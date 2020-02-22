@@ -1,0 +1,11 @@
+# IDE files
+*.classpath
+*.project
+*.settings/
+.idea/
+*.iml
+.DS_Store
+
+# Build files
+target/
+jars/

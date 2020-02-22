@@ -1,9 +1,9 @@
-name: ChestCleaner
-version: 1.7
-author: Tom2208
-api-version: 1.13
+name: ChestCleanerX
+version: 0.1
+author: Tom2208, graves501
+api-version: 1.15
 
-main: chestcleaner.main.Main
+main: io.github.graves501.chestcleaner.main.Main
 
 commands:
   cleaninventory:
@@ -20,4 +20,4 @@ commands:
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
   sortingconfig:
     description: Configuration of the sorting algorithm.
-    usage: /<command> <pattern/evaluator/setautosort/adminconfig>
+    usage: /<command> <pattern/evaluator/setAutosort/adminConfig>
