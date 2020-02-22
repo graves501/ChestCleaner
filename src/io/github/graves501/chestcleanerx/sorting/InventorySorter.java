@@ -2,6 +2,7 @@ package io.github.graves501.chestcleanerx.sorting;
 
 import java.util.ArrayList;
 
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -24,10 +25,10 @@ public class InventorySorter {
 	 * @param list
 	 * @return full stacked {@code list};
 	 */
-	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
+	private static List<ItemStack> getFullStacks(List<ItemStack> list) {
 
-		ArrayList<ItemStack> items = new ArrayList<>();
-		ArrayList<Integer> amounts = new ArrayList<>();
+		List<ItemStack> items = new ArrayList<>();
+		List<Integer> amounts = new ArrayList<>();
 
 		boolean blackListedItemUsed = false;
 
@@ -93,23 +94,23 @@ public class InventorySorter {
 	/**
 	 * Sorts any kind of inventory.
 	 *
-	 * @param inv
+	 * @param inventory
 	 *            the inventory you want to sort.
 	 */
-	public static void sortInventory(Inventory inv, SortingPattern pattern, EvaluatorType evaluator) {
+	public static void sortInventory(Inventory inventory, SortingPattern pattern, EvaluatorType evaluator) {
 
-		ArrayList<ItemStack> list = InventoryConverter.getArrayListFormInventory(inv);
-		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
+		List<ItemStack> list = InventoryConverter.getArrayListFormInventory(inventory);
+		List<ItemStack> temp = new ArrayList<ItemStack>();
 
 		if (list.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inv, list, false, pattern);
+			InventoryConverter.setItemsOfInventory(inventory, list, false, pattern);
 		}
 
 		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
 		temp = sorter.sort(0, list.size() - 1);
-		ArrayList<ItemStack> out = getFullStacks(temp);
+		List<ItemStack> out = getFullStacks(temp);
 
-		InventoryConverter.setItemsOfInventory(inv, out, false, pattern);
+		InventoryConverter.setItemsOfInventory(inventory, out, false, pattern);
 
 	}
 
@@ -123,8 +124,8 @@ public class InventorySorter {
 	 */
 	public static void sortPlayerInv(Player p, SortingPattern pattern, EvaluatorType evaluator) {
 
-		ArrayList<ItemStack> list = InventoryDetector.getPlayerInventoryList(p);
-		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
+		List<ItemStack> list = InventoryDetector.getPlayerMainInventoryList(p);
+		List<ItemStack> temp = new ArrayList<ItemStack>();
 
 		if (list.size() <= 1) {
 			InventoryConverter.setPlayerInventory(list, p, pattern);
@@ -132,7 +133,7 @@ public class InventorySorter {
 
 		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
 		temp = sorter.sort(0, list.size() - 1);
-		ArrayList<ItemStack> out = getFullStacks(temp);
+		List<ItemStack> out = getFullStacks(temp);
 
 		InventoryConverter.setPlayerInventory(out, p, pattern);
 	}

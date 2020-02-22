@@ -12,23 +12,25 @@ import io.github.graves501.chestcleanerx.utils.messages.StringTable;
 
 public class MaterialListUtils {
 
-	public static void sendListPageToPlayer(List<Material> list, Player p, int page, int maxPageLines, int pages){
+	private MaterialListUtils(){}
+
+	public static void sendListPageToPlayer(List<Material> list, Player player, int page, int maxPageLines, int pages){
 
 		MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-				StringTable.getMessage(MessageID.BLACKLIST_TITLE, "%page", page + " / " + pages), p);
+				StringTable.getMessage(MessageID.BLACKLIST_TITLE, "%page", page + " / " + pages), player);
 
 		for (int i = (page - 1) * maxPageLines; i < page * maxPageLines; i++) {
 			if (list.size() == i) {
 				break;
 			} else {
 				MessageSystem.sendMessageToPlayer(MessageType.UNHEADED_INFORMATION,
-						(i + 1) + ". " + list.get(i).name(), p);
+						(i + 1) + ". " + list.get(i).name(), player);
 			}
 		}
 
 		if (pages > page) {
 			MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable
-					.getMessage(MessageID.NEXT_ENTRIES, "%nextpage", String.valueOf(page + 1)), p);
+					.getMessage(MessageID.NEXT_ENTRIES, "%nextpage", String.valueOf(page + 1)), player);
 		}
 
 	}

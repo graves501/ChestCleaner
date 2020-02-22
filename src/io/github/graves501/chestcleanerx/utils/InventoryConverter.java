@@ -2,6 +2,7 @@ package io.github.graves501.chestcleanerx.utils;
 
 import java.util.ArrayList;
 
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -55,7 +56,7 @@ public class InventoryConverter {
 	 *             throws if the argument ItemStack {@code items} or the
 	 *             Inventory {@code inv} is equal to null.
 	 */
-	public static void setItemsOfInventory(Inventory inv, ArrayList<ItemStack> items, boolean isPlayer, SortingPattern pattern) {
+	public static void setItemsOfInventory(Inventory inv, List<ItemStack> items, boolean isPlayer, SortingPattern pattern) {
 
 		if (items == null || inv == null) {
 			throw new IllegalArgumentException();
@@ -156,7 +157,7 @@ public class InventoryConverter {
 	 *             throws if the argument ItemStack {@code items} or the
 	 *             Inventory {@code inv} is equal to null.
 	 */
-	public static void setPlayerInventory(ArrayList<ItemStack> items, Player p, SortingPattern pattern) {
+	public static void setPlayerInventory(List<ItemStack> items, Player p, SortingPattern pattern) {
 
 		if (items == null || p == null) {
 			throw new IllegalArgumentException();

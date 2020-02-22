@@ -2,6 +2,7 @@ package io.github.graves501.chestcleanerx.utils;
 
 import java.util.ArrayList;
 
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -9,8 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 public class InventoryDetector {
+
+	private InventoryDetector(){}
+
+	private static int MAIN_INVENTORY_SLOTS_LOWER_BOUND = 9;
+	private static int MAIN_INVENTORY_SLOTS_UPPER_BOUND = 36;
 
 	/**
 	 * <b>Returns the inventory of the block {@code b}. If there is no inventory
@@ -18,24 +25,21 @@ public class InventoryDetector {
 	 * block is an instance of the class org.bukkit.block.Container and returns
 	 * its inventory.
 	 *
-	 * @param b
+	 * @param block
 	 *            The Block you want to get the inventory form.
 	 * @return Returns the inventory of the container of the block, if its has
 	 *         no container it returns {@code null}.
 	 */
-	public static Inventory getInventoryFormBlock(Block b) {
-		if (b.getState() instanceof InventoryHolder) {
-			InventoryHolder h = (InventoryHolder) b.getState();
-			return h.getInventory();
+	public static Inventory getInventoryFormBlock(final Block block) {
+		if (block.getState() instanceof InventoryHolder) {
+			InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
+			return inventoryHolder.getInventory();
 		}
 		return null;
 	}
 
-	public static boolean hasInventoryHolder(Block b) {
-		if (b.getState() instanceof InventoryHolder) {
-			return true;
-		}
-		return false;
+	public static boolean hasInventoryHolder(final Block block) {
+	    return block.getState() instanceof InventoryHolder;
 	}
 
 	/**
@@ -52,7 +56,7 @@ public class InventoryDetector {
 	 * @return Returns the inventory of the container of the block, if its has
 	 *         no container it returns {@code null}.
 	 */
-	public static Inventory getInventoryFormLocation(Location location, World world) {
+	public static Inventory getInventoryFromLocation(Location location, World world) {
 		return getInventoryFormBlock(world.getBlockAt(location));
 	}
 
@@ -63,43 +67,45 @@ public class InventoryDetector {
 	 * getting avoided.
 	 *
 	 *
-	 * @param p
+	 * @param player
 	 *            The owner of the inventory.
-	 * @return A list of all items form the inventory of {@code p} (form index 9
+	 * @return A list of all items from the inventory of {@code p} (from index 9
 	 *         (including) to index 35 (including))
 	 * @throws IllegalArgumentException
 	 *             if {@code player} is null.
 	 */
-	public static ArrayList<ItemStack> getPlayerInventoryList(Player p) {
+	public static List<ItemStack> getPlayerMainInventoryList(Player player) {
 
-		if (p == null) {
+		if (player == null) {
 			throw new IllegalArgumentException();
 		}
 
-		ArrayList<ItemStack> items = new ArrayList<>();
+		final PlayerInventory playerInventory = player.getInventory();
 
-		for (int i = 9; i < 36; i++) {
-			if (p.getInventory().getItem(i) != null)
-				items.add(p.getInventory().getItem(i).clone());
+		ArrayList<ItemStack> playerMainInventoryItems = new ArrayList<>();
+
+		for (int inventoryIndex = MAIN_INVENTORY_SLOTS_LOWER_BOUND; inventoryIndex < MAIN_INVENTORY_SLOTS_UPPER_BOUND; inventoryIndex++) {
+				if (playerInventory.getItem(inventoryIndex) != null) {
+					playerMainInventoryItems.add(playerInventory.getItem(inventoryIndex).clone());
+				}
 		}
 
-		return items;
+		return playerMainInventoryItems;
 	}
 
-	public static ItemStack[] getFullInventory(Inventory inv) {
+	public static ItemStack[] getHotbarAndMainInventoryItems(final Inventory inventory) {
 
-		if (inv == null) {
+		if (inventory == null) {
 			throw new IllegalArgumentException();
 		}
 
-		ItemStack[] items = new ItemStack[36];
+		ItemStack[] hotbarAndMainInventoryItems = new ItemStack[MAIN_INVENTORY_SLOTS_UPPER_BOUND];
 
-		for (int i = 0; i < items.length; i++) {
-			items[i] = inv.getItem(i);
+		for (int i = 0; i < hotbarAndMainInventoryItems.length; i++) {
+			hotbarAndMainInventoryItems[i] = inventory.getItem(i);
 		}
 
-		return items;
-
+		return hotbarAndMainInventoryItems;
 	}
 
 }

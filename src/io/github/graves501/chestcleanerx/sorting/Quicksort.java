@@ -1,7 +1,6 @@
 package io.github.graves501.chestcleanerx.sorting;
 
-import java.util.ArrayList;
-
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.graves501.chestcleanerx.sorting.evaluator.Evaluator;
@@ -9,18 +8,19 @@ import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 
 public class Quicksort {
 
-	private ArrayList<ItemStack> items;
+	private List<ItemStack> items;
+
 	//Default Evaluator
 	public Evaluator evaluator = EvaluatorType.getEvaluator(EvaluatorType.DEFAULT);
 
-	public Quicksort(ArrayList<ItemStack> items, Evaluator evaluator) {
+	public Quicksort(List<ItemStack> items, Evaluator evaluator) {
 		this.items = items;
 		if(evaluator != null){
 			this.evaluator = evaluator;
 		}
 	}
 
-	public ArrayList<ItemStack> sort(int l, int r) {
+	public List<ItemStack> sort(int l, int r) {
 		int q;
 		if (l < r) {
 			q = partition(l, r);

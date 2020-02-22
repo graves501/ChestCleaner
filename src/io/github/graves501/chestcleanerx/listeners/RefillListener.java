@@ -37,7 +37,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 							}
 						}
 
-						ItemStack[] items = InventoryDetector.getFullInventory(p.getInventory());
+						ItemStack[] items = InventoryDetector.getHotbarAndMainInventoryItems(p.getInventory());
 
 						for (int i = 9; i < 36; i++) {
 
@@ -103,7 +103,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 								if (hand > -1) {
 
-									ItemStack[] items = InventoryDetector.getFullInventory(p.getInventory());
+									ItemStack[] items = InventoryDetector.getHotbarAndMainInventoryItems(p.getInventory());
 									for (int i = 9; i < 36; i++) {
 										if (items[i] != null) {
 											if (items[i].getType().equals(item.getType()) && items[i].getAmount() > 1) {
