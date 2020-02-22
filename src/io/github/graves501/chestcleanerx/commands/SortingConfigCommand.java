@@ -56,9 +56,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			/* PATTERN */
 			if (args[0].equalsIgnoreCase(commandList.get(0))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingconfig.pattern")) {
+				if (!p.hasPermission("chestcleaner.cmd.sortingConfig.pattern")) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingconfig.pattern");
+							"chestcleaner.cmd.sortingConfig.pattern");
 					return true;
 				}
 
@@ -81,9 +81,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* EVALUATOR */
 			} else if (args[0].equalsIgnoreCase(commandList.get(1))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingconfig.evaluator")) {
+				if (!p.hasPermission("chestcleaner.cmd.sortingConfig.evaluator")) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingconfig.evaluator");
+							"chestcleaner.cmd.sortingConfig.evaluator");
 					return true;
 				}
 
@@ -106,9 +106,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* SETAUTOSORT */
 			} else if (args[0].equalsIgnoreCase(commandList.get(2))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingconfig.setautosort")) {
+				if (!p.hasPermission("chestcleaner.cmd.sortingConfig.setautosort")) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingconfig.setautosort");
+							"chestcleaner.cmd.sortingConfig.setautosort");
 					return true;
 				}
 
@@ -117,7 +117,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					b = true;
 				} else if (!args[1].equalsIgnoreCase("false")) {
 					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-							"/sortingconfig setautosort <true/false>", p);
+							"/sortingConfig setautosort <true/false>", p);
 					return true;
 				}
 
@@ -182,7 +182,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						b = true;
 					} else if (!args[2].equalsIgnoreCase("false")) {
 						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-								"/sortingconfig adminconfig setdefaultautosort <true/false>", p);
+								"/sortingConfig adminconfig setdefaultautosort <true/false>", p);
 						return true;
 					}
 
@@ -195,7 +195,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-							"/sortingconfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>", p);
+							"/sortingConfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>", p);
 					return true;
 				}
 
@@ -213,7 +213,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 	private void sendSyntaxErrorMessage(Player p) {
 		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-				"/sortingconfig <pattern/evaluator/setautosort/adminconfig>", p);
+				"/sortingConfig <pattern/evaluator/setautosort/adminconfig>", p);
 	}
 
 	@Override

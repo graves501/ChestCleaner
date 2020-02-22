@@ -1,5 +1,6 @@
 package io.github.graves501.chestcleanerx.commands;
 
+import io.github.graves501.chestcleanerx.utils.stringconstants.PluginPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,16 +23,15 @@ import io.github.graves501.chestcleanerx.utils.messages.StringTable;
 /**
  * @author Tom
  */
-public class CleanInvenotryCommand implements CommandExecutor {
+public class CleanInventoryCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-
 		Player p = (Player) cs;
 		boolean isPlayer = cs instanceof Player;
 		if (isPlayer) {
-			if (!p.hasPermission("chestcleaner.cmd.cleaninventory") && Main.cleanInvPermission) {
-				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, "chestcleaner.cmd.cleaninventory", p);
+			if (!p.hasPermission(PluginPermissions.CLEAN_INVENTORY_PERMISSION) && Main.cleanInvPermission) {
+				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, "chestcleaner.cmd.cleanInventory", p);
 				return true;
 			}
 		}
@@ -40,7 +40,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 
 			// if cs is a console
 			if (!(cs instanceof Player)) {
-				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, "/cleaninventory <x> <y> <z>");
+				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, "/cleanInventory <x> <y> <z>");
 				return true;
 			}
 

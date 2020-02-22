@@ -1,12 +1,13 @@
 package io.github.graves501.chestcleanerx.main;
 
+import io.github.graves501.chestcleanerx.utils.stringconstants.PluginCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
-import io.github.graves501.chestcleanerx.commands.CleanInvenotryCommand;
+import io.github.graves501.chestcleanerx.commands.CleanInventoryCommand;
 import io.github.graves501.chestcleanerx.commands.CleaningItemCommand;
 import io.github.graves501.chestcleanerx.commands.SortingConfigCommand;
 import io.github.graves501.chestcleanerx.commands.TimerCommand;
@@ -26,7 +27,7 @@ public class Main extends JavaPlugin {
 	public static boolean cleanInvPermission = true;
 	public static boolean timer = true;
 	public static int time = 5;
-	public static ItemStack item = new ItemStack(Material.IRON_HOE);
+	public static ItemStack cleaningItem = new ItemStack(Material.IRON_HOE);
 	public static boolean durability = true;
 	public static boolean itemBoolean = true;
 	public static boolean eventmode = false;
@@ -35,21 +36,24 @@ public class Main extends JavaPlugin {
 
 	public static Main main;
 
-	private Counter c = new Counter();
+	private Counter counter = new Counter();
 
 	@Override
 	public void onEnable() {
 		main = this;
 		loadConfig();
-		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
-		getCommand("timer").setExecutor(new TimerCommand());
-		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
-		getCommand("blacklist").setExecutor(new BlacklistCommand());
-		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
+
+		getCommand(PluginCommands.CLEAN_INVENTORY).setExecutor(new CleanInventoryCommand());
+		getCommand(PluginCommands.TIMER).setExecutor(new TimerCommand());
+		getCommand(PluginCommands.CLEANING_ITEM).setExecutor(new CleaningItemCommand());
+		getCommand(PluginCommands.BLACKLIST).setExecutor(new BlacklistCommand());
+		getCommand(PluginCommands.SORTING_CONFIG).setExecutor(new SortingConfigCommand());
+
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
-		c.start();
+		counter.start();
+
 		new UpdateChecker(this).checkForUpdate();
 	}
 
@@ -85,11 +89,11 @@ public class Main extends JavaPlugin {
 			StringTable.setUpList(null);
 		}
 
-		if (Config.getItem() == null) {
-			item = new ItemStack(Material.IRON_HOE);
-			Config.setItem(item);
+		if (Config.getCleaningItem() == null) {
+			cleaningItem = new ItemStack(Material.IRON_HOE);
+			Config.setCleaningItem(cleaningItem);
 		} else {
-			item = Config.getItem();
+			cleaningItem = Config.getCleaningItem();
 		}
 
 		if (Config.containsItemBoolean()) {

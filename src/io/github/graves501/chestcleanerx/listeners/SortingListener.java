@@ -42,8 +42,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-			boolean isMainHand = itemMainHand.equals(Main.item);
-			boolean isOffHand = itemOffHand.equals(Main.item);
+			boolean isMainHand = itemMainHand.equals(Main.cleaningItem);
+			boolean isOffHand = itemOffHand.equals(Main.cleaningItem);
 
 			// TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
 			// SLOTS DAS ITEM H�LT
@@ -52,7 +52,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				if (p.isSneaking()) {
 
-					if (p.hasPermission("chestcleaner.cleaningitem.use.owninventory")) {
+					if (p.hasPermission("chestcleaner.cleaningItem.use.owninventory")) {
 						if (!Timer.playerCheck(p))
 							return;
 
@@ -67,7 +67,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				} else if (!Main.eventmode) {
 
-					if (p.hasPermission("chestcleaner.cleaningitem.use")) {
+					if (p.hasPermission("chestcleaner.cleaningItem.use")) {
 
 						Block b = BlockDetector.getTargetBlock(p);
 
@@ -136,7 +136,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player p = (Player) e.getPlayer();
 
-			if (p.hasPermission("chestcleaner.cleaningitem.use")) {
+			if (p.hasPermission("chestcleaner.cleaningItem.use")) {
 
 				ItemStack itemMainHand = p.getInventory().getItemInMainHand().clone();
 				itemMainHand.setDurability((short) 0);
@@ -146,8 +146,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 				itemOffHand.setDurability((short) 0);
 				itemOffHand.setAmount(1);
 
-				boolean isMainHand = itemMainHand.equals(Main.item);
-				boolean isOffHand = itemOffHand.equals(Main.item);
+				boolean isMainHand = itemMainHand.equals(Main.cleaningItem);
+				boolean isOffHand = itemOffHand.equals(Main.cleaningItem);
 
 				if (isMainHand || isOffHand) {
 

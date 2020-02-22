@@ -1,23 +1,23 @@
 name: ChestCleanerX
-version: 0.1
+version: "0.1"
 author: Tom2208, graves501
-api-version: 1.15
+api-version: "1.15"
 
 main: io.github.graves501.chestcleaner.main.Main
 
 commands:
-  cleaninventory:
+  cleanInventory:
     description: Cleans an inventory of a block.
     usage: /<command> <x> <y> <z>
   timer:
     description: Configures the timer.
     usage: /<command> <setActive/setTime>
-  cleaningitem:
-    description: Configuration of the cleaningitem.
+  cleaningItem:
+    description: Configuration of the cleaningItem.
     usage: /<command> <get/give/rename/setActive/setDurabilityLoss/setEventDetectionMode/setItem/setLore>
   blacklist:
     description: Avoiding items to get stacked while sorting.
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
-  sortingconfig:
+  sortingConfig:
     description: Configuration of the sorting algorithm.
     usage: /<command> <pattern/evaluator/setAutosort/adminConfig>

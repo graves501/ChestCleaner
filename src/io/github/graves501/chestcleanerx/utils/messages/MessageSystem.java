@@ -28,7 +28,7 @@ public class MessageSystem {
 
 		switch (type) {
 		case SYNTAX_ERROR:
-			out += "�c" + StringTable.getMessage(MessageID.SYTAX_ERROR) +": " + arg;
+			out += "�c" + StringTable.getMessage(MessageID.SYNTAX_ERROR) +": " + arg;
 			break;
 		case ERROR:
 			out += "�c" + StringTable.getMessage(MessageID.ERROR) + ": " + arg;

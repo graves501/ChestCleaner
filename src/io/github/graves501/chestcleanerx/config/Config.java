@@ -150,12 +150,12 @@ public class Config {
 
 	/* ITEM */
 
-	public static void setItem(ItemStack is) {
+	public static void setCleaningItem(ItemStack is) {
 		Config.set("cleaningItem", is);
 		save();
 	}
 
-	public static ItemStack getItem() {
+	public static ItemStack getCleaningItem() {
 		return Config.getItemStack("cleaningItem");
 	}
 

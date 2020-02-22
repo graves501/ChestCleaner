@@ -53,7 +53,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* RENAME SUBCOMMAND */
 			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.rename") || !isPlayer) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.rename") || !isPlayer) {
 
 					String newname = new String();
 					for (int i = 1; i < args.length; i++) {
@@ -73,17 +73,17 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
 								StringTable.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname));
 
-					ItemStack is = Main.item;
+					ItemStack is = Main.cleaningItem;
 					ItemMeta im = is.getItemMeta();
 					im.setDisplayName(newname);
-					Main.item.setItemMeta(im);
-					Config.setItem(Main.item);
+					Main.cleaningItem.setItemMeta(im);
+					Config.setCleaningItem(Main.cleaningItem);
 					if (args.length == 1)
 						return true;
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.rename", player);
+							"chestcleaner.cmd.cleaningItem.rename", player);
 					return true;
 				}
 				return true;
@@ -91,7 +91,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				/* SETLORE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(1))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setlore") || !isPlayer) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.setlore") || !isPlayer) {
 
 					String lore = args[1];
 					for (int i = 2; i < args.length; i++) {
@@ -108,10 +108,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					}
 
-					ItemMeta im = Main.item.getItemMeta();
+					ItemMeta im = Main.cleaningItem.getItemMeta();
 					im.setLore(lorelist);
-					Main.item.setItemMeta(im);
-					Config.setItem(Main.item);
+					Main.cleaningItem.setItemMeta(im);
+					Config.setCleaningItem(Main.cleaningItem);
 					Config.save();
 
 					if (isPlayer)
@@ -122,7 +122,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.setlore", player);
+							"chestcleaner.cmd.cleaningItem.setlore", player);
 					return true;
 				}
 
@@ -135,23 +135,23 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* RENAME SUBCOMMAND ERRORS */
 			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
 				if (isPlayer)
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/cleaningitem rename <name>", player);
+					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/cleaningItem rename <name>", player);
 				else
-					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, "/cleaningitem rename <name>");
+					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, "/cleaningItem rename <name>");
 				return true;
 			}
 
 			/* SETITEM SUBCOMMAND */
 			else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(2)) && isPlayer) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setitem")) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.setitem")) {
 
 					ItemStack item = player.getInventory().getItemInMainHand().clone();
 					if (item != null) {
 						item.setDurability((short) 0);
 						item.setAmount(1);
-						Config.setItem(item);
-						Main.item = item;
+						Config.setCleaningItem(item);
+						Main.cleaningItem = item;
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 								StringTable.getMessage(MessageID.NEW_ITEM, "%newitem", item.toString()), player);
 						return true;
@@ -162,22 +162,22 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					}
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.setitem", player);
+							"chestcleaner.cmd.cleaningItem.setitem", player);
 					return true;
 				}
 
 				/* GET SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(3)) && isPlayer) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.get")) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.get")) {
 
-					player.getInventory().addItem(Main.item);
+					player.getInventory().addItem(Main.cleaningItem);
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.GOT_ITEM, player);
 					return true;
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.get", player);
+							"chestcleaner.cmd.cleaningItem.get", player);
 					return true;
 				}
 
@@ -188,7 +188,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* SETACTIVE SUBCOMMAND */
 			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(4))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setactive") || !isPlayer) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.setactive") || !isPlayer) {
 
 					if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
 
@@ -209,23 +209,23 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					} else {
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-									"/cleaningitem setactive <true/false>", player);
+									"/cleaningItem setactive <true/false>", player);
 						else
 							MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
-									"/cleaningitem setactive <true/false>");
+									"/cleaningItem setactive <true/false>");
 						return true;
 					}
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.setactive", player);
+							"chestcleaner.cmd.cleaningItem.setactive", player);
 					return true;
 				}
 
 				/* SETDURIBILITYLOSS SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(5))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setdurabilityloss") || !isPlayer) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.setdurabilityloss") || !isPlayer) {
 
 					if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
 
@@ -246,26 +246,26 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					} else {
 						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-								"/cleaningitem setactive <true/false>", player);
+								"/cleaningItem setactive <true/false>", player);
 						return true;
 					}
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.durabilityloss", player);
+							"chestcleaner.cmd.cleaningItem.durabilityloss", player);
 					return true;
 				}
 
 				/* GIVE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(6))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.give") || !isPlayer) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.give") || !isPlayer) {
 
 					Player p2 = Bukkit.getPlayer(args[1]);
 
 					if (p2 != null) {
 
-						p2.getInventory().addItem(Main.item);
+						p2.getInventory().addItem(Main.cleaningItem);
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", p2.getName()),
@@ -283,7 +283,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 							for (Object p : players) {
 								Player pl = (Player) p;
-								pl.getInventory().addItem(Main.item);
+								pl.getInventory().addItem(Main.cleaningItem);
 								if (isPlayer)
 									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
 											MessageID.PLAYER_GOT_ITEM, "%playername", pl.getName()), player);
@@ -302,14 +302,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.give", player);
+							"chestcleaner.cmd.cleaningItem.give", player);
 					return true;
 				}
 
 				/* SETEVENTDETECTIONMODE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(7))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.seteventdetectionmode")) {
+				if (player.hasPermission("chestcleaner.cmd.cleaningItem.seteventdetectionmode")) {
 
 					boolean b = Boolean.parseBoolean(args[1]);
 					Main.eventmode = b;
@@ -321,7 +321,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				} else {
 					if (isPlayer)
 						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-								"chestcleaner.cmd.cleaningitem.seteventdetectionmode", player);
+								"chestcleaner.cmd.cleaningItem.seteventdetectionmode", player);
 					return true;
 				}
 
@@ -329,22 +329,22 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (isPlayer)
 					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-							"/cleaningitem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
+							"/cleaningItem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
 							player);
 				else
 					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
-							"/cleaningitem <setactive/setdurabilityloss/give/rename/setlore>");
+							"/cleaningItem <setactive/setdurabilityloss/give/rename/setlore>");
 				return true;
 			}
 
 		} else {
 			if (isPlayer)
 				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-						"/cleaningitem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
+						"/cleaningItem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
 						player);
 			else
 				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
-						"/cleaningitem <setactive/setdurabilityloss/give/rename/setlore>");
+						"/cleaningItem <setactive/setdurabilityloss/give/rename/setlore>");
 			return true;
 		}
 
