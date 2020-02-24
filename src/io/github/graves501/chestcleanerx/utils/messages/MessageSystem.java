@@ -6,48 +6,53 @@ import io.github.graves501.chestcleanerx.main.Main;
 
 public class MessageSystem {
 
-	public static void sendMessageToPlayer(MessageType type, String arg, Player p) {
-		p.sendMessage(getMessageString(type, arg));
-	}
+    private MessageSystem() {
+    }
 
-	public static void sendMessageToPlayer(MessageType type, MessageID messageID, Player p) {
-		p.sendMessage(getMessageString(type, StringTable.getMessage(messageID)));
-	}
+    public static void sendMessageToPlayer(MessageType type, String arg, Player player) {
+        player.sendMessage(getMessageString(type, arg));
+    }
 
-	public static void sendConsoleMessage(MessageType type, String arg) {
-		Main.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
-	}
+    public static void sendMessageToPlayer(MessageType type, MessageID messageID, Player player) {
+        player.sendMessage(getMessageString(type, Messages.getMessage(messageID)));
+    }
 
-	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
-		Main.main.getServer().getConsoleSender().sendMessage(getMessageString(type, StringTable.getMessage(messageID)));
-	}
+    public static void sendConsoleMessage(MessageType type, String arg) {
+        Main.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
+    }
 
-	private static String getMessageString(MessageType type, String arg) {
+    public static void sendConsoleMessage(MessageType type, MessageID messageID) {
+        Main.main.getServer().getConsoleSender()
+            .sendMessage(getMessageString(type, Messages.getMessage(messageID)));
+    }
 
-		String out = "�6[ChestCleaner] ";
+    private static String getMessageString(MessageType type, String arg) {
 
-		switch (type) {
-		case SYNTAX_ERROR:
-			out += "�c" + StringTable.getMessage(MessageID.SYNTAX_ERROR) +": " + arg;
-			break;
-		case ERROR:
-			out += "�c" + StringTable.getMessage(MessageID.ERROR) + ": " + arg;
-			break;
-		case SUCCESS:
-			out += "�a" + arg;
-			break;
-		case MISSING_PERMISSION:
-			out += "�c" + StringTable.getMessage(MessageID.PERMISSON_DENIED) + " ( " + arg + " )";
-			break;
-		case UNHEADED_INFORMATION:
-			out = "�7" + arg;
-			break;
-		default:
-			throw new IllegalArgumentException();
-		}
+        String out = "�6[ChestCleanerX] ";
 
-		return out;
+        switch (type) {
+            case SYNTAX_ERROR:
+                out += "�c" + Messages.getMessage(MessageID.SYNTAX_ERROR) + ": " + arg;
+                break;
+            case ERROR:
+                out += "�c" + Messages.getMessage(MessageID.ERROR) + ": " + arg;
+                break;
+            case SUCCESS:
+                out += "�a" + arg;
+                break;
+            case MISSING_PERMISSION:
+                out +=
+                    "�c" + Messages.getMessage(MessageID.PERMISSION_DENIED) + " ( " + arg + " )";
+                break;
+            case UNHEADED_INFORMATION:
+                out = "�7" + arg;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
-	}
+        return out;
+
+    }
 
 }

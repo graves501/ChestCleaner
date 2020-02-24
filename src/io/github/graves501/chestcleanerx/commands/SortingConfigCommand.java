@@ -18,7 +18,7 @@ import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
@@ -121,8 +121,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-						StringTable.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)), p);
+				MessageSystem.sendMessageToPlayer(
+					MessageType.SUCCESS,
+					Messages.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)), p);
 				PlayerData.setAutoSort(b, p);
 				PlayerDataManager.loadPlayerData(p);
 				return true;
@@ -190,7 +191,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 					Config.setDefaultAutoSort(b);
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.DEFUALT_AUTOSORT, "%boolean", String.valueOf(b)), p);
+							Messages.getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(b)), p);
 					return true;
 
 				} else {

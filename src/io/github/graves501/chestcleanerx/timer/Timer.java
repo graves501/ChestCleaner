@@ -8,7 +8,7 @@ import io.github.graves501.chestcleanerx.main.Main;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class Timer {
 
@@ -79,7 +79,7 @@ public class Timer {
 	public static boolean playerCheck(Player p) {
 		if (Main.timer && !p.hasPermission("chestcleaner.timer.noeffect")) {
 			if (isPlayerOnList(p)) {
-				MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
+				MessageSystem.sendMessageToPlayer(MessageType.ERROR, Messages
 						.getMessage(MessageID.SORTING_ON_COOLDOWN, "%time", String.valueOf(getPlayerTime(p))), p);
 				return false;
 			}

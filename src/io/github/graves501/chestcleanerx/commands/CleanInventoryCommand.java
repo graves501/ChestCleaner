@@ -18,7 +18,7 @@ import io.github.graves501.chestcleanerx.utils.BlockDetector;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 /**
  * @author Tom
@@ -57,7 +57,7 @@ public class CleanInventoryCommand implements CommandExecutor {
 				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location",
+							Messages.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location",
 									"(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", "+ block.getType().name() +")"),
 							p);
 					return true;
@@ -84,7 +84,7 @@ public class CleanInventoryCommand implements CommandExecutor {
 					w = p.getWorld();
 				if (w == null) {
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-							StringTable.getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", args[3]), p);
+							Messages.getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", args[3]), p);
 
 					return true;
 				}
@@ -92,7 +92,7 @@ public class CleanInventoryCommand implements CommandExecutor {
 				w = Bukkit.getWorld(args[3]);
 				if (w == null) {
 					MessageSystem.sendConsoleMessage(MessageType.ERROR,
-							StringTable.getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", args[3]));
+							Messages.getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", args[3]));
 					return true;
 				}
 
@@ -116,10 +116,10 @@ public class CleanInventoryCommand implements CommandExecutor {
 			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 				if (isPlayer) {
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
+					MessageSystem.sendMessageToPlayer(MessageType.ERROR, Messages.getMessage(
 							MessageID.BLOCK_HAS_NO_INV, "%location", "(" + x + " / " + y + " / " + z + ")"), p);
 				} else {
-					MessageSystem.sendConsoleMessage(MessageType.ERROR, StringTable.getMessage(
+					MessageSystem.sendConsoleMessage(MessageType.ERROR, Messages.getMessage(
 							MessageID.BLOCK_HAS_NO_INV, "%location", "(" + x + " / " + y + " / " + z + ")"));
 				}
 

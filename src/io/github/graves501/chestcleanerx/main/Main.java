@@ -20,7 +20,7 @@ import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 import io.github.graves501.chestcleanerx.listeners.DataLoadingListener;
 import io.github.graves501.chestcleanerx.listeners.RefillListener;
 import io.github.graves501.chestcleanerx.timer.Counter;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class Main extends JavaPlugin {
 
@@ -84,9 +84,9 @@ public class Main extends JavaPlugin {
 		}
 
 		if (Config.containsStrings()) {
-			StringTable.setUpList(Config.getStrings());
+			Messages.setMessages(Config.getStrings());
 		} else {
-			StringTable.setUpList(null);
+			Messages.setMessages(null);
 		}
 
 		if (Config.getCleaningItem() == null) {

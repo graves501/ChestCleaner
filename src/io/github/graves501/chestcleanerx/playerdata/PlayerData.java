@@ -12,7 +12,7 @@ import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 
 public class PlayerData {
 
-	public static File ConfigFile = new File("plugins/ChestCleaner", "playerdata.yml");
+	public static File ConfigFile = new File("plugins/ChestCleanerX", "playerdata.yml");
 	public static FileConfiguration Config = YamlConfiguration.loadConfiguration(ConfigFile);
 
 	/**

@@ -20,7 +20,7 @@ import io.github.graves501.chestcleanerx.utils.MaterialListUtils;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
@@ -117,8 +117,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                         if (material == null) {
                             MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                StringTable
-                                    .getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
+                                Messages.getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
                                         arguments[2]),
                                 player);
                             return VALID_COMMAND;
@@ -139,7 +138,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                     if (materialList.contains(material)) {
                         MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                            StringTable.getMessage(MessageID.IS_ALREADY_ON_BLACKLIST, "%material",
+                            Messages.getMessage(MessageID.IS_ALREADY_ON_BLACKLIST, "%material",
                                 material.name()),
                             player);
                         return VALID_COMMAND;
@@ -149,7 +148,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                     saveBlacklistInConfiguration(listNumber);
 
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        StringTable
+                        Messages
                             .getMessage(MessageID.SET_TO_BLACKLIST, "%material", material.name()),
                         player);
                     return VALID_COMMAND;
@@ -176,7 +175,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                                 } else {
                                     MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                        StringTable.getMessage(
+                                        Messages.getMessage(
                                             MessageID.INDEX_OUT_OF_BOUNDS, "%biggestindex",
                                             String.valueOf(index)),
                                         player);
@@ -186,7 +185,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                             } catch (NumberFormatException ex) {
 
                                 MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                    StringTable.getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
+                                    Messages.getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
                                         arguments[2]),
                                     player);
                                 return VALID_COMMAND;
@@ -208,8 +207,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                     }
 
                     if (!materialList.contains(material)) {
-                        MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
-                                .getMessage(MessageID.BLACKLIST_DOESNT_CONTAINS, "%material",
+                        MessageSystem.sendMessageToPlayer(MessageType.ERROR, Messages
+                                .getMessage(MessageID.BLACKLIST_DOESNT_CONTAIN, "%material",
                                     material.name()),
                             player);
                         return VALID_COMMAND;
@@ -219,7 +218,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                     saveBlacklistInConfiguration(listNumber);
 
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        StringTable.getMessage(MessageID.REMOVED_FORM_BLACKLIST, "%material",
+                        Messages.getMessage(MessageID.REMOVED_FORM_BLACKLIST, "%material",
                             material.name()),
                         player);
                     return VALID_COMMAND;
@@ -246,7 +245,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         } catch (NumberFormatException ex) {
 
                             MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                StringTable
+                                Messages
                                     .getMessage(MessageID.INVALID_INPUT_FOR_INTEGER, "%index",
                                         arguments[1]),
                                 player);
@@ -256,7 +255,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                         if (!(page > 0 && page <= pages)) {
                             MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                StringTable.getMessage(MessageID.INVALID_PAGE_NUMBER, "%range",
+                                Messages.getMessage(MessageID.INVALID_PAGE_NUMBER, "%range",
                                     "1 - " + pages),
                                 player);
                             return VALID_COMMAND;

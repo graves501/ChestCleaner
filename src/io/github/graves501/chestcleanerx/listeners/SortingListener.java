@@ -19,7 +19,7 @@ import io.github.graves501.chestcleanerx.utils.BlockDetector;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 /**
  * @author Tom2208
@@ -29,63 +29,69 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 
 	@EventHandler
-	private void onRightClick(PlayerInteractEvent e) {
+	private void onRightClick(PlayerInteractEvent playerInteractEvent) {
 
-		Player p = e.getPlayer();
-		ItemStack itemMainHand = p.getInventory().getItemInMainHand().clone();
+		final Player player = playerInteractEvent.getPlayer();
+		ItemStack itemMainHand = player.getInventory().getItemInMainHand().clone();
 		itemMainHand.setDurability((short) 0);
 		itemMainHand.setAmount(1);
 
-		ItemStack itemOffHand = p.getInventory().getItemInOffHand().clone();
+		ItemStack itemOffHand = player.getInventory().getItemInOffHand().clone();
 		itemOffHand.setDurability((short) 0);
 		itemOffHand.setAmount(1);
 
-		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
 			boolean isMainHand = itemMainHand.equals(Main.cleaningItem);
 			boolean isOffHand = itemOffHand.equals(Main.cleaningItem);
 
+			// TODO clean up
 			// TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
 			// SLOTS DAS ITEM H�LT
 
 			if ((isMainHand || isOffHand) && (isMainHand != isOffHand)) {
 
-				if (p.isSneaking()) {
+				if (player.isSneaking()) {
 
-					if (p.hasPermission("chestcleaner.cleaningItem.use.owninventory")) {
-						if (!Timer.playerCheck(p))
+					if (player.hasPermission("chestcleaner.cleaningItem.use.owninventory")) {
+						if (!Timer.playerCheck(player))
 							return;
 
-						damageItem(p, isMainHand);
-						InventorySorter.sortPlayerInv(p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p));
-						InventorySorter.playSortingSound(p);
+						damageItem(player, isMainHand);
+						InventorySorter.sortPlayerInv(
+							player, PlayerDataManager.getSortingPatternOfPlayer(player), PlayerDataManager.getEvaluatorTypOfPlayer(
+								player));
+						InventorySorter.playSortingSound(player);
 
-						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
+						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED,
+							player);
 
-						e.setCancelled(true);
+						playerInteractEvent.setCancelled(true);
 					}
 
 				} else if (!Main.eventmode) {
 
-					if (p.hasPermission("chestcleaner.cleaningItem.use")) {
+					if (player.hasPermission("chestcleaner.cleaningItem.use")) {
 
-						Block b = BlockDetector.getTargetBlock(p);
+						Block block = BlockDetector.getTargetBlock(player);
 
-						if (BlacklistCommand.inventoryBlacklist.contains(b.getType())) {
+						if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
 							return;
 						}
 
-						if (!Timer.playerCheck(p)) {
+						if (!Timer.playerCheck(player)) {
 							return;
 						}
 
-						if (InventorySorter.sortPlayerBlock(b, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
+						if (InventorySorter.sortPlayerBlock(block,
+							player, PlayerDataManager.getSortingPatternOfPlayer(player), PlayerDataManager.getEvaluatorTypOfPlayer(
+								player))) {
 
-							damageItem(p, isMainHand);
+							damageItem(player, isMainHand);
 
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.INVENTORY_SORTED), p);
-							e.setCancelled(true);
+									Messages.getMessage(MessageID.INVENTORY_SORTED), player);
+							playerInteractEvent.setCancelled(true);
 						}
 
 					}
@@ -161,7 +167,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 					e.setCancelled(true);
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.INVENTORY_SORTED), p);
+							Messages.getMessage(MessageID.INVENTORY_SORTED), p);
 				}
 
 			}
@@ -171,21 +177,21 @@ public class SortingListener implements org.bukkit.event.Listener {
 	}
 
 	@EventHandler
-	private void onCloseInventory(InventoryCloseEvent e){
+	private void onCloseInventory(InventoryCloseEvent inventoryCloseEvent){
 
-		if(e.getInventory().getHolder() instanceof Chest){
+		if(inventoryCloseEvent.getInventory().getHolder() instanceof Chest){
 
-			Player p = (Player) e.getPlayer();
+			Player player = (Player) inventoryCloseEvent.getPlayer();
 
-			if(PlayerDataManager.getAutoSortOfPlayer(p)){
+			if(PlayerDataManager.getAutoSortOfPlayer(player)){
 
-				if(!Timer.playerCheck(p)){
+				if(!Timer.playerCheck(player)){
 					return;
 				}
 
-				InventorySorter.sortInventoryByPlayer(e.getInventory(), p);
-				InventorySorter.playSortingSound(p);
-				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
+				InventorySorter.sortInventoryByPlayer(inventoryCloseEvent.getInventory(), player);
+				InventorySorter.playSortingSound(player);
+				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 
 			}
 

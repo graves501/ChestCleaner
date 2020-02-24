@@ -16,7 +16,7 @@ import io.github.graves501.chestcleanerx.main.Main;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class TimerCommand implements CommandExecutor, TabCompleter {
 
@@ -77,7 +77,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 						Config.setTime(time);
 					}
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.TIMER_NEW_TIME, "%time", String.valueOf(time)), p);
+							Messages.getMessage(MessageID.TIMER_NEW_TIME, "%time", String.valueOf(time)), p);
 					return true;
 
 				} else {

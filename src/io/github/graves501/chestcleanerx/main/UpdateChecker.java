@@ -21,7 +21,7 @@ import io.github.graves501.chestcleanerx.listeners.SortingListener;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class UpdateChecker {
 
@@ -57,7 +57,7 @@ public class UpdateChecker {
                     //Check if the requested version is the same as the one in your plugin.yml.
                     if (localPluginVersion.equals(spigotPluginVersion)) return;
 
-                    MessageSystem.sendConsoleMessage(MessageType.SUCCESS, StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE));
+                    MessageSystem.sendConsoleMessage(MessageType.SUCCESS, Messages.getMessage(MessageID.NEW_UPDATE_AVAILABLE));
 
                     //Register the PlayerJoinEvent
                     Bukkit.getScheduler().runTask(javaPlugin, () -> Bukkit.getPluginManager().registerEvents(new SortingListener() {
@@ -65,7 +65,7 @@ public class UpdateChecker {
                         public void onPlayerJoin(final PlayerJoinEvent event) {
                             final Player player = event.getPlayer();
                             if (!player.hasPermission(UPDATE_PERM)) return;
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE), player);
+                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, Messages.getMessage(MessageID.NEW_UPDATE_AVAILABLE), player);
                         }
                     }, javaPlugin));
 

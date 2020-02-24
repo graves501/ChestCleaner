@@ -19,7 +19,7 @@ import io.github.graves501.chestcleanerx.main.Main;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.StringTable;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 /**
  * @author tom2208
@@ -68,10 +68,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					newname = newname.replace("&", "�");
 					if (isPlayer)
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-								StringTable.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname), player);
+								Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname), player);
 					else
 						MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-								StringTable.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname));
+								Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname));
 
 					ItemStack is = Main.cleaningItem;
 					ItemMeta im = is.getItemMeta();
@@ -153,7 +153,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						Config.setCleaningItem(item);
 						Main.cleaningItem = item;
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-								StringTable.getMessage(MessageID.NEW_ITEM, "%newitem", item.toString()), player);
+								Messages.getMessage(MessageID.NEW_ITEM, "%newitem", item.toString()), player);
 						return true;
 
 					} else {
@@ -268,11 +268,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						p2.getInventory().addItem(Main.cleaningItem);
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", p2.getName()),
+									Messages.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", p2.getName()),
 									player);
 						else
 							MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", player.getName()));
+									Messages.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", player.getName()));
 						return true;
 
 					} else {
@@ -285,7 +285,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 								Player pl = (Player) p;
 								pl.getInventory().addItem(Main.cleaningItem);
 								if (isPlayer)
-									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
+									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, Messages.getMessage(
 											MessageID.PLAYER_GOT_ITEM, "%playername", pl.getName()), player);
 							}
 							return true;
@@ -293,10 +293,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-									StringTable.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]), p2);
+									Messages.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]), p2);
 						else
 							MessageSystem.sendConsoleMessage(MessageType.ERROR,
-									StringTable.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]));
+									Messages.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]));
 						return true;
 					}
 
@@ -313,7 +313,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					boolean b = Boolean.parseBoolean(args[1]);
 					Main.eventmode = b;
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
+					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, Messages.getMessage(
 							MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(b)), player);
 					Config.setMode(b);
 					return true;

@@ -16,8 +16,15 @@ public class InventoryDetector {
 
 	private InventoryDetector(){}
 
+	private static int HOTBAR_SLOTS_LOWER_BOUND = 0;
+	private static int HOTBAR_SLOTS_EXCLUSIVE_UPPER_BOUND = 9;
+
 	private static int MAIN_INVENTORY_SLOTS_LOWER_BOUND = 9;
-	private static int MAIN_INVENTORY_SLOTS_UPPER_BOUND = 36;
+	private static int MAIN_INVENTORY_SLOTS_EXCLUSIVE_UPPER_BOUND = 36;
+
+	private static int HOTBAR_SIZE = 9;
+	private static int MAIN_INVENTORY_SIZE = 27;
+	private static int HOTBAR_PLUS_MAIN_INVENTORY_SIZE = HOTBAR_SIZE + MAIN_INVENTORY_SIZE;
 
 	/**
 	 * <b>Returns the inventory of the block {@code b}. If there is no inventory
@@ -84,7 +91,7 @@ public class InventoryDetector {
 
 		ArrayList<ItemStack> playerMainInventoryItems = new ArrayList<>();
 
-		for (int inventoryIndex = MAIN_INVENTORY_SLOTS_LOWER_BOUND; inventoryIndex < MAIN_INVENTORY_SLOTS_UPPER_BOUND; inventoryIndex++) {
+		for (int inventoryIndex = MAIN_INVENTORY_SLOTS_LOWER_BOUND; inventoryIndex < MAIN_INVENTORY_SLOTS_EXCLUSIVE_UPPER_BOUND; inventoryIndex++) {
 				if (playerInventory.getItem(inventoryIndex) != null) {
 					playerMainInventoryItems.add(playerInventory.getItem(inventoryIndex).clone());
 				}
@@ -99,7 +106,7 @@ public class InventoryDetector {
 			throw new IllegalArgumentException();
 		}
 
-		ItemStack[] hotbarAndMainInventoryItems = new ItemStack[MAIN_INVENTORY_SLOTS_UPPER_BOUND];
+		ItemStack[] hotbarAndMainInventoryItems = new ItemStack[HOTBAR_PLUS_MAIN_INVENTORY_SIZE];
 
 		for (int i = 0; i < hotbarAndMainInventoryItems.length; i++) {
 			hotbarAndMainInventoryItems[i] = inventory.getItem(i);
