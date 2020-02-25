@@ -1,10 +1,16 @@
 package io.github.graves501.chestcleanerx.commands;
 
+import io.github.graves501.chestcleanerx.config.Config;
+import io.github.graves501.chestcleanerx.sorting.InventorySorter;
+import io.github.graves501.chestcleanerx.utils.MaterialListUtils;
+import io.github.graves501.chestcleanerx.utils.messages.MessageID;
+import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
+import io.github.graves501.chestcleanerx.utils.messages.MessageType;
+import io.github.graves501.chestcleanerx.utils.messages.Messages;
 import io.github.graves501.chestcleanerx.utils.stringconstants.PlayerMessages;
 import io.github.graves501.chestcleanerx.utils.stringconstants.PluginPermissions;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,14 +19,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.StringUtil;
-
-import io.github.graves501.chestcleanerx.config.Config;
-import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.utils.MaterialListUtils;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
 
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
@@ -33,7 +31,6 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         static final String REMOVE_MATERIAL = "removeMaterial";
         static final String LIST = "list";
         static final String CLEAR = "clear";
-
     }
 
     private static final boolean VALID_COMMAND = true;
@@ -62,7 +59,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(final CommandSender commandSender, final Command command,
+    public boolean onCommand(final CommandSender commandSender,
+        final Command command,
         final String alias,
         final String[] arguments) {
 
@@ -89,7 +87,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
             if (arguments.length == TWO_ARGUMENTS || arguments.length == THREE_ARGUMENTS) {
 
-                ArrayList<Material> materialList = null;
+                List<Material> materialList = null;
 
                 int listNumber = -1;
                 if (arguments[0].equalsIgnoreCase(blacklists.get(0))) {
@@ -118,7 +116,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         if (material == null) {
                             MessageSystem.sendMessageToPlayer(MessageType.ERROR,
                                 Messages.getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
-                                        arguments[2]),
+                                    arguments[2]),
                                 player);
                             return VALID_COMMAND;
                         }
@@ -339,8 +337,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias,
-        String[] args) {
+    public List<String> onTabComplete(final CommandSender sender,
+        final Command command,
+        final String alias,
+        final String[] args) {
 
         final List<String> tabCompletions = new ArrayList<>();
 

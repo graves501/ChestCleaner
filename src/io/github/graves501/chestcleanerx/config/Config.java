@@ -1,17 +1,15 @@
 package io.github.graves501.chestcleanerx.config;
 
+import io.github.graves501.chestcleanerx.sorting.SortingPattern;
+import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-
-import io.github.graves501.chestcleanerx.sorting.SortingPattern;
-import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 
 /**
  * This class includes all methods to save and read game data (variables for this plugin).
@@ -24,6 +22,7 @@ public class Config {
     public static final String DEFAULT_AUTOSORT = "defaultautosort";
     public static final String DEFAULT_EVALUATOR = "defaultevaluator";
     public static final String MESSAGES = "messages";
+    public static final String BLOCKREFILL = "blockrefill";
 
     public static File ConfigFile = new File("plugins/ChestCleanerX", "config.yml");
     public static FileConfiguration Config = YamlConfiguration.loadConfiguration(ConfigFile);
@@ -151,8 +150,8 @@ public class Config {
 
     /* ITEM */
 
-    public static void setCleaningItem(ItemStack is) {
-        Config.set("cleaningItem", is);
+    public static void setCleaningItem(ItemStack itemStack) {
+        Config.set("cleaningItem", itemStack);
         save();
     }
 
@@ -172,16 +171,16 @@ public class Config {
     }
 
     public static boolean containsItemBoolean() {
-			if (Config.contains("active")) {
-				return true;
-			}
+        if (Config.contains("active")) {
+            return true;
+        }
         return false;
     }
 
     /* DURABILITYLOSS */
 
-    public static void setDurabilityLossBoolean(boolean b) {
-        Config.set("durability", b);
+    public static void setDurabilityLossBoolean(boolean enableDurabilityLoss) {
+        Config.set("durability", enableDurabilityLoss);
         save();
     }
 
@@ -190,16 +189,16 @@ public class Config {
     }
 
     public static boolean containsDurabilityLossBoolean() {
-			if (Config.contains("durability")) {
-				return true;
-			}
+        if (Config.contains("durability")) {
+            return true;
+        }
         return false;
     }
 
     /* MODE */
 
-    public static void setMode(boolean b) {
-        Config.set("openinventoryeventmode", b);
+    public static void setMode(boolean enableOpenInventoryEventMode) {
+        Config.set("openinventoryeventmode", enableOpenInventoryEventMode);
         save();
     }
 
@@ -208,16 +207,16 @@ public class Config {
     }
 
     public static boolean containsMode() {
-			if (Config.contains("openinventoryeventmode")) {
-				return true;
-			}
+        if (Config.contains("openinventoryeventmode")) {
+            return true;
+        }
         return false;
     }
 
     /* CONSUMABLES */
 
-    public static void setConsumablesRefill(boolean b) {
-        Config.set("consumablesrefill", b);
+    public static void setConsumablesRefill(boolean enableConsumablesRefill) {
+        Config.set("consumablesrefill", enableConsumablesRefill);
         save();
     }
 
@@ -226,16 +225,16 @@ public class Config {
     }
 
     public static boolean containsConsumablesRefill() {
-			if (Config.contains("consumablesrefill")) {
-				return true;
-			}
+        if (Config.contains("consumablesrefill")) {
+            return true;
+        }
         return false;
     }
 
     /* BLOCKREFILL */
 
-    public static void setBlockRefill(boolean b) {
-        Config.set("blockrefill", b);
+    public static void setBlockRefill(boolean enableBlockRefill) {
+        Config.set("blockrefill", enableBlockRefill);
         save();
     }
 
@@ -244,10 +243,7 @@ public class Config {
     }
 
     public static boolean containsBlockRefill() {
-			if (Config.contains("blockrefill")) {
-				return true;
-			}
-        return false;
+        return Config.contains(BLOCKREFILL);
     }
 
     /* BLACKLISTS */
@@ -255,21 +251,21 @@ public class Config {
     /**
      * SortingBlacklist
      */
-    private static void setStringSortingBlackList(ArrayList<String> list) {
+    private static void setStringSortingBlackList(List<String> list) {
         Config.set("blacklist", list);
         save();
     }
 
     public static boolean containsSortingBlackList() {
-			if (Config.contains("blacklist")) {
-				return true;
-			}
+        if (Config.contains("blacklist")) {
+            return true;
+        }
         return false;
     }
 
-    public static void setSortingBlackList(ArrayList<Material> blacklist) {
+    public static void setSortingBlackList(final List<Material> blacklist) {
 
-        ArrayList<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
 
         for (Material material : blacklist) {
             list.add(material.name());
@@ -277,10 +273,10 @@ public class Config {
         setStringSortingBlackList(list);
     }
 
-    public static ArrayList<Material> getSortingBlackList() {
+    public static List<Material> getSortingBlackList() {
 
         List<String> list = Config.getStringList("blacklist");
-        ArrayList<Material> materials = new ArrayList<>();
+        List<Material> materials = new ArrayList<>();
 
         for (String name : list) {
             materials.add(Material.getMaterial(name));
@@ -292,7 +288,7 @@ public class Config {
     /**
      * SortingBlacklist
      */
-    private static void setStringInventoryBlackList(ArrayList<String> list) {
+    private static void setStringInventoryBlackList(final List<String> list) {
         Config.set(INVENTORY_BLACKLIST, list);
         save();
     }
@@ -301,7 +297,7 @@ public class Config {
         return Config.contains(INVENTORY_BLACKLIST);
     }
 
-    public static void setInventoryBlackList(ArrayList<Material> blacklist) {
+    public static void setInventoryBlackList(final List<Material> blacklist) {
 
         ArrayList<String> list = new ArrayList<>();
 

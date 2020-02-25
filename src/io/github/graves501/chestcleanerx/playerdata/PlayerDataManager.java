@@ -1,58 +1,60 @@
 package io.github.graves501.chestcleanerx.playerdata;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.entity.Player;
-
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import java.util.HashMap;
+import java.util.UUID;
+import org.bukkit.entity.Player;
 
 public class PlayerDataManager {
 
-	public static boolean defaultAutoSort = false;
+    public static boolean defaultAutoSort = false;
 
-	private static HashMap<UUID, EvaluatorType> playerEvaluator = new HashMap<>();
-	private static HashMap<UUID, SortingPattern> playerPattern = new HashMap<>();
-	private static HashMap<UUID, Boolean> playerAutoSort = new HashMap<>();
+    private static HashMap<UUID, EvaluatorType> playerEvaluator = new HashMap<>();
+    private static HashMap<UUID, SortingPattern> playerPattern = new HashMap<>();
+    private static HashMap<UUID, Boolean> playerAutoSort = new HashMap<>();
 
-	public static void loadPlayerData(Player p){
-		SortingPattern pattern = PlayerData.getSortingPattern(p);
-		EvaluatorType evaluator = PlayerData.getEvaluatorType(p);
-		boolean autosort = PlayerData.getAutoSort(p);
+    public static void loadPlayerData(Player player) {
+        SortingPattern pattern = PlayerData.getSortingPattern(player);
+        EvaluatorType evaluator = PlayerData.getEvaluatorType(player);
+        boolean autosort = PlayerData.getAutoSort(player);
 
-		if(pattern != null){
-			playerPattern.put(p.getUniqueId(), pattern);
-		}
+        if (pattern != null) {
+            playerPattern.put(player.getUniqueId(), pattern);
+        }
 
-		if(evaluator != null){
-			playerEvaluator.put(p.getUniqueId(), evaluator);
-		}
+        if (evaluator != null) {
+            playerEvaluator.put(player.getUniqueId(), evaluator);
+        }
 
-		if(!PlayerData.containsAutoSort(p)){
-			autosort = defaultAutoSort;
-		}
+        if (!PlayerData.containsAutoSort(player)) {
+            autosort = defaultAutoSort;
+        }
 
-		playerAutoSort.put(p.getUniqueId(), autosort);
+        playerAutoSort.put(player.getUniqueId(), autosort);
 
-	}
+    }
 
-	public static void removePlayerDataFormMemory(Player p){
-		playerEvaluator.remove(p);
-		playerPattern.remove(p);
-		playerAutoSort.remove(p);
-	}
+    public static void removePlayerDataFromMemory(Player player) {
+        playerEvaluator.remove(player);
+        playerPattern.remove(player);
+        playerAutoSort.remove(player);
+    }
 
-	public static EvaluatorType getEvaluatorTypOfPlayer(Player p){
-		return playerEvaluator.get(p) == null ? playerEvaluator.get(p.getUniqueId()) : EvaluatorType.DEFAULT;
-	}
+    public static EvaluatorType getEvaluatorTypOfPlayer(Player player) {
+        return playerEvaluator.get(player) == null ? playerEvaluator.get(player.getUniqueId())
+            : EvaluatorType.DEFAULT;
+    }
 
-	public static SortingPattern getSortingPatternOfPlayer(Player p){
-		return playerPattern.get(p) == null ? playerPattern.get(p.getUniqueId()) : SortingPattern.DEFAULT;
-	}
+    public static SortingPattern getSortingPatternOfPlayer(Player player) {
+        return playerPattern.get(player) == null ? playerPattern.get(player.getUniqueId())
+            : SortingPattern.DEFAULT;
+    }
 
-	public static boolean getAutoSortOfPlayer(Player p){
-		return playerAutoSort.containsKey(p.getUniqueId()) ? playerAutoSort.get(p.getUniqueId()) : defaultAutoSort;
-	}
+    public static boolean getAutoSortOfPlayer(Player player) {
+        return playerAutoSort.containsKey(player.getUniqueId()) ? playerAutoSort
+            .get(player.getUniqueId())
+            : defaultAutoSort;
+    }
 
 }

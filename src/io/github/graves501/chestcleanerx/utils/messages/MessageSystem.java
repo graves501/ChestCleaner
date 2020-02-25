@@ -1,8 +1,7 @@
 package io.github.graves501.chestcleanerx.utils.messages;
 
-import org.bukkit.entity.Player;
-
 import io.github.graves501.chestcleanerx.main.Main;
+import org.bukkit.entity.Player;
 
 public class MessageSystem {
 

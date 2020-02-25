@@ -1,7 +1,10 @@
 package io.github.graves501.chestcleanerx.sorting;
 
+import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
+import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import io.github.graves501.chestcleanerx.utils.InventoryConverter;
+import io.github.graves501.chestcleanerx.utils.InventoryDetector;
 import java.util.ArrayList;
-
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -10,189 +13,176 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
-import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
-import io.github.graves501.chestcleanerx.utils.InventoryConverter;
-import io.github.graves501.chestcleanerx.utils.InventoryDetector;
-
 public class InventorySorter {
 
-	public static ArrayList<Material> blacklist = new ArrayList<>();
+    public static List<Material> blacklist = new ArrayList<>();
 
-	/**
-	 * Returns {@code list} with full stacked items.
-	 *
-	 * @param list
-	 * @return full stacked {@code list};
-	 */
-	private static List<ItemStack> getFullStacks(List<ItemStack> list) {
+    /**
+     * Returns {@code list} with full stacked items.
+     *
+     * @return full stacked {@code list};
+     */
+    private static List<ItemStack> getFullStacks(List<ItemStack> list) {
 
-		List<ItemStack> items = new ArrayList<>();
-		List<Integer> amounts = new ArrayList<>();
+        List<ItemStack> items = new ArrayList<>();
+        List<Integer> amounts = new ArrayList<>();
 
-		boolean blackListedItemUsed = false;
+        boolean blackListedItemUsed = false;
 
-		for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
 
-			ItemStack item = list.get(i);
-			int amount = item.getAmount();
+            ItemStack item = list.get(i);
+            int amount = item.getAmount();
 
-			item.setAmount(1);
+            item.setAmount(1);
 
-			if (blacklist.contains(list.get(i).getType())) {
-				items.add(item);
-				amounts.add(amount);
-				blackListedItemUsed = true;
-			} else {
+            if (blacklist.contains(list.get(i).getType())) {
+                items.add(item);
+                amounts.add(amount);
+                blackListedItemUsed = true;
+            } else {
 
-				int index = -1;
-				for (int j = 0; j < items.size(); j++) {
-					if (items.get(j).isSimilar(list.get(i))) {
-						index = j;
-						break;
-					}
-				}
+                int index = -1;
+                for (int j = 0; j < items.size(); j++) {
+                    if (items.get(j).isSimilar(list.get(i))) {
+                        index = j;
+                        break;
+                    }
+                }
 
-				if (index >= 0) {
-					amounts.set(index, amounts.get(index) + amount);
-				} else {
-					items.add(item);
-					amounts.add(amount);
-				}
-			}
+                if (index >= 0) {
+                    amounts.set(index, amounts.get(index) + amount);
+                } else {
+                    items.add(item);
+                    amounts.add(amount);
+                }
+            }
 
-		}
+        }
 
-		ArrayList<ItemStack> out = new ArrayList<>();
+        ArrayList<ItemStack> out = new ArrayList<>();
 
-		for (int i = 0; i < items.size(); i++) {
-			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
-			for (int j = 0; j < stacks; j++) {
-				ItemStack item = items.get(i).clone();
-				item.setAmount(items.get(i).getMaxStackSize());
-				out.add(item);
-			}
+        for (int i = 0; i < items.size(); i++) {
+            int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
+            for (int j = 0; j < stacks; j++) {
+                ItemStack item = items.get(i).clone();
+                item.setAmount(items.get(i).getMaxStackSize());
+                out.add(item);
+            }
 
-			int remainingItems = amounts.get(i) % items.get(i).getMaxStackSize();
-			if (remainingItems > 0) {
-				ItemStack item = items.get(i).clone();
-				item.setAmount(remainingItems);
-				out.add(item);
-			}
+            int remainingItems = amounts.get(i) % items.get(i).getMaxStackSize();
+            if (remainingItems > 0) {
+                ItemStack item = items.get(i).clone();
+                item.setAmount(remainingItems);
+                out.add(item);
+            }
 
-		}
+        }
 
-		if (blackListedItemUsed) {
-			AmountSorter sorter = new AmountSorter(out);
-			return sorter.sortArray();
-		}
+        if (blackListedItemUsed) {
+            AmountSorter sorter = new AmountSorter(out);
+            return sorter.sortArray();
+        }
 
-		return out;
+        return out;
 
-	}
+    }
 
-	/**
-	 * Sorts any kind of inventory.
-	 *
-	 * @param inventory
-	 *            the inventory you want to sort.
-	 */
-	public static void sortInventory(Inventory inventory, SortingPattern pattern, EvaluatorType evaluator) {
+    /**
+     * Sorts any kind of inventory.
+     *
+     * @param inventory the inventory you want to sort.
+     */
+    public static void sortInventory(Inventory inventory, SortingPattern pattern,
+        EvaluatorType evaluator) {
 
-		List<ItemStack> list = InventoryConverter.getArrayListFormInventory(inventory);
-		List<ItemStack> temp = new ArrayList<ItemStack>();
+        List<ItemStack> list = InventoryConverter.getArrayListFormInventory(inventory);
+        List<ItemStack> temp = new ArrayList<ItemStack>();
 
-		if (list.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inventory, list, false, pattern);
-		}
+        if (list.size() <= 1) {
+            InventoryConverter.setItemsOfInventory(inventory, list, false, pattern);
+        }
 
-		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
-		temp = sorter.sort(0, list.size() - 1);
-		List<ItemStack> out = getFullStacks(temp);
+        Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
+        temp = sorter.sort(0, list.size() - 1);
+        List<ItemStack> out = getFullStacks(temp);
 
-		InventoryConverter.setItemsOfInventory(inventory, out, false, pattern);
+        InventoryConverter.setItemsOfInventory(inventory, out, false, pattern);
 
-	}
+    }
 
-	/**
-	 * Sorts a part of the inventory of a player. It sorts the slots with the
-	 * index 9 to 35, that means the hotbar, armor slot and the extra item slot
-	 * are not effected.
-	 *
-	 * @param p
-	 *            The player whose inventory you want to sort.
-	 */
-	public static void sortPlayerInv(Player p, SortingPattern pattern, EvaluatorType evaluator) {
+    /**
+     * Sorts a part of the inventory of a player. It sorts the slots with the index 9 to 35, that
+     * means the hotbar, armor slot and the extra item slot are not effected.
+     *
+     * @param player The player whose inventory you want to sort.
+     */
+    public static void sortPlayerInv(Player player, SortingPattern pattern,
+        EvaluatorType evaluator) {
 
-		List<ItemStack> list = InventoryDetector.getPlayerMainInventoryList(p);
-		List<ItemStack> temp = new ArrayList<ItemStack>();
+        List<ItemStack> list = InventoryDetector.getPlayerMainInventoryList(player);
+        List<ItemStack> temp = new ArrayList<ItemStack>();
 
-		if (list.size() <= 1) {
-			InventoryConverter.setPlayerInventory(list, p, pattern);
-		}
+        if (list.size() <= 1) {
+            InventoryConverter.setPlayerInventory(list, player, pattern);
+        }
 
-		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
-		temp = sorter.sort(0, list.size() - 1);
-		List<ItemStack> out = getFullStacks(temp);
+        Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
+        temp = sorter.sort(0, list.size() - 1);
+        List<ItemStack> out = getFullStacks(temp);
 
-		InventoryConverter.setPlayerInventory(out, p, pattern);
-	}
+        InventoryConverter.setPlayerInventory(out, player, pattern);
+    }
 
-	/**
-	 * Checks if the block has an inventory or if it is an enderchest and sorts
-	 * it.
-	 *
-	 * @param b
-	 *            Block you want to get sorted.
-	 * @param p
-	 *            the player or owner of an enderchest inventory.
-	 * @return returns true if an inventory got sorted, otherwise false.
-	 */
-	public static boolean sortPlayerBlock(Block b, Player p, SortingPattern pattern, EvaluatorType evaluator) {
+    /**
+     * Checks if the block has an inventory or if it is an enderchest and sorts it.
+     *
+     * @param block Block you want to get sorted.
+     * @param player the player or owner of an enderchest inventory.
+     * @return returns true if an inventory got sorted, otherwise false.
+     */
+    public static boolean sortPlayerBlock(Block block, Player player, SortingPattern pattern,
+        EvaluatorType evaluator) {
 
-		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
+        Inventory inv = InventoryDetector.getInventoryFormBlock(block);
 
-		if (inv != null) {
-			if (p != null) {
-				playSortingSound(p);
-			}
-			sortInventory(inv, pattern, evaluator);
-			return true;
-		}
+        if (inv != null) {
+            if (player != null) {
+                playSortingSound(player);
+            }
+            sortInventory(inv, pattern, evaluator);
+            return true;
+        }
 
-		if (p != null) {
-			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
-				playSortingSound(p);
-				sortInventory(p.getEnderChest(), pattern, evaluator);
-				return true;
-			}
-		}
+        if (player != null) {
+            if (block.getBlockData().getMaterial() == Material.ENDER_CHEST) {
+                playSortingSound(player);
+                sortInventory(player.getEnderChest(), pattern, evaluator);
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Sorts an inventory with the saved patterns of the player selected pattern
-	 * and evaluator, if nothing was selected it takes the default pattern and
-	 * evaluator.
-	 *
-	 * @param inv
-	 *            The inventory you want to sort.
-	 * @param p
-	 *            the player who is the owner of the sorting pattern and
-	 *            evaluator.
-	 */
-	public static void sortInventoryByPlayer(Inventory inv, Player p) {
+    /**
+     * Sorts an inventory with the saved patterns of the player selected pattern and evaluator, if
+     * nothing was selected it takes the default pattern and evaluator.
+     *
+     * @param inventory The inventory you want to sort.
+     * @param player the player who is the owner of the sorting pattern and evaluator.
+     */
+    public static void sortInventoryByPlayer(Inventory inventory, Player player) {
 
-		SortingPattern pattern = PlayerDataManager.getSortingPatternOfPlayer(p);
-		EvaluatorType evaluator = PlayerDataManager.getEvaluatorTypOfPlayer(p);
+        SortingPattern pattern = PlayerDataManager.getSortingPatternOfPlayer(player);
+        EvaluatorType evaluator = PlayerDataManager.getEvaluatorTypOfPlayer(player);
 
-		sortInventory(inv, pattern, evaluator);
+        sortInventory(inventory, pattern, evaluator);
 
-	}
+    }
 
-	public static void playSortingSound(Player p) {
-		p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
-	}
+    public static void playSortingSound(Player player) {
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
+    }
 
 }

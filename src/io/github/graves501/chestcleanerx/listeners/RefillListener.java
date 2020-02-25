@@ -1,5 +1,7 @@
 package io.github.graves501.chestcleanerx.listeners;
 
+import io.github.graves501.chestcleanerx.main.Main;
+import io.github.graves501.chestcleanerx.utils.InventoryDetector;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -10,129 +12,136 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.graves501.chestcleanerx.main.Main;
-import io.github.graves501.chestcleanerx.utils.InventoryDetector;
-
 public class RefillListener implements org.bukkit.event.Listener {
 
-	@EventHandler
-	private void onPlacingBlock(BlockPlaceEvent e) {
+    @EventHandler
+    private void onPlacingBlock(BlockPlaceEvent blockPlaceEvent) {
 
-		if (Main.blockRefill && !e.isCancelled()) {
-			Player p = e.getPlayer();
+        if (Main.blockRefill && !blockPlaceEvent.isCancelled()) {
+            final Player player = blockPlaceEvent.getPlayer();
 
-			if (p.getGameMode().equals(GameMode.SURVIVAL)) {
+            if (player.getGameMode().equals(GameMode.SURVIVAL)) {
 
-				ItemStack item = e.getItemInHand();
-				if (item.getAmount() == 1) {
+                ItemStack item = blockPlaceEvent.getItemInHand();
+                if (item.getAmount() == 1) {
 
-					if (p.hasPermission("chestcleaner.autorefill.blocks")) {
+                    if (player.hasPermission("chestcleaner.autorefill.blocks")) {
 
-						Material material = e.getBlockPlaced().getType();
+                        Material material = blockPlaceEvent.getBlockPlaced().getType();
 
-						if (material.toString().contains("STRIPPED")) {
-							if (p.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
-									|| p.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
-								return;
-							}
-						}
+                        if (material.toString().contains("STRIPPED")) {
+                            if (player.getInventory().getItemInMainHand().getType().toString()
+                                .contains("_AXE")
+                                || player.getInventory().getItemInOffHand().getType().toString()
+                                .contains("_AXE")) {
+                                return;
+                            }
+                        }
 
-						ItemStack[] items = InventoryDetector.getHotbarAndMainInventoryItems(p.getInventory());
+                        ItemStack[] items = InventoryDetector
+                            .getHotbarAndMainInventoryItems(player.getInventory());
 
-						for (int i = 9; i < 36; i++) {
+                        for (int i = 9; i < 36; i++) {
 
-							if (items[i] != null) {
+                            if (items[i] != null) {
 
-								if (items[i].getType().equals(material)) {
+                                if (items[i].getType().equals(material)) {
 
-									if (e.getHand().equals(EquipmentSlot.HAND)) {
-										p.getInventory().setItemInMainHand(items[i]);
-										p.getInventory().setItem(i, null);
-										break;
-									} else if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-										p.getInventory().setItemInOffHand(items[i]);
-										p.getInventory().setItem(i, null);
-										break;
-									}
+                                    if (blockPlaceEvent.getHand().equals(EquipmentSlot.HAND)) {
+                                        player.getInventory().setItemInMainHand(items[i]);
+                                        player.getInventory().setItem(i, null);
+                                        break;
+                                    } else if (blockPlaceEvent.getHand()
+                                        .equals(EquipmentSlot.OFF_HAND)) {
+                                        player.getInventory().setItemInOffHand(items[i]);
+                                        player.getInventory().setItem(i, null);
+                                        break;
+                                    }
 
-								}
+                                }
 
-							}
+                            }
 
-						}
-					}
-				}
-			}
-		}
-	}
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	@EventHandler
-	private void onConsuming(PlayerItemConsumeEvent e) {
+    @EventHandler
+    private void onConsuming(PlayerItemConsumeEvent playerItemConsumeEvent) {
 
-		if (Main.consumablesRefill && !e.isCancelled()) {
+        if (Main.consumablesRefill && !playerItemConsumeEvent.isCancelled()) {
 
-			if (!Bukkit.getVersion().contains("1.8")) {
+            if (!Bukkit.getVersion().contains("1.8")) {
 
-				Player p = e.getPlayer();
-				if (p.getGameMode().equals(GameMode.SURVIVAL)) {
+                Player player = playerItemConsumeEvent.getPlayer();
+                if (player.getGameMode().equals(GameMode.SURVIVAL)) {
 
-					ItemStack item = e.getItem();
-					if (item.getAmount() == 1) {
+                    ItemStack item = playerItemConsumeEvent.getItem();
+                    if (item.getAmount() == 1) {
 
-						if (p.hasPermission("chestcleaner.autorefill.consumables")) {
+                        if (player.hasPermission("chestcleaner.autorefill.consumables")) {
 
-							if (item.getMaxStackSize() > 1) {
-								int hand = -1; // -1 = nothing, 0 = hand, 1 =
-												// offhand
+                            if (item.getMaxStackSize() > 1) {
+                                int hand = -1; // -1 = nothing, 0 = hand, 1 =
+                                // offhand
 
-								if (p.getInventory().getItem(p.getInventory().getHeldItemSlot()) != null) {
-									if (p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()
-											.equals(item.getType())) {
-										hand = 0;
-									} else if (p.getInventory().getItemInOffHand() != null) {
-										if (p.getInventory().getItemInOffHand().getType().equals(item.getType())) {
-											hand = 1;
-										}
-									}
-								} else if (p.getInventory().getItemInOffHand() != null) {
-									if (p.getInventory().getItemInOffHand().getType().equals(item.getType())) {
-										hand = 1;
-									}
+                                if (player.getInventory()
+                                    .getItem(player.getInventory().getHeldItemSlot()) != null) {
+                                    if (player.getInventory()
+                                        .getItem(player.getInventory().getHeldItemSlot()).getType()
+                                        .equals(item.getType())) {
+                                        hand = 0;
+                                    } else if (player.getInventory().getItemInOffHand() != null) {
+                                        if (player.getInventory().getItemInOffHand().getType()
+                                            .equals(item.getType())) {
+                                            hand = 1;
+                                        }
+                                    }
+                                } else if (player.getInventory().getItemInOffHand() != null) {
+                                    if (player.getInventory().getItemInOffHand().getType()
+                                        .equals(item.getType())) {
+                                        hand = 1;
+                                    }
 
-								}
+                                }
 
-								if (hand > -1) {
+                                if (hand > -1) {
 
-									ItemStack[] items = InventoryDetector.getHotbarAndMainInventoryItems(p.getInventory());
-									for (int i = 9; i < 36; i++) {
-										if (items[i] != null) {
-											if (items[i].getType().equals(item.getType()) && items[i].getAmount() > 1) {
-												items[i].setAmount(items[i].getAmount() + 1);
-												if (hand == 0) {
-													e.setItem(items[i]);
-													p.getInventory().setItem(i, null);
-													break;
-												} else if (hand == 1) {
-													e.setItem(items[i]);
-													p.getInventory().setItem(i, null);
-													break;
-												}
+                                    ItemStack[] items = InventoryDetector
+                                        .getHotbarAndMainInventoryItems(player.getInventory());
+                                    for (int i = 9; i < 36; i++) {
+                                        if (items[i] != null) {
+                                            if (items[i].getType().equals(item.getType())
+                                                && items[i].getAmount() > 1) {
+                                                items[i].setAmount(items[i].getAmount() + 1);
+                                                if (hand == 0) {
+                                                    playerItemConsumeEvent.setItem(items[i]);
+                                                    player.getInventory().setItem(i, null);
+                                                    break;
+                                                } else if (hand == 1) {
+                                                    playerItemConsumeEvent.setItem(items[i]);
+                                                    player.getInventory().setItem(i, null);
+                                                    break;
+                                                }
 
-											}
+                                            }
 
-										}
+                                        }
 
-									}
+                                    }
 
-								}
+                                }
 
-							}
-						}
-					}
-				}
-			}
-		}
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-	}
+    }
 
 }

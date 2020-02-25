@@ -1,9 +1,8 @@
 package io.github.graves501.chestcleanerx.utils.messages;
 
+import io.github.graves501.chestcleanerx.config.Config;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.graves501.chestcleanerx.config.Config;
 
 public class Messages {
 
@@ -53,13 +52,15 @@ public class Messages {
         defaultMessages.add("The player %playername got a cleaning item.");
         defaultMessages.add("Player %playername is not online.");
         defaultMessages.add("OpenInventoryEvent-DetectionMode was set to: %modeBoolean");
-        defaultMessages.add("A new update is available at:�b https://www.spigotmc.org/resources/40313/updates");
+        defaultMessages.add(
+            "A new update is available at:�b https://www.spigotmc.org/resources/40313/updates");
         defaultMessages.add("DurabilityLoss: true");
         defaultMessages.add("DurabilityLoss: false");
         defaultMessages.add("The material of the item \"%material\" was added to the blacklist.");
         defaultMessages.add("The material \"%material\" was removed form the blacklist.");
         defaultMessages.add("The blacklist does not contain the material \"%material\".");
-        defaultMessages.add("Index is out of bounds, it have to be bigger than -1 and smaller than %biggestindex.");
+        defaultMessages.add(
+            "Index is out of bounds, it have to be bigger than -1 and smaller than %biggestindex.");
         defaultMessages.add("The blacklist is empty.");
         defaultMessages.add("The BlackList page %page:");
         defaultMessages.add("For the next entries: /list %nextpage");

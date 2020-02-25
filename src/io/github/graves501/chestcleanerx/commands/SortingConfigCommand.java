@@ -1,15 +1,5 @@
 package io.github.graves501.chestcleanerx.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
-
 import io.github.graves501.chestcleanerx.config.Config;
 import io.github.graves501.chestcleanerx.playerdata.PlayerData;
 import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
@@ -19,237 +9,277 @@ import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
 import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
-	private final List<String> commandList = new ArrayList<>();
-	private final List<String> booleans = new ArrayList<>();
-	private final List<String> admincontrolSubCMD = new ArrayList<>();
+    private final List<String> commandList = new ArrayList<>();
+    private final List<String> booleans = new ArrayList<>();
+    private final List<String> admincontrolSubCMD = new ArrayList<>();
 
-	public SortingConfigCommand() {
+    public SortingConfigCommand() {
 
-		commandList.add("pattern");
-		commandList.add("evaluator");
-		commandList.add("setautosort");
-		commandList.add("adminconfig");
+        commandList.add("pattern");
+        commandList.add("evaluator");
+        commandList.add("setautosort");
+        commandList.add("adminconfig");
 
-		booleans.add("true");
-		booleans.add("false");
+        booleans.add("true");
+        booleans.add("false");
 
-		admincontrolSubCMD.add("setdefaultpattern");
-		admincontrolSubCMD.add("setdefaultevaluator");
-		admincontrolSubCMD.add("setdefaultautosort");
+        admincontrolSubCMD.add("setdefaultpattern");
+        admincontrolSubCMD.add("setdefaultevaluator");
+        admincontrolSubCMD.add("setdefaultautosort");
 
-	}
+    }
 
-	@Override
-	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+    @Override
+    public boolean onCommand(final CommandSender commandSender,
+        final Command command,
+        final String label,
+        String[] arguments) {
 
-		if (!(cs instanceof Player)) {
-			return true;
-		}
+        if (!(commandSender instanceof Player)) {
+            return true;
+        }
 
-		Player p = (Player) cs;
+        Player player = (Player) commandSender;
 
-		if (args.length == 2) {
+        if (arguments.length == 2) {
 
-			/* PATTERN */
-			if (args[0].equalsIgnoreCase(commandList.get(0))) {
+            /* PATTERN */
+            if (arguments[0].equalsIgnoreCase(commandList.get(0))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingConfig.pattern")) {
-					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingConfig.pattern");
-					return true;
-				}
+                if (!player.hasPermission("chestcleaner.cmd.sortingConfig.pattern")) {
+                    MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
+                        "chestcleaner.cmd.sortingConfig.pattern");
+                    return true;
+                }
 
-				SortingPattern pattern = SortingPattern.getSortingPatternByName(args[1]);
+                SortingPattern pattern = SortingPattern.getSortingPatternByName(arguments[1]);
 
-				if (pattern == null) {
+                if (pattern == null) {
 
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID, p);
-					return true;
+                    MessageSystem
+                        .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID, player);
+                    return true;
 
-				} else {
+                } else {
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_PATTERN_SET, p);
-					PlayerData.setSortingPattern(pattern, p);
-					PlayerDataManager.loadPlayerData(p);
-					return true;
+                    MessageSystem
+                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_PATTERN_SET,
+                            player);
+                    PlayerData.setSortingPattern(pattern, player);
+                    PlayerDataManager.loadPlayerData(player);
+                    return true;
 
-				}
+                }
 
-				/* EVALUATOR */
-			} else if (args[0].equalsIgnoreCase(commandList.get(1))) {
+                /* EVALUATOR */
+            } else if (arguments[0].equalsIgnoreCase(commandList.get(1))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingConfig.evaluator")) {
-					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingConfig.evaluator");
-					return true;
-				}
+                if (!player.hasPermission("chestcleaner.cmd.sortingConfig.evaluator")) {
+                    MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
+                        "chestcleaner.cmd.sortingConfig.evaluator");
+                    return true;
+                }
 
-				EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(args[1]);
+                EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(arguments[1]);
 
-				if (evaluator == null) {
+                if (evaluator == null) {
 
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.NO_EVALUATOR_ID, p);
-					return true;
+                    MessageSystem
+                        .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_EVALUATOR_ID, player);
+                    return true;
 
-				} else {
+                } else {
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_EVALUATOR_SET, p);
-					PlayerData.setEvaluatorTyp(evaluator, p);
-					PlayerDataManager.loadPlayerData(p);
-					return true;
+                    MessageSystem
+                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_EVALUATOR_SET,
+                            player);
+                    PlayerData.setEvaluatorTyp(evaluator, player);
+                    PlayerDataManager.loadPlayerData(player);
+                    return true;
 
-				}
+                }
 
-				/* SETAUTOSORT */
-			} else if (args[0].equalsIgnoreCase(commandList.get(2))) {
+                /* SETAUTOSORT */
+            } else if (arguments[0].equalsIgnoreCase(commandList.get(2))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingConfig.setautosort")) {
-					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingConfig.setautosort");
-					return true;
-				}
+                if (!player.hasPermission("chestcleaner.cmd.sortingConfig.setautosort")) {
+                    MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
+                        "chestcleaner.cmd.sortingConfig.setautosort");
+                    return true;
+                }
 
-				boolean b = false;
-				if (args[1].equalsIgnoreCase("true")) {
-					b = true;
-				} else if (!args[1].equalsIgnoreCase("false")) {
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-							"/sortingConfig setautosort <true/false>", p);
-					return true;
-				}
+                boolean b = false;
+                if (arguments[1].equalsIgnoreCase("true")) {
+                    b = true;
+                } else if (!arguments[1].equalsIgnoreCase("false")) {
+                    MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+                        "/sortingConfig setautosort <true/false>", player);
+                    return true;
+                }
 
-				MessageSystem.sendMessageToPlayer(
-					MessageType.SUCCESS,
-					Messages.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)), p);
-				PlayerData.setAutoSort(b, p);
-				PlayerDataManager.loadPlayerData(p);
-				return true;
+                MessageSystem.sendMessageToPlayer(
+                    MessageType.SUCCESS,
+                    Messages.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)),
+                    player);
+                PlayerData.setAutoSort(b, player);
+                PlayerDataManager.loadPlayerData(player);
+                return true;
 
-			} else {
-				sendSyntaxErrorMessage(p);
-				return true;
-			}
+            } else {
+                sendSyntaxErrorMessage(player);
+                return true;
+            }
 
-		} else if (args.length == 3) {
+        } else if (arguments.length == 3) {
 
-			/* ADMINCONFIG */
-			if (args[0].equalsIgnoreCase(commandList.get(3))) {
+            /* ADMINCONFIG */
+            if (arguments[0].equalsIgnoreCase(commandList.get(3))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sorting.config.admincontrol")) {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sorting.config.admincontrol", p);
-					return true;
-				}
+                if (!player.hasPermission("chestcleaner.cmd.sorting.config.admincontrol")) {
+                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+                        "chestcleaner.cmd.sorting.config.admincontrol", player);
+                    return true;
+                }
 
-				/* SETDEFAULTPATTERN */
-				if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(0))) {
+                /* SETDEFAULTPATTERN */
+                if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(0))) {
 
-					SortingPattern pattern = SortingPattern.getSortingPatternByName(args[2]);
+                    SortingPattern pattern = SortingPattern.getSortingPatternByName(arguments[2]);
 
-					if (pattern == null) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID, p);
-						return true;
-					}
+                    if (pattern == null) {
+                        MessageSystem
+                            .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID,
+                                player);
+                        return true;
+                    }
 
-					Config.setDefaultSortingPattern(pattern);
-					SortingPattern.DEFAULT = pattern;
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_SORTING_PATTERN, p);
-					return true;
+                    Config.setDefaultSortingPattern(pattern);
+                    SortingPattern.DEFAULT = pattern;
+                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
+                        MessageID.NEW_DEFAULT_SORTING_PATTERN,
+                        player);
+                    return true;
 
-					/* SETDEFAULTEVALUATOR */
-				} else if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(1))) {
+                    /* SETDEFAULTEVALUATOR */
+                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(1))) {
 
-					EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(args[2]);
+                    EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(arguments[2]);
 
-					if (evaluator == null) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.NO_EVALUATOR_ID, p);
-						return true;
-					}
+                    if (evaluator == null) {
+                        MessageSystem
+                            .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_EVALUATOR_ID,
+                                player);
+                        return true;
+                    }
 
-					Config.setDefaultEvaluator(evaluator);
-					EvaluatorType.DEFAULT = evaluator;
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR, p);
-					return true;
+                    Config.setDefaultEvaluator(evaluator);
+                    EvaluatorType.DEFAULT = evaluator;
+                    MessageSystem
+                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR,
+                            player);
+                    return true;
 
-					/* SETDEFAULTAUTOSORTING */
-				} else if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(2))) {
+                    /* SETDEFAULTAUTOSORTING */
+                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(2))) {
 
-					Boolean b = false;
+                    Boolean b = false;
 
-					if (args[2].equalsIgnoreCase("true")) {
-						b = true;
-					} else if (!args[2].equalsIgnoreCase("false")) {
-						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-								"/sortingConfig adminconfig setdefaultautosort <true/false>", p);
-						return true;
-					}
+                    if (arguments[2].equalsIgnoreCase("true")) {
+                        b = true;
+                    } else if (!arguments[2].equalsIgnoreCase("false")) {
+                        MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+                            "/sortingConfig adminconfig setdefaultautosort <true/false>", player);
+                        return true;
+                    }
 
-					PlayerDataManager.defaultAutoSort = b;
+                    PlayerDataManager.defaultAutoSort = b;
 
-					Config.setDefaultAutoSort(b);
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							Messages.getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(b)), p);
-					return true;
+                    Config.setDefaultAutoSort(b);
+                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
+                        Messages
+                            .getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(b)),
+                        player);
+                    return true;
 
-				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-							"/sortingConfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>", p);
-					return true;
-				}
+                } else {
+                    MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+                        "/sortingConfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>",
+                        player);
+                    return true;
+                }
 
-			} else {
-				sendSyntaxErrorMessage(p);
-				return true;
-			}
+            } else {
+                sendSyntaxErrorMessage(player);
+                return true;
+            }
 
-		} else {
-			sendSyntaxErrorMessage(p);
-			return true;
-		}
+        } else {
+            sendSyntaxErrorMessage(player);
+            return true;
+        }
 
-	}
+    }
 
-	private void sendSyntaxErrorMessage(Player p) {
-		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-				"/sortingConfig <pattern/evaluator/setautosort/adminconfig>", p);
-	}
+    private void sendSyntaxErrorMessage(final Player player) {
+        MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+            "/sortingConfig <pattern/evaluator/setautosort/adminconfig>", player);
+    }
 
-	@Override
-	public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
+    @Override
+    public List<String> onTabComplete(final CommandSender commandSender,
+        final Command command,
+        final String label,
+        final String[] arguments) {
 
-		final List<String> completions = new ArrayList<>();
+        final List<String> tabCompletions = new ArrayList<>();
 
-		if (args.length <= 1) {
+        if (arguments.length <= 1) {
 
-			StringUtil.copyPartialMatches(args[0], commandList, completions);
+            StringUtil.copyPartialMatches(arguments[0], commandList, tabCompletions);
 
-		} else if (args.length == 2) {
+        } else if (arguments.length == 2) {
 
-			if (args[0].equalsIgnoreCase(commandList.get(0)))
-				StringUtil.copyPartialMatches(args[1], SortingPattern.getIDList(), completions);
-			else if (args[0].equalsIgnoreCase(commandList.get(1)))
-				StringUtil.copyPartialMatches(args[1], EvaluatorType.getIDList(), completions);
-			else if (args[0].equalsIgnoreCase(commandList.get(2)))
-				StringUtil.copyPartialMatches(args[1], booleans, completions);
-			else if (args[0].equalsIgnoreCase(commandList.get(3)))
-				StringUtil.copyPartialMatches(args[1], admincontrolSubCMD, completions);
+            if (arguments[0].equalsIgnoreCase(commandList.get(0))) {
+                StringUtil
+                    .copyPartialMatches(arguments[1], SortingPattern.getIDList(), tabCompletions);
+            } else if (arguments[0].equalsIgnoreCase(commandList.get(1))) {
+                StringUtil.copyPartialMatches(arguments[1], EvaluatorType.getIDList(),
+                    tabCompletions);
+            } else if (arguments[0].equalsIgnoreCase(commandList.get(2))) {
+                StringUtil.copyPartialMatches(arguments[1], booleans, tabCompletions);
+            } else if (arguments[0].equalsIgnoreCase(commandList.get(3))) {
+                StringUtil.copyPartialMatches(arguments[1], admincontrolSubCMD, tabCompletions);
+            }
 
-		} else if (args.length == 3) {
-			if(args[0].equalsIgnoreCase(commandList.get(3))){
-				if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(0)))
-					StringUtil.copyPartialMatches(args[2], SortingPattern.getIDList(), completions);
-				else if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(1)))
-					StringUtil.copyPartialMatches(args[2], EvaluatorType.getIDList(), completions);
-				else if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(2)))
-					StringUtil.copyPartialMatches(args[2], booleans, completions);
-			}
-		}
+        } else if (arguments.length == 3) {
+            if (arguments[0].equalsIgnoreCase(commandList.get(3))) {
+                if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(0))) {
+                    StringUtil
+                        .copyPartialMatches(arguments[2], SortingPattern.getIDList(),
+                            tabCompletions);
+                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(1))) {
+                    StringUtil
+                        .copyPartialMatches(arguments[2], EvaluatorType.getIDList(),
+                            tabCompletions);
+                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(2))) {
+                    StringUtil.copyPartialMatches(arguments[2], booleans, tabCompletions);
+                }
+            }
+        }
 
-		return completions;
+        return tabCompletions;
 
-	}
+    }
 
 }

@@ -2,7 +2,8 @@ package io.github.graves501.chestcleanerx.utils.stringconstants;
 
 public class PluginCommands {
 
-    private PluginCommands(){}
+    private PluginCommands() {
+    }
 
     public static final String CLEAN_INVENTORY = "cleanInventory";
     public static final String TIMER = "TIMER";
