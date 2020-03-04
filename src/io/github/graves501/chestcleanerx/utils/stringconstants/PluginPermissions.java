@@ -5,6 +5,7 @@ public class PluginPermissions {
     private PluginPermissions() {
     }
 
-    public static final String BLACKLIST_PERMISSION = "chestcleaner.cmd.blacklist";
     public static final String CLEAN_INVENTORY_PERMISSION = "chestcleaner.cmd.cleanInventory";
+    public static final String BLACKLIST_PERMISSION = "chestcleaner.cmd.blacklist";
+    public static final String TIMER_PERMISSION = "chestcleaner.cmd.timer";
 }

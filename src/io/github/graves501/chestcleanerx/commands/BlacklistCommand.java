@@ -23,7 +23,6 @@ import org.bukkit.util.StringUtil;
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
     private static class BlackListCommandString {
-
         static final String SORTING = "sorting";
         static final String INVENTORIES = "inventories";
 
