@@ -5,6 +5,7 @@ import io.github.graves501.chestcleanerx.playerdata.PlayerData;
 import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
@@ -156,17 +157,20 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                 /* SETDEFAULTPATTERN */
                 if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(0))) {
 
-                    SortingPattern pattern = SortingPattern.getSortingPatternByName(arguments[2]);
+                    SortingPattern sortingPattern = SortingPattern
+                        .getSortingPatternByName(arguments[2]);
 
-                    if (pattern == null) {
+                    if (sortingPattern == null) {
                         MessageSystem
                             .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID,
                                 player);
                         return true;
                     }
 
-                    pluginConfiguration.setDefaultSortingPattern(pattern);
-                    SortingPattern.DEFAULT = pattern;
+                    pluginConfiguration
+                        .setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN, sortingPattern
+                            .name());
+                    SortingPattern.defaultSortingPattern = sortingPattern;
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                         MessageID.NEW_DEFAULT_SORTING_PATTERN,
                         player);
@@ -184,7 +188,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfiguration.setDefaultEvaluatorType(evaluator);
+                    pluginConfiguration.setAndSaveDefaultEvaluatorType(evaluator);
 
                     MessageSystem
                         .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR,
@@ -194,22 +198,25 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     /* SETDEFAULTAUTOSORTING */
                 } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(2))) {
 
-                    Boolean b = false;
+                    boolean defaultAutoSorting = false;
 
                     if (arguments[2].equalsIgnoreCase("true")) {
-                        b = true;
+                        defaultAutoSorting = true;
                     } else if (!arguments[2].equalsIgnoreCase("false")) {
                         MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
                             "/sortingConfig adminconfig setdefaultautosort <true/false>", player);
                         return true;
                     }
 
-                    PlayerDataManager.defaultAutoSort = b;
+                    PlayerDataManager.setDefaultAutoSorting(defaultAutoSorting);
 
-                    pluginConfiguration.setDefaultAutoSort(b);
+                    pluginConfiguration.setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORTING,
+                        defaultAutoSorting);
+
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                         Messages
-                            .getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(b)),
+                            .getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(
+                                defaultAutoSorting)),
                         player);
                     return true;
 

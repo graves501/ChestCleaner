@@ -93,8 +93,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                 /** subCommands */
 
-                /*----- addMaterial -----*/
-                if (arguments[1].equalsIgnoreCase(commandList.get(0))) {
+                if (arguments[1].equalsIgnoreCase(BlacklistConstant.ADD_MATERIAL.getString())) {
 
                     Material material;
 
@@ -141,8 +140,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         player);
                     return VALID_COMMAND;
 
-                    /*----- removeMaterial -----*/
-                } else if (arguments[1].equalsIgnoreCase(commandList.get(1))) {
+                } else if (arguments[1]
+                    .equalsIgnoreCase(BlacklistConstant.REMOVE_MATERIAL.getString())) {
 
                     Material material;
 
@@ -211,8 +210,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         player);
                     return VALID_COMMAND;
 
-                    /*----- list -----*/
-                } else if (arguments[1].equalsIgnoreCase(commandList.get(2))) {
+                } else if (arguments[1].equalsIgnoreCase(BlacklistConstant.LIST.getString())) {
 
                     if (materialList.isEmpty()) {
                         MessageSystem
@@ -256,7 +254,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                     return VALID_COMMAND;
 
                     /*----- clear -----*/
-                } else if (arguments[1].equalsIgnoreCase(commandList.get(3))) {
+                } else if (arguments[1].equalsIgnoreCase(BlacklistConstant.CLEAR.getString())) {
 
                     materialList.clear();
                     saveBlacklistInConfiguration(listNumber);
@@ -322,7 +320,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         final int INVENTORY_BLACKLIST = 1;
 
         if (blacklist == SORTING_BLACKLIST) {
-            pluginConfiguration.setSortingBlackList(InventorySorter.blacklist);
+            pluginConfiguration.setSortingBlacklist(InventorySorter.blacklist);
         } else if (blacklist == INVENTORY_BLACKLIST) {
             pluginConfiguration.setInventoryBlackList(inventoryBlacklist);
         }
@@ -333,14 +331,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(final CommandSender sender,
         final Command command,
         final String alias,
-        final String[] args) {
+        final String[] arguments) {
 
         final List<String> tabCompletions = new ArrayList<>();
 
-        if (args.length <= SINGLE_ARGUMENT) {
-            StringUtil.copyPartialMatches(args[0], blacklists, tabCompletions);
-        } else if (args.length == TWO_ARGUMENTS) {
-            StringUtil.copyPartialMatches(args[1], commandList, tabCompletions);
+        if (arguments.length <= SINGLE_ARGUMENT) {
+            StringUtil.copyPartialMatches(arguments[0], blacklists, tabCompletions);
+        } else if (arguments.length == TWO_ARGUMENTS) {
+            StringUtil.copyPartialMatches(arguments[1], commandList, tabCompletions);
         }
 
         return tabCompletions;

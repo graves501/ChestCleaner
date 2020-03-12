@@ -9,22 +9,22 @@ public class Messages {
     private Messages() {
     }
 
-    private static List<String> messages = new ArrayList<>();
+    private static List<String> messageList = new ArrayList<>();
 
-    public static void setMessages(final List<String> messagesLoadedFromConfig) {
+    public static void setMessageList(final List<String> messagesLoadedFromConfig) {
 
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
         final List<String> defaultMessages = getDefaultMessages();
 
         if (messagesLoadedFromConfig == null) {
-            pluginConfiguration.setMessages(getDefaultMessages());
+            pluginConfiguration.setAndSaveMessageList(getDefaultMessages());
         } else if (messagesLoadedFromConfig.size() >= defaultMessages.size()) {
-            messages = messagesLoadedFromConfig;
+            messageList = messagesLoadedFromConfig;
         } else {
-            messages = messagesLoadedFromConfig;
-            messages.addAll(defaultMessages);
+            messageList = messagesLoadedFromConfig;
+            messageList.addAll(defaultMessages);
 
-            pluginConfiguration.setMessages(messages);
+            pluginConfiguration.setAndSaveMessageList(messageList);
         }
 
     }
@@ -84,12 +84,12 @@ public class Messages {
     }
 
     public static String getMessage(MessageID id) {
-        return messages.get(id.getID());
+        return messageList.get(id.getID());
     }
 
     public static String getMessage(MessageID id, String target, String replacement) {
 
-        String message = messages.get(id.getID());
+        String message = messageList.get(id.getID());
         message = message.replace(target, replacement);
 
         return message;

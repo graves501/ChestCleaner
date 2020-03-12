@@ -37,7 +37,7 @@ public enum SortingPattern {
 
     public static List<String> getIDList() {
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         list.add(LEFT_TO_RIGHT_TOP_TO_BOTTOM.name());
         list.add(RIGHT_TO_LEFT_BOTTOM_TO_TOP.name());
@@ -47,6 +47,10 @@ public enum SortingPattern {
         return list;
     }
 
-    public static SortingPattern DEFAULT = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
+    public static SortingPattern defaultSortingPattern = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
+
+    public static void setDefaultSortingPattern(SortingPattern sortingPattern) {
+        defaultSortingPattern = sortingPattern;
+    }
 
 }

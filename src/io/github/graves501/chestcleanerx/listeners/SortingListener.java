@@ -74,7 +74,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                         playerInteractEvent.setCancelled(true);
                     }
 
-                } else if (!pluginConfiguration.isEventModeActive()) {
+                } else if (!pluginConfiguration.isOpenInventoryEventDetectionModeActive()) {
 
                     if (player.hasPermission("chestcleaner.cleaningItem.use")) {
 
@@ -147,8 +147,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
         final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
 
-        if (pluginConfiguration.isEventModeActive()) {
-
+        if (pluginConfiguration.isOpenInventoryEventDetectionModeActive()) {
             Player player = (Player) inventoryOpenEvent.getPlayer();
 
             if (player.hasPermission("chestcleaner.cleaningItem.use")) {
@@ -208,7 +207,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         }
     }
 
-    private boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent){
+    private boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent) {
         return inventoryCloseEvent.getInventory().getHolder() instanceof Chest;
     }
 

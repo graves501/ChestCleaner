@@ -25,28 +25,26 @@ import org.bukkit.inventory.ItemStack;
 @Data
 public class PluginConfiguration {
 
-    private ItemStack currentCleaningItem = new ItemStack(Material.IRON_HOE);
+    private ItemStack currentCleaningItem;
     private int cooldownTimeInSeconds = 5;
 
     private boolean isCleanInventoryActive = true;
     private boolean isCooldownTimerActive = true;
     private boolean isDurabilityLossActive = true;
     private boolean isCleaningItemActive = true;
-    private boolean isEventModeActive = false;
+    private boolean isOpenInventoryEventDetectionModeActive = false;
     private boolean isBlockRefillActive = true;
     private boolean isConsumablesRefillActive = true;
+    private EvaluatorType defaultEvaluatorType = EvaluatorType.BACK_BEGIN_STRING;
 
-    private final static File pluginConfigurationFile = new File(
+    private static final File pluginConfigurationFile = new File(
         Property.PLUGIN_FILE_PATH.getString(),
         Property.PLUGIN_YAML_CONFIG_FILE_NAME.getString());
 
-    private final static FileConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(
+    private static final FileConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(
         pluginConfigurationFile);
 
-
     private static PluginConfiguration instance = new PluginConfiguration();
-
-    private EvaluatorType defaultEvaluatorType = EvaluatorType.BACK_BEGIN_STRING;
 
     private PluginConfiguration() {
     }
@@ -60,263 +58,207 @@ public class PluginConfiguration {
      * the default values for the variables.
      */
     public void loadConfiguration() {
-
         // TODO put this at end of the function?
-        saveConfigurationToFile();
+        saveOrOverwriteConfigurationToFile();
 
-        if (configurationContainsProperty(Property.DEFAULT_AUTOSORT)) {
-            PlayerDataManager.defaultAutoSort = getDefaultAutoSort();
+        loadDefaultAutoSorting();
+        loadDefaultEvaluatorType();
+        loadDefaultSortingPattern();
+        loadMessages();
+        loadCleaningItem();
+        loadIsCleaningItemActive();
+        loadIsCooldownTimerActive();
+        loadIsDurabilityLossActive();
+        loadIsOpenInventoryEventModeActive();
+        loadIsConsumablesRefillActive();
+        loadIsBlockRefillActive();
+        loadIsCleanInventoryPermissionActive();
+        loadSortingBlacklist();
+        loadInventoryBlacklist();
+    }
+
+    private void loadDefaultAutoSorting() {
+        if (configurationContainsProperty(Property.DEFAULT_AUTOSORTING)) {
+            PlayerDataManager
+                .setDefaultAutoSorting(getBooleanProperty(Property.DEFAULT_AUTOSORTING));
         } else {
-            setDefaultAutoSort(PlayerDataManager.defaultAutoSort);
+            setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORTING,
+                PlayerDataManager.isDefaultAutoSorting());
         }
+    }
 
+    private void loadDefaultEvaluatorType() {
         if (configurationContainsProperty(Property.DEFAULT_EVALUATOR)) {
-            defaultEvaluatorType = getDefaultEvaluatorType();
+            defaultEvaluatorType = getDefaultEvaluatorTypeFromConfiguration();
         } else {
-            setDefaultEvaluatorType(defaultEvaluatorType);
+            setAndSaveDefaultEvaluatorType(defaultEvaluatorType);
         }
+    }
 
+    private void loadDefaultSortingPattern() {
         if (configurationContainsProperty(Property.DEFAULT_SORTING_PATTERN)) {
-            SortingPattern.DEFAULT = getDefaultSortingPattern();
+            SortingPattern.setDefaultSortingPattern(getDefaultSortingPatternFromConfiguration());
         } else {
-            setDefaultSortingPattern(SortingPattern.DEFAULT);
+            setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN,
+                SortingPattern.defaultSortingPattern.name());
         }
+    }
 
+    private void loadMessages() {
         if (configurationContainsProperty(Property.MESSAGES)) {
-            Messages.setMessages(getMessages());
+            Messages.setMessageList(getMessagesFromConfiguration());
         } else {
-            Messages.setMessages(null);
+            Messages.setMessageList(null);
         }
+    }
 
-        if (getCleaningItem() == null) {
+    private void loadCleaningItem() {
+        if (configurationContainsProperty(Property.CLEANING_ITEM)) {
+            this.currentCleaningItem = getCleaningItemFromConfiguration();
+        } else {
             this.currentCleaningItem = new ItemStack(Material.IRON_HOE);
-            this.setConfigurationProperty(Property.CLEANING_ITEM, this.currentCleaningItem);
-        } else {
-            currentCleaningItem = getCleaningItem();
+            this.setAndSaveConfigurationProperty(Property.CLEANING_ITEM, this.currentCleaningItem);
         }
+    }
 
+    private void loadIsCleaningItemActive() {
         if (configurationContainsProperty(Property.CLEANING_ITEM_ACTIVE)) {
-            isCleaningItemActive = getCleaningItemActive();
+            this.isCleaningItemActive = getBooleanProperty(Property.CLEANING_ITEM_ACTIVE);
         } else {
-            setCleaningItemActive(true);
+            setAndSaveBooleanProperty(Property.CLEANING_ITEM_ACTIVE, true);
         }
+    }
 
+    private void loadIsCooldownTimerActive() {
+        if (configurationContainsProperty(Property.COOLDOWN_TIMER_ACTIVE)) {
+            this.isCooldownTimerActive = getBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE);
+        } else {
+            setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, true);
+        }
+    }
+
+    private void loadIsDurabilityLossActive() {
         if (configurationContainsProperty(Property.DURABILITY_LOSS)) {
-            isDurabilityLossActive = getDurabilityLossBoolean();
+            this.isDurabilityLossActive = getBooleanProperty(Property.DURABILITY_LOSS);
         } else {
-            setDurabilityLossBoolean(true);
+            setAndSaveBooleanProperty(Property.DURABILITY_LOSS, true);
         }
+    }
 
-        if (configurationContainsProperty(Property.OPEN_INVENTORY_EVENT_MODE)) {
-            isEventModeActive = getOpenInventoryEventModeEnabled();
+    private void loadIsOpenInventoryEventModeActive() {
+        if (configurationContainsProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE)) {
+            this.isOpenInventoryEventDetectionModeActive = getBooleanProperty(
+                Property.OPEN_INVENTORY_EVENT_DETECTION_MODE);
         } else {
-            enableOpenInventoryEventMode(false);
+            setAndSaveBooleanProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE, false);
         }
+    }
 
+    private void loadIsConsumablesRefillActive() {
         if (configurationContainsProperty(Property.CONSUMABLES_REFILL)) {
-            isConsumablesRefillActive = getConsumablesRefill();
+            this.isConsumablesRefillActive = getBooleanProperty(Property.CONSUMABLES_REFILL);
         } else {
-            setConsumablesRefill(true);
+            setAndSaveBooleanProperty(Property.CONSUMABLES_REFILL, true);
         }
+    }
 
+    private void loadIsBlockRefillActive() {
         if (configurationContainsProperty(Property.BLOCK_REFILL)) {
-            isBlockRefillActive = isBlockRefillActive();
+            this.isBlockRefillActive = getBooleanProperty(Property.BLOCK_REFILL);
         } else {
-            enableBlockRefill(true);
+            setAndSaveBooleanProperty(Property.BLOCK_REFILL, true);
         }
+    }
 
+    private void loadIsCleanInventoryPermissionActive() {
         if (configurationContainsProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE)) {
-            isCleanInventoryActive = getBooleanProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE);
+            this.isCleanInventoryActive = getBooleanProperty(
+                Property.CLEAN_INVENTORY_PERMISSION_ACTIVE);
         } else {
-            setCleanInventoryPermission(true);
+            setAndSaveBooleanProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE, true);
         }
+    }
 
+    private void loadSortingBlacklist() {
         if (configurationContainsProperty(Property.SORTING_BLACKLIST)) {
-            InventorySorter.blacklist = getSortingBlackList();
+            //TODO make list non-static
+            InventorySorter.blacklist = getSortingBlackListFromConfiguration();
         }
+    }
 
+    private void loadInventoryBlacklist() {
         if (configurationContainsProperty(Property.INVENTORY_BLACKLIST)) {
-            BlacklistCommand.inventoryBlacklist = getInventoryBlackList();
+            //TODO make list non-static
+            BlacklistCommand.inventoryBlacklist = getInventoryBlackListFromConfiguration();
         }
-
     }
 
     /**
-     * Saves this {@code FileConfiguration} to the the io.github.graves501.chestcleaner folder. If
-     * the file does not exist, it will be created. If already exists, it will be overwritten.
-     *
      * This method will save using the system default encoding, or possibly using UTF8.
      */
-    public void saveConfigurationToFile() {
+    public void saveOrOverwriteConfigurationToFile() {
         try {
             yamlConfiguration.save(pluginConfigurationFile);
         } catch (IOException e) {
+            //TODO use logger
             e.printStackTrace();
         }
     }
 
-    /* DEFAULT AUTOSORT */
-
-    public void setDefaultAutoSort(boolean defaultAutoSortEnabled) {
-        yamlConfiguration.set(Property.DEFAULT_AUTOSORT.getString(),
-            defaultAutoSortEnabled);
-        saveConfigurationToFile();
-    }
-
-    public boolean getDefaultAutoSort() {
-        return yamlConfiguration
-            .getBoolean(Property.DEFAULT_AUTOSORT.getString());
-    }
-
-    /* DEFAULT EVALUATOR */
-
-    public void setDefaultEvaluatorType(EvaluatorType evaluatorType) {
+    public void setAndSaveDefaultEvaluatorType(EvaluatorType evaluatorType) {
         yamlConfiguration
             .set(Property.DEFAULT_EVALUATOR.getString(), evaluatorType.name());
-        saveConfigurationToFile();
+        saveOrOverwriteConfigurationToFile();
     }
 
-    public EvaluatorType getDefaultEvaluatorType() {
+    public EvaluatorType getDefaultEvaluatorTypeFromConfiguration() {
         return EvaluatorType.getEvaluatorTypeByName(yamlConfiguration.getString(
             Property.DEFAULT_EVALUATOR.getString()));
     }
 
-    /* DEFAULT PATTERN*/
-
-    public void setDefaultSortingPattern(SortingPattern sortingPattern) {
-        yamlConfiguration.set(Property.DEFAULT_SORTING_PATTERN.getString(), sortingPattern.name());
-        saveConfigurationToFile();
-    }
-
-    public SortingPattern getDefaultSortingPattern() {
+    public SortingPattern getDefaultSortingPatternFromConfiguration() {
         return SortingPattern
-            .getSortingPatternByName(yamlConfiguration.getString("defaultsortingpattern"));
+            .getSortingPatternByName(getStringProperty(Property.DEFAULT_SORTING_PATTERN));
     }
 
-    /* CLEANINVETORYPERMISSION */
-
-    public void setCleanInventoryPermission(boolean b) {
-        yamlConfiguration.set(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE.getString(), b);
-        saveConfigurationToFile();
-    }
-
-//    public boolean getCleanInvPermission() {
-//        return yamlConfiguration.getBoolean("cleanInventorypermissionactive");
-//    }
-
-    public void setCooldownTimerActive(boolean enableCooldownTimer) {
-        yamlConfiguration.set(Property.TIMER_ACTIVE.getString(),
-            enableCooldownTimer);
-        saveConfigurationToFile();
-    }
-
-    public boolean isCooldownTimerActive() {
-        return yamlConfiguration.getBoolean(Property.TIMER_ACTIVE.getString());
-    }
-
-    public void setCooldownTime(int timeInSeconds) {
+    public void setAndSaveCooldownTime(int timeInSeconds) {
         yamlConfiguration.set(Property.TIMER_TIME.getString(), timeInSeconds);
-        saveConfigurationToFile();
+        saveOrOverwriteConfigurationToFile();
     }
 
-    public int getCooldownTime() {
-        return yamlConfiguration.getInt(Property.TIMER_TIME.getString());
+    public void setAndSaveCleaningItem(ItemStack cleaningItem) {
+        yamlConfiguration.set(Property.CLEANING_ITEM.getString(), cleaningItem);
+        saveOrOverwriteConfigurationToFile();
     }
 
-    /* STRINGS */
-
-    public void setMessages(List<String> messages) {
-        yamlConfiguration.set(Property.MESSAGES.getString(), messages);
-        saveConfigurationToFile();
+    public void setAndSaveMessageList(List<String> messageList) {
+        yamlConfiguration.set(Property.MESSAGES.getString(), messageList);
+        saveOrOverwriteConfigurationToFile();
     }
 
-    public List<String> getMessages() {
+    private List<String> getMessagesFromConfiguration() {
         return yamlConfiguration.getStringList(Property.MESSAGES.getString());
     }
 
-    /* ITEM */
-
-    public ItemStack getCleaningItem() {
+    private ItemStack getCleaningItemFromConfiguration() {
         return yamlConfiguration.getItemStack(Property.CLEANING_ITEM.getString());
     }
 
-    public void setCleaningItemActive(boolean isCleaningItemActive) {
-        yamlConfiguration.set(Property.CLEANING_ITEM_ACTIVE.getString(), isCleaningItemActive);
-        saveConfigurationToFile();
-    }
-
-    public boolean getCleaningItemActive() {
-        return yamlConfiguration.getBoolean(Property.CLEANING_ITEM_ACTIVE.getString());
-    }
-
-    /* DURABILITYLOSS */
-
-    public void setDurabilityLossBoolean(boolean enableDurabilityLoss) {
-        yamlConfiguration.set(Property.DURABILITY_LOSS.getString(), enableDurabilityLoss);
-        saveConfigurationToFile();
-    }
-
-    public boolean getDurabilityLossBoolean() {
-        return yamlConfiguration.getBoolean(Property.DURABILITY_LOSS.getString());
-    }
-
-    /* MODE */
-
-    public void enableOpenInventoryEventMode(boolean enableOpenInventoryEventMode) {
-        yamlConfiguration
-            .set(Property.OPEN_INVENTORY_EVENT_MODE.getString(), enableOpenInventoryEventMode);
-        saveConfigurationToFile();
-    }
-
-    public boolean getOpenInventoryEventModeEnabled() {
-        return yamlConfiguration.getBoolean(Property.OPEN_INVENTORY_EVENT_MODE.getString());
-    }
-
-    /* CONSUMABLES */
-
-    public void setConsumablesRefill(boolean enableConsumablesRefill) {
-        yamlConfiguration.set(Property.CONSUMABLES_REFILL.getString(), enableConsumablesRefill);
-        saveConfigurationToFile();
-    }
-
-    public boolean getConsumablesRefill() {
-        return yamlConfiguration.getBoolean(Property.CONSUMABLES_REFILL.getString());
-    }
-
-    /* BLOCKREFILL */
-
-    public void enableBlockRefill(boolean enableBlockRefill) {
-        yamlConfiguration
-            .set(Property.BLOCK_REFILL.getString(), enableBlockRefill);
-        saveConfigurationToFile();
-    }
-
-    public boolean isBlockRefillActive() {
-        return yamlConfiguration.getBoolean(Property.BLOCK_REFILL.getString());
-    }
-
-    /* BLACKLISTS */
-
-    /**
-     * SortingBlacklist
-     */
-    private void setStringSortingBlackList(List<String> list) {
-        yamlConfiguration.set(Property.SORTING_BLACKLIST.getString(), list);
-        saveConfigurationToFile();
-    }
-
-    public void setSortingBlackList(final List<Material> blacklist) {
-
+    public void setSortingBlacklist(final List<Material> blacklist) {
         List<String> list = new ArrayList<>();
 
         for (Material material : blacklist) {
             list.add(material.name());
         }
-        setStringSortingBlackList(list);
+        setAndSaveSortingBlacklist(list);
     }
 
-    public List<Material> getSortingBlackList() {
+    private void setAndSaveSortingBlacklist(List<String> list) {
+        yamlConfiguration.set(Property.SORTING_BLACKLIST.getString(), list);
+        saveOrOverwriteConfigurationToFile();
+    }
 
+    public List<Material> getSortingBlackListFromConfiguration() {
         List<String> list = yamlConfiguration.getStringList(Property.SORTING_BLACKLIST.getString());
         List<Material> materials = new ArrayList<>();
 
@@ -327,25 +269,21 @@ public class PluginConfiguration {
         return materials;
     }
 
-    /**
-     * SortingBlacklist
-     */
-    private void setStringInventoryBlackList(final List<String> list) {
-        yamlConfiguration.set(Property.INVENTORY_BLACKLIST.getString(), list);
-        saveConfigurationToFile();
-    }
-
     public void setInventoryBlackList(final List<Material> blacklist) {
-
         ArrayList<String> list = new ArrayList<>();
 
         for (Material material : blacklist) {
             list.add(material.name());
         }
-        setStringInventoryBlackList(list);
+        setAndSaveSortingInventoryBlackList(list);
     }
 
-    public List<Material> getInventoryBlackList() {
+    private void setAndSaveSortingInventoryBlackList(final List<String> list) {
+        yamlConfiguration.set(Property.INVENTORY_BLACKLIST.getString(), list);
+        saveOrOverwriteConfigurationToFile();
+    }
+
+    public List<Material> getInventoryBlackListFromConfiguration() {
 
         List<String> inventoryBlacklist = yamlConfiguration
             .getStringList(Property.INVENTORY_BLACKLIST.getString());
@@ -358,6 +296,8 @@ public class PluginConfiguration {
         return materials;
     }
 
+    // Helper functions
+
     public boolean setFallbackValueIfPropertyIsNotSet(final Property property,
         final Object fallbackValue) {
         if (!configurationContainsProperty(property)) {
@@ -368,27 +308,49 @@ public class PluginConfiguration {
         return false;
     }
 
-    private boolean configurationContainsProperty(final Property property) {
+    public boolean setFallbackValueIfPropertyIsNotSet(final Property property,
+        final boolean fallbackValue) {
+        if (!configurationContainsProperty(property)) {
+            yamlConfiguration.set(property.getString(), fallbackValue);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean configurationContainsProperty(final Property property) {
         return yamlConfiguration.contains(property.getString());
     }
 
-    private void setBooleanProperty(final Property property, boolean value) {
+    public void setAndSaveBooleanProperty(final Property property, boolean value) {
         yamlConfiguration.set(property.getString(), value);
+        saveOrOverwriteConfigurationToFile();
     }
 
-    private boolean getBooleanProperty(final Property property) {
+    public boolean getBooleanProperty(final Property property) {
         return yamlConfiguration.getBoolean(property.getString());
     }
 
-    private String getStringProperty(final Property property) {
+    public void setAndSaveStringProperty(final Property property, String value) {
+        yamlConfiguration.set(property.getString(), value);
+        saveOrOverwriteConfigurationToFile();
+    }
+
+    public String getStringProperty(final Property property) {
         return yamlConfiguration.getString(property.getString());
     }
 
-    private void setConfigurationProperty(final Property property, final Object propertyValue) {
+    public void setConfigurationProperty(final Property property, final Object propertyValue) {
         yamlConfiguration.set(property.getString(), propertyValue);
     }
 
-    private Object getConfigurationProperty(final Property property) {
+    public void setAndSaveConfigurationProperty(final Property property,
+        final Object propertyValue) {
+        yamlConfiguration.set(property.getString(), propertyValue);
+        saveOrOverwriteConfigurationToFile();
+    }
+
+    public Object getConfigurationProperty(final Property property) {
         return yamlConfiguration.get(property.getString());
     }
 }

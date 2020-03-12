@@ -3,6 +3,7 @@ package io.github.graves501.chestcleanerx.commands;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.utils.enums.Permission;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
+import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.enums.TimerCommandConstant;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
@@ -51,17 +52,20 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
                     if (arguments[1].equalsIgnoreCase(TimerCommandConstant.TRUE.getString())) {
 
                         if (!pluginConfiguration.isCooldownTimerActive()) {
-                            pluginConfiguration.setCooldownTimerActive(true);
+                            pluginConfiguration
+                                .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, true);
                         }
                         MessageSystem
                             .sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_ACTIVATED,
                                 player);
                         return true;
 
-                    } else if (arguments[1].equalsIgnoreCase(TimerCommandConstant.FALSE.getString())) {
+                    } else if (arguments[1]
+                        .equalsIgnoreCase(TimerCommandConstant.FALSE.getString())) {
 
                         if (!pluginConfiguration.isCooldownTimerActive()) {
-                            pluginConfiguration.setCooldownTimerActive(false);
+                            pluginConfiguration
+                                .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, false);
                         }
                         MessageSystem
                             .sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_DEACTIVATED,
@@ -79,14 +83,14 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
 
                     final int cooldownTimeInSeconds = Integer.valueOf(arguments[1]);
 
-                    pluginConfiguration.getCooldownTimeInSeconds();
                     if (pluginConfiguration.getCooldownTimeInSeconds() != cooldownTimeInSeconds) {
-                        pluginConfiguration.setCooldownTime(cooldownTimeInSeconds);
+                        pluginConfiguration.setAndSaveCooldownTime(cooldownTimeInSeconds);
                     }
 
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                         Messages
-                            .getMessage(MessageID.TIMER_NEW_TIME, TimerCommandConstant.TIME_TARGET.getString(),
+                            .getMessage(MessageID.TIMER_NEW_TIME,
+                                TimerCommandConstant.TIME_TARGET.getString(),
                                 String.valueOf(
                                     cooldownTimeInSeconds)),
                         player);

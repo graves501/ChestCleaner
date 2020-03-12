@@ -73,7 +73,7 @@ public class InventoryConverter {
         }
 
         if (pattern == null) {
-            pattern = SortingPattern.DEFAULT;
+            pattern = SortingPattern.defaultSortingPattern;
         }
 
         switch (pattern) {

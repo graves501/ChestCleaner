@@ -1,6 +1,7 @@
 package io.github.graves501.chestcleanerx.commands;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
+import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
@@ -118,7 +119,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     }
 
-                    ItemMeta itemMeta = pluginConfiguration.getInstance().getCurrentCleaningItem()
+                    ItemMeta itemMeta = pluginConfiguration.getCurrentCleaningItem()
                         .getItemMeta();
                     itemMeta.setLore(lorelist);
 
@@ -127,7 +128,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                     currentCleaningItem.setItemMeta(itemMeta);
 
                     pluginConfiguration.setCurrentCleaningItem(currentCleaningItem);
-                    pluginConfiguration.saveConfigurationToFile();
+                    pluginConfiguration.setAndSaveCleaningItem(currentCleaningItem);
 
                     if (isPlayer) {
                         MessageSystem
@@ -228,8 +229,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                             isCleaningItemActive = true;
                         }
 
-                        pluginConfiguration.setCleaningItemActive(isCleaningItemActive);
-//                        PluginMain.getInstance().setCleaningItemActive(isCleaningItemActive);
+                        pluginConfiguration
+                            .setAndSaveBooleanProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE,
+                                isCleaningItemActive);
 
                         if (isCleaningItemActive) {
                             MessageSystem
@@ -363,14 +365,17 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.seteventdetectionmode")) {
 
-                    boolean eventMode = Boolean.parseBoolean(arguments[1]);
-                    pluginConfiguration.setEventModeActive(eventMode);
+                    boolean eventDetectionModeActive = Boolean.parseBoolean(arguments[1]);
+                    pluginConfiguration
+                        .setOpenInventoryEventDetectionModeActive(eventDetectionModeActive);
 
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, Messages.getMessage(
                         MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(
-                            eventMode)),
+                            eventDetectionModeActive)),
                         player);
-                    pluginConfiguration.enableOpenInventoryEventMode(eventMode);
+                    pluginConfiguration
+                        .setAndSaveBooleanProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE,
+                            eventDetectionModeActive);
                     return true;
 
                 } else {

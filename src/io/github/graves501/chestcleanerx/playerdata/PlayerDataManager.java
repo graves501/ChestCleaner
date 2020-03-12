@@ -9,7 +9,19 @@ import org.bukkit.entity.Player;
 
 public class PlayerDataManager {
 
-    public static boolean defaultAutoSort = false;
+
+    private static boolean defaultAutoSorting = false;
+
+    private PlayerDataManager() {
+    }
+
+    public static boolean isDefaultAutoSorting() {
+        return defaultAutoSorting;
+    }
+
+    public static void setDefaultAutoSorting(boolean defaultAutoSorting) {
+        PlayerDataManager.defaultAutoSorting = defaultAutoSorting;
+    }
 
     private static HashMap<UUID, EvaluatorType> playerEvaluatorMap = new HashMap<>();
     private static HashMap<UUID, SortingPattern> playerPatternMap = new HashMap<>();
@@ -29,7 +41,7 @@ public class PlayerDataManager {
         }
 
         if (!PlayerData.containsAutoSort(player)) {
-            autosort = defaultAutoSort;
+            autosort = defaultAutoSorting;
         }
 
         playerAutoSortMap.put(player.getUniqueId(), autosort);
@@ -49,13 +61,13 @@ public class PlayerDataManager {
 
     public static SortingPattern getSortingPatternOfPlayer(Player player) {
         return playerPatternMap.get(player) == null ? playerPatternMap.get(player.getUniqueId())
-            : SortingPattern.DEFAULT;
+            : SortingPattern.defaultSortingPattern;
     }
 
     public static boolean getAutoSortConfigurationOfPlayer(Player player) {
         return playerAutoSortMap.containsKey(player.getUniqueId()) ? playerAutoSortMap
             .get(player.getUniqueId())
-            : defaultAutoSort;
+            : defaultAutoSorting;
     }
 
 }
