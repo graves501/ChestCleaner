@@ -11,9 +11,9 @@ public class PlayerDataManager {
 
     public static boolean defaultAutoSort = false;
 
-    private static HashMap<UUID, EvaluatorType> playerEvaluator = new HashMap<>();
-    private static HashMap<UUID, SortingPattern> playerPattern = new HashMap<>();
-    private static HashMap<UUID, Boolean> playerAutoSort = new HashMap<>();
+    private static HashMap<UUID, EvaluatorType> playerEvaluatorMap = new HashMap<>();
+    private static HashMap<UUID, SortingPattern> playerPatternMap = new HashMap<>();
+    private static HashMap<UUID, Boolean> playerAutoSortMap = new HashMap<>();
 
     public static void loadPlayerData(Player player) {
         SortingPattern pattern = PlayerData.getSortingPattern(player);
@@ -21,39 +21,39 @@ public class PlayerDataManager {
         boolean autosort = PlayerData.getAutoSort(player);
 
         if (pattern != null) {
-            playerPattern.put(player.getUniqueId(), pattern);
+            playerPatternMap.put(player.getUniqueId(), pattern);
         }
 
         if (evaluator != null) {
-            playerEvaluator.put(player.getUniqueId(), evaluator);
+            playerEvaluatorMap.put(player.getUniqueId(), evaluator);
         }
 
         if (!PlayerData.containsAutoSort(player)) {
             autosort = defaultAutoSort;
         }
 
-        playerAutoSort.put(player.getUniqueId(), autosort);
+        playerAutoSortMap.put(player.getUniqueId(), autosort);
 
     }
 
     public static void removePlayerDataFromMemory(Player player) {
-        playerEvaluator.remove(player);
-        playerPattern.remove(player);
-        playerAutoSort.remove(player);
+        playerEvaluatorMap.remove(player);
+        playerPatternMap.remove(player);
+        playerAutoSortMap.remove(player);
     }
 
     public static EvaluatorType getEvaluatorTypOfPlayer(Player player) {
-        return playerEvaluator.get(player) == null ? playerEvaluator.get(player.getUniqueId())
+        return playerEvaluatorMap.get(player) == null ? playerEvaluatorMap.get(player.getUniqueId())
             : PluginConfiguration.getInstance().getDefaultEvaluatorType();
     }
 
     public static SortingPattern getSortingPatternOfPlayer(Player player) {
-        return playerPattern.get(player) == null ? playerPattern.get(player.getUniqueId())
+        return playerPatternMap.get(player) == null ? playerPatternMap.get(player.getUniqueId())
             : SortingPattern.DEFAULT;
     }
 
-    public static boolean getAutoSortOfPlayer(Player player) {
-        return playerAutoSort.containsKey(player.getUniqueId()) ? playerAutoSort
+    public static boolean getAutoSortConfigurationOfPlayer(Player player) {
+        return playerAutoSortMap.containsKey(player.getUniqueId()) ? playerAutoSortMap
             .get(player.getUniqueId())
             : defaultAutoSort;
     }

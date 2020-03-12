@@ -41,7 +41,7 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         final Player player = (Player) commandSender;
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
 
-        if (player.hasPermission(Permission.COOLDOWN_TIMER_PERMISSION.getString())) {
+        if (player.hasPermission(Permission.COOLDOWN_TIMER.getString())) {
 
             if (arguments.length == 2) {
 
@@ -111,7 +111,7 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         } else {
             MessageSystem
                 .sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                    Permission.COOLDOWN_TIMER_PERMISSION.getString(),
+                    Permission.COOLDOWN_TIMER.getString(),
                     player);
             return true;
         }

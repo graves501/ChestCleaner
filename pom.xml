@@ -59,7 +59,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!--    Lombok-->
+    <!-- Lombok-->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -71,8 +71,8 @@
   <build>
     <defaultGoal>clean install</defaultGoal>
     <sourceDirectory>src</sourceDirectory>
-    <!--    TODO add testSourceDirectory-->
-    <!--    <testSourceDirectory>test</testSourceDirectory>-->
+    <!-- TODO add testSourceDirectory-->
+    <!-- <testSourceDirectory>test</testSourceDirectory>-->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

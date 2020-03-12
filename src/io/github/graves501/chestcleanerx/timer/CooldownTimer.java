@@ -1,6 +1,7 @@
 package io.github.graves501.chestcleanerx.timer;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
+import io.github.graves501.chestcleanerx.utils.enums.Permission;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
@@ -13,12 +14,12 @@ import org.bukkit.entity.Player;
 public class CooldownTimer {
 
     private Player player;
-    private int timeInSeconds;
+    private int cooldownTimeInSeconds;
     private static ArrayList<CooldownTimer> cooldownTimersList = new ArrayList<>();
 
-    public CooldownTimer(Player player, int timeInSeconds) {
+    public CooldownTimer(Player player, int cooldownTimeInSeconds) {
         this.player = player;
-        this.timeInSeconds = timeInSeconds;
+        this.cooldownTimeInSeconds = cooldownTimeInSeconds;
     }
 
     public Player getPlayer() {
@@ -29,19 +30,11 @@ public class CooldownTimer {
     public static void update() {
         if (PluginConfiguration.getInstance().isCooldownTimerActive()) {
             for (CooldownTimer cooldownTimer : cooldownTimersList) {
-                cooldownTimer.setTimeInSeconds(cooldownTimer.getTimeInSeconds() - 1);
+                countDownOneSecond(cooldownTimer);
             }
 
-            ArrayList<Integer> remove = new ArrayList<>();
-
-            for (int i = 0; i < cooldownTimersList.size(); i++) {
-                if (cooldownTimersList.get(i).getTimeInSeconds() <= 0) {
-                    remove.add(i);
-                }
-            }
-            for (int i : remove) {
-                cooldownTimersList.remove(i);
-            }
+            cooldownTimersList
+                .removeIf(cooldownTimer -> cooldownTimer.getCooldownTimeInSeconds() <= 0);
         }
     }
 
@@ -57,39 +50,49 @@ public class CooldownTimer {
     public static int getCooldownTimeForPlayer(final Player player) {
         for (CooldownTimer cooldownTimer : cooldownTimersList) {
             if (cooldownTimer.getPlayer().equals(player)) {
-                return cooldownTimer.getTimeInSeconds();
+                return cooldownTimer.getCooldownTimeInSeconds();
             }
         }
         return 0;
     }
 
     public static void addPlayerToCooldownTimers(final Player player) {
-        cooldownTimersList
-            .add(new CooldownTimer(player,
-                PluginConfiguration.getInstance().getCooldownTimeInSeconds()));
+        cooldownTimersList.add(new CooldownTimer(player,
+            PluginConfiguration.getInstance().getCooldownTimeInSeconds()));
     }
 
-    /**
-     * Checks if the player is has sorting cooldown and if sorting is available of it. If sorting
-     * isn't on cooldown it sets a cooldown for the player and returns true. If the sorting is on
-     * cooldown it sends a message with the remaining time and returns false.
-     *
-     * @param player The player who you want to check if it can sort.
-     * @return Returns true if the player is allowed to sort and false if it is not.
-     */
-    public static boolean checkPlayerAndPlayerPermissions(final Player player) {
-        if (PluginConfiguration.getInstance().isCooldownTimerActive() && !player
-            .hasPermission("chestcleaner.timer.noeffect")) {
+    public static boolean isPlayerAllowedToUseSort(final Player player) {
+        if (isCoolDownTimerActive() && !playerHasTimerNoEffectPermission(player)) {
+
             if (isPlayerOnCooldownTimersList(player)) {
-                MessageSystem.sendMessageToPlayer(MessageType.ERROR, Messages
-                    .getMessage(MessageID.SORTING_ON_COOLDOWN, "%time",
-                        String.valueOf(getCooldownTimeForPlayer(player))), player);
+                sendSortingOnCooldownMessageToPlayer(player);
                 return false;
             }
+
             addPlayerToCooldownTimers(player);
-            return true;
         }
+
         return true;
+    }
+
+    private static void sendSortingOnCooldownMessageToPlayer(final Player player) {
+        final String sortingOnCooldownMessage = Messages.getMessage(
+            MessageID.SORTING_ON_COOLDOWN, "%time",
+            String.valueOf(getCooldownTimeForPlayer(player)));
+
+        MessageSystem.sendMessageToPlayer(MessageType.ERROR, sortingOnCooldownMessage, player);
+    }
+
+    private static boolean isCoolDownTimerActive() {
+        return PluginConfiguration.getInstance().isCooldownTimerActive();
+    }
+
+    private static boolean playerHasTimerNoEffectPermission(final Player player) {
+        return player.hasPermission(Permission.TIMER_NO_EFFECT.getString());
+    }
+
+    private static void countDownOneSecond(CooldownTimer cooldownTimer) {
+        cooldownTimer.setCooldownTimeInSeconds(cooldownTimer.getCooldownTimeInSeconds() - 1);
     }
 
 }

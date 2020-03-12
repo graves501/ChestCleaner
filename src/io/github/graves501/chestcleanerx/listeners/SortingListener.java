@@ -56,7 +56,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                 if (player.isSneaking()) {
 
                     if (player.hasPermission("chestcleaner.cleaningItem.use.owninventory")) {
-                        if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
+                        if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
                             return;
                         }
 
@@ -84,7 +84,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                             return;
                         }
 
-                        if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
+                        if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
                             return;
                         }
 
@@ -166,7 +166,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                 if (isMainHand || isOffHand) {
 
-                    if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
+                    if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
                         return;
                     }
 
@@ -189,15 +189,14 @@ public class SortingListener implements org.bukkit.event.Listener {
     }
 
     @EventHandler
-    private void onCloseInventory(InventoryCloseEvent inventoryCloseEvent) {
+    private void onCloseInventory(final InventoryCloseEvent inventoryCloseEvent) {
 
-        if (inventoryCloseEvent.getInventory().getHolder() instanceof Chest) {
+        if (isInventoryCloseEventCausedByChest(inventoryCloseEvent)) {
+            final Player player = (Player) inventoryCloseEvent.getPlayer();
 
-            Player player = (Player) inventoryCloseEvent.getPlayer();
+            if (PlayerDataManager.getAutoSortConfigurationOfPlayer(player)) {
 
-            if (PlayerDataManager.getAutoSortOfPlayer(player)) {
-
-                if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
+                if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
                     return;
                 }
 
@@ -205,11 +204,12 @@ public class SortingListener implements org.bukkit.event.Listener {
                 InventorySorter.playSortingSound(player);
                 MessageSystem
                     .sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
-
             }
-
         }
+    }
 
+    private boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent){
+        return inventoryCloseEvent.getInventory().getHolder() instanceof Chest;
     }
 
 }

@@ -37,7 +37,7 @@ public class CleanInventoryCommand implements CommandExecutor {
         boolean isPlayer = commandSender instanceof Player;
 
         if (isPlayer) {
-            if (!player.hasPermission(Permission.CLEAN_INVENTORY_PERMISSION.getString())
+            if (!player.hasPermission(Permission.CLEAN_INVENTORY.getString())
                 && pluginConfiguration.isCleanInventoryActive()) {
                 MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
                     "chestcleaner.cmd.cleanInventory",
@@ -64,7 +64,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
+            if (CooldownTimer.isPlayerAllowedToUseSort(player)) {
 
                 // if the block has no inventory
                 if (!InventorySorter.sortPlayerBlock(block,
@@ -136,7 +136,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (isPlayer && !CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
+            if (isPlayer && !CooldownTimer.isPlayerAllowedToUseSort(player)) {
                 return true;
             }
 

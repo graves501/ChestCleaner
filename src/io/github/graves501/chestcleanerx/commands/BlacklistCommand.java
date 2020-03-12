@@ -68,7 +68,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) commandSender;
 
-        if (player.hasPermission(Permission.BLACKLIST_PERMISSION.getString())) {
+        if (player.hasPermission(Permission.BLACKLIST.getString())) {
 
             if (arguments.length <= SINGLE_ARGUMENT) {
                 sendSyntaxErrorMessageToPlayer(player);
@@ -278,7 +278,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         } else {
             MessageSystem
                 .sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                    Permission.BLACKLIST_PERMISSION.getString(),
+                    Permission.BLACKLIST.getString(),
                     player);
             return VALID_COMMAND;
         }
