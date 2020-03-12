@@ -1,5 +1,6 @@
 package io.github.graves501.chestcleanerx.sorting;
 
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.evaluator.Evaluator;
 import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 import java.util.List;
@@ -9,39 +10,39 @@ public class Quicksort {
 
     private List<ItemStack> items;
 
-    //Default Evaluator
-    public Evaluator evaluator = EvaluatorType.getEvaluator(EvaluatorType.DEFAULT);
+    public Evaluator defaultEvaluator = EvaluatorType
+        .getEvaluator(PluginConfiguration.getInstance().getDefaultEvaluatorType());
 
     public Quicksort(List<ItemStack> items, Evaluator evaluator) {
         this.items = items;
         if (evaluator != null) {
-            this.evaluator = evaluator;
+            this.defaultEvaluator = evaluator;
         }
     }
 
-    public List<ItemStack> sort(int l, int r) {
+    public List<ItemStack> sort(int left, int right) {
         int q;
-        if (l < r) {
-            q = partition(l, r);
-            sort(l, q);
-            sort(q + 1, r);
+        if (left < right) {
+            q = partition(left, right);
+            sort(left, q);
+            sort(q + 1, right);
         }
         return items;
     }
 
-    private int partition(int l, int r) {
+    private int partition(int left, int right) {
 
-        int i = l - 1;
-        int j = r + 1;
-        ItemStack item = items.get((l + r) / 2);
+        int i = left - 1;
+        int j = right + 1;
+        ItemStack item = items.get((left + right) / 2);
         while (true) {
             do {
                 i++;
-            } while (evaluator.isSmallerThan(items.get(i), item));
+            } while (defaultEvaluator.isSmallerThan(items.get(i), item));
 
             do {
                 j--;
-            } while (evaluator.isGreaterThan(items.get(j), item));
+            } while (defaultEvaluator.isGreaterThan(items.get(j), item));
 
             if (i < j) {
                 ItemStack k = items.get(i);

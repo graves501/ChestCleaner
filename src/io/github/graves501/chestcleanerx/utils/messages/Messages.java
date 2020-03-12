@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.utils.messages;
 
-import io.github.graves501.chestcleanerx.config.Config;
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,19 +11,20 @@ public class Messages {
 
     private static List<String> messages = new ArrayList<>();
 
-    public static void setMessages(List<String> messagesLoadedFromConfig) {
+    public static void setMessages(final List<String> messagesLoadedFromConfig) {
 
-        List<String> defaultMessages = getDefaultMessages();
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final List<String> defaultMessages = getDefaultMessages();
 
         if (messagesLoadedFromConfig == null) {
-            Config.setMessages(getDefaultMessages());
+            pluginConfiguration.setMessages(getDefaultMessages());
         } else if (messagesLoadedFromConfig.size() >= defaultMessages.size()) {
             messages = messagesLoadedFromConfig;
         } else {
             messages = messagesLoadedFromConfig;
             messages.addAll(defaultMessages);
 
-            Config.setMessages(messages);
+            pluginConfiguration.setMessages(messages);
         }
 
     }

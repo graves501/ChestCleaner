@@ -1,7 +1,6 @@
 package io.github.graves501.chestcleanerx.commands;
 
-import io.github.graves501.chestcleanerx.config.Config;
-import io.github.graves501.chestcleanerx.main.Main;
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
@@ -41,48 +40,54 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(final CommandSender sender,
-        final Command command,
-        final String alias,
-        final String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String alias,
+        final String[] arguments) {
 
         boolean isPlayer = sender instanceof Player;
         Player player = (Player) sender;
 
-        if (args.length > 1) {
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+
+        if (arguments.length > 1) {
 
             /* RENAME SUBCOMMAND */
-            if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
+            if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.rename") || !isPlayer) {
 
-                    String newname = new String();
-                    for (int i = 1; i < args.length; i++) {
+                    String newCleaningItemName = new String();
+                    for (int i = 1; i < arguments.length; i++) {
 
                         if (i == 1) {
-                            newname = args[1];
+                            newCleaningItemName = arguments[1];
                         } else {
-                            newname = newname + " " + args[i];
+                            newCleaningItemName = newCleaningItemName + " " + arguments[i];
                         }
 
                     }
 
-                    newname = newname.replace("&", "�");
+                    newCleaningItemName = newCleaningItemName.replace("&", "�");
                     if (isPlayer) {
                         MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                            Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname),
+                            Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname",
+                                newCleaningItemName),
                             player);
                     } else {
                         MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-                            Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname));
+                            Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname",
+                                newCleaningItemName));
                     }
 
-                    ItemStack is = Main.cleaningItem;
-                    ItemMeta im = is.getItemMeta();
-                    im.setDisplayName(newname);
-                    Main.cleaningItem.setItemMeta(im);
-                    Config.setCleaningItem(Main.cleaningItem);
-                    if (args.length == 1) {
+                    final ItemStack newCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+
+                    final ItemMeta currentCleaningItemMeta = newCleaningItem.getItemMeta();
+                    currentCleaningItemMeta.setDisplayName(newCleaningItemName);
+
+                    newCleaningItem.setItemMeta(currentCleaningItemMeta);
+
+                    pluginConfiguration.setCurrentCleaningItem(newCleaningItem);
+
+                    if (arguments.length == 1) {
                         return true;
                     }
 
@@ -94,13 +99,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                 return true;
 
                 /* SETLORE SUBCOMMAND */
-            } else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(1))) {
+            } else if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(1))) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.setlore") || !isPlayer) {
 
-                    String lore = args[1];
-                    for (int i = 2; i < args.length; i++) {
-                        lore = lore + " " + args[i];
+                    String lore = arguments[1];
+                    for (int i = 2; i < arguments.length; i++) {
+                        lore = lore + " " + arguments[i];
                     }
 
                     String[] lorearray = lore.split("/n");
@@ -113,11 +118,16 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     }
 
-                    ItemMeta im = Main.cleaningItem.getItemMeta();
-                    im.setLore(lorelist);
-                    Main.cleaningItem.setItemMeta(im);
-                    Config.setCleaningItem(Main.cleaningItem);
-                    Config.save();
+                    ItemMeta itemMeta = pluginConfiguration.getInstance().getCurrentCleaningItem()
+                        .getItemMeta();
+                    itemMeta.setLore(lorelist);
+
+                    final ItemStack currentCleaningItem = pluginConfiguration
+                        .getCurrentCleaningItem();
+                    currentCleaningItem.setItemMeta(itemMeta);
+
+                    pluginConfiguration.setCurrentCleaningItem(currentCleaningItem);
+                    pluginConfiguration.saveConfigurationToFile();
 
                     if (isPlayer) {
                         MessageSystem
@@ -139,10 +149,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
         }
 
-        if (args.length == 1) {
+        if (arguments.length == 1) {
 
             /* RENAME SUBCOMMAND ERRORS */
-            if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
+            if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
                 if (isPlayer) {
                     MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
                         "/cleaningItem rename <name>", player);
@@ -154,19 +164,22 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
             }
 
             /* SETITEM SUBCOMMAND */
-            else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(2)) && isPlayer) {
+            else if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(2)) && isPlayer) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.setitem")) {
 
-                    ItemStack item = player.getInventory().getItemInMainHand().clone();
-                    if (item != null) {
-                        item.setDurability((short) 0);
-                        item.setAmount(1);
-                        Config.setCleaningItem(item);
-                        Main.cleaningItem = item;
+                    final ItemStack cleaningItem = player.getInventory().getItemInMainHand()
+                        .clone();
+
+                    if (cleaningItem != null) {
+                        cleaningItem.setDurability((short) 0);
+                        cleaningItem.setAmount(1);
+
+                        pluginConfiguration.setCurrentCleaningItem(cleaningItem);
+
                         MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                            Messages.getMessage(MessageID.NEW_ITEM, "%newitem", item.toString()),
-                            player);
+                            Messages.getMessage(MessageID.NEW_ITEM, "%newitem",
+                                cleaningItem.toString()), player);
                         return true;
 
                     } else {
@@ -181,11 +194,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                 }
 
                 /* GET SUBCOMMAND */
-            } else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(3)) && isPlayer) {
+            } else if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(3)) && isPlayer) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.get")) {
 
-                    player.getInventory().addItem(Main.cleaningItem);
+                    player.getInventory()
+                        .addItem(PluginConfiguration.getInstance().getCurrentCleaningItem());
+
                     MessageSystem
                         .sendMessageToPlayer(MessageType.SUCCESS, MessageID.GOT_ITEM, player);
                     return true;
@@ -198,24 +213,25 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
             }
 
-        } else if (args.length == 2) {
+        } else if (arguments.length == 2) {
 
             /* SETACTIVE SUBCOMMAND */
-            if (args[0].equalsIgnoreCase(cleaningItemCommands.get(4))) {
+            if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(4))) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.setactive") || !isPlayer) {
 
-                    if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+                    if (arguments[1].equalsIgnoreCase("true") || arguments[1]
+                        .equalsIgnoreCase("false")) {
 
-                        boolean b = false;
-                        if (args[1].equalsIgnoreCase("true")) {
-                            b = true;
+                        boolean isCleaningItemActive = false;
+                        if (arguments[1].equalsIgnoreCase("true")) {
+                            isCleaningItemActive = true;
                         }
 
-                        Config.setItemBoolean(b);
-                        Main.itemBoolean = b;
+                        pluginConfiguration.setCleaningItemActive(isCleaningItemActive);
+//                        PluginMain.getInstance().setCleaningItemActive(isCleaningItemActive);
 
-                        if (b) {
+                        if (isCleaningItemActive) {
                             MessageSystem
                                 .sendMessageToPlayer(MessageType.SUCCESS, MessageID.ITEM_ACTIVATED,
                                     player);
@@ -243,21 +259,22 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                 }
 
                 /* SETDURIBILITYLOSS SUBCOMMAND */
-            } else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(5))) {
+            } else if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(5))) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.setdurabilityloss")
                     || !isPlayer) {
 
-                    if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+                    if (arguments[1].equalsIgnoreCase("true") || arguments[1]
+                        .equalsIgnoreCase("false")) {
 
-                        boolean b = false;
-                        if (args[1].equalsIgnoreCase("true")) {
-                            b = true;
+                        boolean durabilityLoss = false;
+                        if (arguments[1].equalsIgnoreCase("true")) {
+                            durabilityLoss = true;
                         }
 
-                        Config.setDurabilityLossBoolean(b);
-                        Main.durability = b;
-                        if (Main.durability) {
+                        pluginConfiguration.setDurabilityLossActive(durabilityLoss);
+
+                        if (pluginConfiguration.isDurabilityLossActive()) {
                             MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                                 MessageID.DURABILITYLOSS_ACTIVATED,
                                 player);
@@ -281,15 +298,16 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                 }
 
                 /* GIVE SUBCOMMAND */
-            } else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(6))) {
+            } else if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(6))) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.give") || !isPlayer) {
 
-                    Player p2 = Bukkit.getPlayer(args[1]);
+                    Player p2 = Bukkit.getPlayer(arguments[1]);
 
                     if (p2 != null) {
 
-                        p2.getInventory().addItem(Main.cleaningItem);
+                        p2.getInventory()
+                            .addItem(pluginConfiguration.getCurrentCleaningItem());
                         if (isPlayer) {
                             MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                                 Messages.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername",
@@ -304,13 +322,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     } else {
 
-                        if (args[1].equalsIgnoreCase("@a")) {
+                        if (arguments[1].equalsIgnoreCase("@a")) {
 
                             Object[] players = Bukkit.getOnlinePlayers().toArray();
 
                             for (Object p : players) {
                                 Player pl = (Player) p;
-                                pl.getInventory().addItem(Main.cleaningItem);
+                                pl.getInventory()
+                                    .addItem(pluginConfiguration.getCurrentCleaningItem());
                                 if (isPlayer) {
                                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                                         Messages.getMessage(
@@ -324,11 +343,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                         if (isPlayer) {
                             MessageSystem.sendMessageToPlayer(MessageType.ERROR,
                                 Messages.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername",
-                                    args[1]), p2);
+                                    arguments[1]), p2);
                         } else {
                             MessageSystem.sendConsoleMessage(MessageType.ERROR,
                                 Messages.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername",
-                                    args[1]));
+                                    arguments[1]));
                         }
                         return true;
                     }
@@ -340,16 +359,18 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                 }
 
                 /* SETEVENTDETECTIONMODE SUBCOMMAND */
-            } else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(7))) {
+            } else if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(7))) {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.seteventdetectionmode")) {
 
-                    boolean b = Boolean.parseBoolean(args[1]);
-                    Main.eventmode = b;
+                    boolean eventMode = Boolean.parseBoolean(arguments[1]);
+                    pluginConfiguration.setEventModeActive(eventMode);
+
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, Messages.getMessage(
-                        MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(b)),
+                        MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(
+                            eventMode)),
                         player);
-                    Config.setMode(b);
+                    pluginConfiguration.enableOpenInventoryEventMode(eventMode);
                     return true;
 
                 } else {

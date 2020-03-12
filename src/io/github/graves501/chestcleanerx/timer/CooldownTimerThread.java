@@ -1,13 +1,13 @@
 package io.github.graves501.chestcleanerx.timer;
 
-public class Counter extends Thread {
+public class CooldownTimerThread extends Thread {
 
     public void run() {
 
         try {
             while (true) {
                 Thread.sleep(1000);
-                Timer.update();
+                CooldownTimer.update();
             }
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();

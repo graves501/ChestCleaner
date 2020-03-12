@@ -1,10 +1,10 @@
 package io.github.graves501.chestcleanerx.listeners;
 
 import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
-import io.github.graves501.chestcleanerx.main.Main;
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.timer.Timer;
+import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
@@ -38,11 +38,14 @@ public class SortingListener implements org.bukkit.event.Listener {
         itemOffHand.setDurability((short) 0);
         itemOffHand.setAmount(1);
 
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+
         if (playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
             || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-            boolean isMainHand = itemMainHand.equals(Main.cleaningItem);
-            boolean isOffHand = itemOffHand.equals(Main.cleaningItem);
+            boolean isMainHand = itemMainHand.equals(currentCleaningItem);
+            boolean isOffHand = itemOffHand.equals(currentCleaningItem);
 
             // TODO clean up
             // TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
@@ -53,7 +56,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                 if (player.isSneaking()) {
 
                     if (player.hasPermission("chestcleaner.cleaningItem.use.owninventory")) {
-                        if (!Timer.playerCheck(player)) {
+                        if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
                             return;
                         }
 
@@ -71,7 +74,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                         playerInteractEvent.setCancelled(true);
                     }
 
-                } else if (!Main.eventmode) {
+                } else if (!pluginConfiguration.isEventModeActive()) {
 
                     if (player.hasPermission("chestcleaner.cleaningItem.use")) {
 
@@ -81,7 +84,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                             return;
                         }
 
-                        if (!Timer.playerCheck(player)) {
+                        if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
                             return;
                         }
 
@@ -114,12 +117,14 @@ public class SortingListener implements org.bukkit.event.Listener {
      *
      * @param player the player who is holding the item, that you want to get damaged, in hand.
      */
-    private void damageItem(Player player, boolean isHoldingInMainHand) {
+    private void damageItem(final Player player, final boolean isHoldingItemInMainHand) {
 
-        if (Main.durability) {
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+
+        if (pluginConfiguration.isDurabilityLossActive()) {
 
             ItemStack item;
-            if (isHoldingInMainHand) {
+            if (isHoldingItemInMainHand) {
                 item = player.getInventory().getItemInMainHand();
             } else {
                 item = player.getInventory().getItemInOffHand();
@@ -139,7 +144,10 @@ public class SortingListener implements org.bukkit.event.Listener {
     @EventHandler
     private void onOpenInventory(InventoryOpenEvent inventoryOpenEvent) {
 
-        if (Main.eventmode) {
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+
+        if (pluginConfiguration.isEventModeActive()) {
 
             Player player = (Player) inventoryOpenEvent.getPlayer();
 
@@ -153,12 +161,12 @@ public class SortingListener implements org.bukkit.event.Listener {
                 itemOffHand.setDurability((short) 0);
                 itemOffHand.setAmount(1);
 
-                boolean isMainHand = itemMainHand.equals(Main.cleaningItem);
-                boolean isOffHand = itemOffHand.equals(Main.cleaningItem);
+                boolean isMainHand = itemMainHand.equals(currentCleaningItem);
+                boolean isOffHand = itemOffHand.equals(currentCleaningItem);
 
                 if (isMainHand || isOffHand) {
 
-                    if (!Timer.playerCheck(player)) {
+                    if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
                         return;
                     }
 
@@ -189,7 +197,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
             if (PlayerDataManager.getAutoSortOfPlayer(player)) {
 
-                if (!Timer.playerCheck(player)) {
+                if (!CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
                     return;
                 }
 

@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.listeners;
 
-import io.github.graves501.chestcleanerx.main.Main;
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.utils.InventoryDetector;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,8 +16,9 @@ public class RefillListener implements org.bukkit.event.Listener {
 
     @EventHandler
     private void onPlacingBlock(BlockPlaceEvent blockPlaceEvent) {
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
 
-        if (Main.blockRefill && !blockPlaceEvent.isCancelled()) {
+        if (pluginConfiguration.isBlockRefillActive() && !blockPlaceEvent.isCancelled()) {
             final Player player = blockPlaceEvent.getPlayer();
 
             if (player.getGameMode().equals(GameMode.SURVIVAL)) {
@@ -72,7 +73,10 @@ public class RefillListener implements org.bukkit.event.Listener {
     @EventHandler
     private void onConsuming(PlayerItemConsumeEvent playerItemConsumeEvent) {
 
-        if (Main.consumablesRefill && !playerItemConsumeEvent.isCancelled()) {
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+
+        if (pluginConfiguration.isConsumablesRefillActive() && !playerItemConsumeEvent
+            .isCancelled()) {
 
             if (!Bukkit.getVersion().contains("1.8")) {
 

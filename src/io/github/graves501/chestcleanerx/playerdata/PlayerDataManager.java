@@ -1,5 +1,6 @@
 package io.github.graves501.chestcleanerx.playerdata;
 
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class PlayerDataManager {
 
     public static EvaluatorType getEvaluatorTypOfPlayer(Player player) {
         return playerEvaluator.get(player) == null ? playerEvaluator.get(player.getUniqueId())
-            : EvaluatorType.DEFAULT;
+            : PluginConfiguration.getInstance().getDefaultEvaluatorType();
     }
 
     public static SortingPattern getSortingPatternOfPlayer(Player player) {

@@ -20,7 +20,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class UpdateChecker {
+public class UpdateCheckerThread {
 
     private final JavaPlugin javaPlugin;
     private final String localPluginVersion;
@@ -31,7 +31,7 @@ public class UpdateChecker {
         PermissionDefault.TRUE);
     private static final long CHECK_INTERVAL = 12_000; //In ticks.
 
-    public UpdateChecker(final JavaPlugin javaPlugin) {
+    public UpdateCheckerThread(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
         this.localPluginVersion = javaPlugin.getDescription().getVersion();
     }

@@ -1,6 +1,7 @@
 package io.github.graves501.chestcleanerx.utils.messages;
 
-import io.github.graves501.chestcleanerx.main.Main;
+import io.github.graves501.chestcleanerx.main.PluginMain;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class MessageSystem {
@@ -17,41 +18,45 @@ public class MessageSystem {
     }
 
     public static void sendConsoleMessage(MessageType type, String arg) {
-        Main.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
+        getConsoleCommandSender().sendMessage(getMessageString(type, arg));
     }
 
     public static void sendConsoleMessage(MessageType type, MessageID messageID) {
-        Main.main.getServer().getConsoleSender()
+        getConsoleCommandSender()
             .sendMessage(getMessageString(type, Messages.getMessage(messageID)));
     }
 
+    private static ConsoleCommandSender getConsoleCommandSender() {
+        return PluginMain.getInstance().getServer().getConsoleSender();
+    }
+
+
     private static String getMessageString(MessageType type, String arg) {
 
-        String out = "�6[ChestCleanerX] ";
+        String message = "�6[ChestCleanerX] ";
 
         switch (type) {
             case SYNTAX_ERROR:
-                out += "�c" + Messages.getMessage(MessageID.SYNTAX_ERROR) + ": " + arg;
+                message += "�c" + Messages.getMessage(MessageID.SYNTAX_ERROR) + ": " + arg;
                 break;
             case ERROR:
-                out += "�c" + Messages.getMessage(MessageID.ERROR) + ": " + arg;
+                message += "�c" + Messages.getMessage(MessageID.ERROR) + ": " + arg;
                 break;
             case SUCCESS:
-                out += "�a" + arg;
+                message += "�a" + arg;
                 break;
             case MISSING_PERMISSION:
-                out +=
+                message +=
                     "�c" + Messages.getMessage(MessageID.PERMISSION_DENIED) + " ( " + arg + " )";
                 break;
             case UNHEADED_INFORMATION:
-                out = "�7" + arg;
+                message = "�7" + arg;
                 break;
             default:
                 throw new IllegalArgumentException();
         }
 
-        return out;
-
+        return message;
     }
 
 }

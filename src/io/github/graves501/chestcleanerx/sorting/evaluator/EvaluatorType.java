@@ -10,43 +10,41 @@ public enum EvaluatorType {
     /**
      * Returns the enum object if it's is equal to an existing entry.
      *
-     * @param str the name of the enum entry.
+     * @param evaluatorTypeName the name of the enum entry.
      * @return the enum entry object or {@code null} if does not exist.
      */
-    public static EvaluatorType getEvaluatorTypByName(String str) {
-        if (str == null) {
+    public static EvaluatorType getEvaluatorTypeByName(final String evaluatorTypeName) {
+        if (evaluatorTypeName == null) {
             return null;
         }
 
-        if (str.equalsIgnoreCase(BACK_BEGIN_STRING.name())) {
+        if (evaluatorTypeName.equalsIgnoreCase(BACK_BEGIN_STRING.name())) {
             return BACK_BEGIN_STRING;
-        } else if (str.equalsIgnoreCase(BEGIN_BACK_STRING.name())) {
+        } else if (evaluatorTypeName.equalsIgnoreCase(BEGIN_BACK_STRING.name())) {
             return BEGIN_BACK_STRING;
         }
         return null;
     }
 
     public static List<String> getIDList() {
-        List<String> list = new ArrayList<String>();
-        list.add(BACK_BEGIN_STRING.name());
-        list.add(BEGIN_BACK_STRING.name());
-        return list;
+        List<String> idList = new ArrayList<>();
+        idList.add(BACK_BEGIN_STRING.name());
+        idList.add(BEGIN_BACK_STRING.name());
+        return idList;
     }
 
-    public static Evaluator getEvaluator(EvaluatorType type) {
+    public static Evaluator getEvaluator(final EvaluatorType evaluatorType) {
 
-        if (type == null) {
+        if (evaluatorType == null) {
             return null;
         }
 
-        if (type.equals(BACK_BEGIN_STRING)) {
+        if (evaluatorType.equals(BACK_BEGIN_STRING)) {
             return new BackBeginStringEvaluator();
-        } else if (type.equals(BEGIN_BACK_STRING)) {
+        } else if (evaluatorType.equals(BEGIN_BACK_STRING)) {
             return new BeginBackStringEvaluator();
         }
         return null;
     }
-
-    public static EvaluatorType DEFAULT = EvaluatorType.BACK_BEGIN_STRING;
 
 }

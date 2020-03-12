@@ -1,15 +1,15 @@
 package io.github.graves501.chestcleanerx.commands;
 
-import io.github.graves501.chestcleanerx.main.Main;
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.timer.Timer;
+import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
+import io.github.graves501.chestcleanerx.utils.enums.Permission;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
 import io.github.graves501.chestcleanerx.utils.messages.Messages;
-import io.github.graves501.chestcleanerx.utils.stringconstants.PluginPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,11 +29,16 @@ public class CleanInventoryCommand implements CommandExecutor {
         final Command command,
         final String label,
         final String[] arguments) {
+
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+
         Player player = (Player) commandSender;
+
         boolean isPlayer = commandSender instanceof Player;
+
         if (isPlayer) {
-            if (!player.hasPermission(PluginPermissions.CLEAN_INVENTORY_PERMISSION)
-                && Main.cleanInvPermission) {
+            if (!player.hasPermission(Permission.CLEAN_INVENTORY_PERMISSION.getString())
+                && pluginConfiguration.isCleanInventoryActive()) {
                 MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
                     "chestcleaner.cmd.cleanInventory",
                     player);
@@ -59,7 +64,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (Timer.playerCheck(player)) {
+            if (CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
 
                 // if the block has no inventory
                 if (!InventorySorter.sortPlayerBlock(block,
@@ -131,7 +136,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (isPlayer && !Timer.playerCheck(player)) {
+            if (isPlayer && !CooldownTimer.checkPlayerAndPlayerPermissions(player)) {
                 return true;
             }
 

@@ -1,14 +1,15 @@
 package io.github.graves501.chestcleanerx.commands;
 
-import io.github.graves501.chestcleanerx.config.Config;
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.utils.MaterialListUtils;
+import io.github.graves501.chestcleanerx.utils.enums.BlacklistConstant;
+import io.github.graves501.chestcleanerx.utils.enums.Permission;
+import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
 import io.github.graves501.chestcleanerx.utils.messages.Messages;
-import io.github.graves501.chestcleanerx.utils.stringconstants.PlayerMessages;
-import io.github.graves501.chestcleanerx.utils.stringconstants.PluginPermissions;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
@@ -21,16 +22,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.StringUtil;
 
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
-
-    private static class BlackListCommandString {
-        static final String SORTING = "sorting";
-        static final String INVENTORIES = "inventories";
-
-        static final String ADD_MATERIAL = "addMaterial";
-        static final String REMOVE_MATERIAL = "removeMaterial";
-        static final String LIST = "list";
-        static final String CLEAR = "clear";
-    }
 
     private static final boolean VALID_COMMAND = true;
     private static final boolean INVALID_COMMAND = false;
@@ -45,16 +36,16 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     //TODO what's up with this magic number?
     private final int LIST_LENGTH = 8;
 
-    public static ArrayList<Material> inventoryBlacklist = new ArrayList<>();
+    public static List<Material> inventoryBlacklist = new ArrayList<>();
 
     public BlacklistCommand() {
-        blacklists.add(BlackListCommandString.SORTING);
-        blacklists.add(BlackListCommandString.INVENTORIES);
+        blacklists.add(BlacklistConstant.SORTING.getString());
+        blacklists.add(BlacklistConstant.INVENTORIES.getString());
 
-        commandList.add(BlackListCommandString.ADD_MATERIAL);
-        commandList.add(BlackListCommandString.REMOVE_MATERIAL);
-        commandList.add(BlackListCommandString.LIST);
-        commandList.add(BlackListCommandString.CLEAR);
+        commandList.add(BlacklistConstant.ADD_MATERIAL.getString());
+        commandList.add(BlacklistConstant.REMOVE_MATERIAL.getString());
+        commandList.add(BlacklistConstant.LIST.getString());
+        commandList.add(BlacklistConstant.CLEAR.getString());
     }
 
     @Override
@@ -77,7 +68,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) commandSender;
 
-        if (player.hasPermission(PluginPermissions.BLACKLIST_PERMISSION)) {
+        if (player.hasPermission(Permission.BLACKLIST_PERMISSION.getString())) {
 
             if (arguments.length <= SINGLE_ARGUMENT) {
                 sendSyntaxErrorMessageToPlayer(player);
@@ -287,7 +278,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         } else {
             MessageSystem
                 .sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                    PluginPermissions.BLACKLIST_PERMISSION,
+                    Permission.BLACKLIST_PERMISSION.getString(),
                     player);
             return VALID_COMMAND;
         }
@@ -319,18 +310,21 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
     private void sendSyntaxErrorMessageToPlayer(final Player player) {
         MessageSystem
-            .sendMessageToPlayer(MessageType.SYNTAX_ERROR, PlayerMessages.BLACKLIST_SYNTAX_ERROR,
+            .sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+                PlayerMessage.BLACKLIST_SYNTAX_ERROR.getString(),
                 player);
     }
 
     private void saveBlacklistInConfiguration(final int blacklist) {
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+
         final int SORTING_BLACKLIST = 0;
         final int INVENTORY_BLACKLIST = 1;
 
         if (blacklist == SORTING_BLACKLIST) {
-            Config.setSortingBlackList(InventorySorter.blacklist);
+            pluginConfiguration.setSortingBlackList(InventorySorter.blacklist);
         } else if (blacklist == INVENTORY_BLACKLIST) {
-            Config.setInventoryBlackList(inventoryBlacklist);
+            pluginConfiguration.setInventoryBlackList(inventoryBlacklist);
         }
 
     }
