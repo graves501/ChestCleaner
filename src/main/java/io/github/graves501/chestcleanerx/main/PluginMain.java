@@ -12,19 +12,17 @@ import io.github.graves501.chestcleanerx.listeners.SortingListener;
 import io.github.graves501.chestcleanerx.timer.CooldownTimerThread;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerCommand;
 import java.util.Objects;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@Getter
-@Setter
 public class PluginMain extends JavaPlugin {
 
-    private static PluginMain instance = new PluginMain();
-
-    private PluginMain() {
-    }
+    /**
+     * PluginMain needs to have a default constructor,
+     * otherwise the plugin cannot be initialized.
+     * Therefore a private constructor cannot be used.
+     */
+    private static PluginMain instance;
 
     public static PluginMain getInstance() {
         return instance;
@@ -32,6 +30,7 @@ public class PluginMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         PluginConfiguration.getInstance().loadConfiguration();
         enablePluginCommands();
         registerEventListener();
