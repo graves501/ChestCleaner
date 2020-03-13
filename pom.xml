@@ -70,7 +70,7 @@
 
   <build>
     <defaultGoal>clean install</defaultGoal>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <!-- TODO add testSourceDirectory-->
     <!-- <testSourceDirectory>test</testSourceDirectory>-->
     <plugins>
@@ -86,15 +86,21 @@
     </plugins>
     <resources>
       <resource>
-        <directory>src</directory>
-        <includes>
-          <include>*.properties</include>
-          <include>*.yml</include>
-          <include>*.csv</include>
-          <include>*.txt</include>
-          <include>*.json</include>
-        </includes>
+        <directory>src/main/resources</directory>
+        <!-- Keeping filtering at true here reduces plugin.yml redundancy! -->
         <filtering>true</filtering>
+        <includes>
+          <include>plugin.yml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <!-- Keep filtering at false for other resources to prevent bad magic -->
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/*.java</exclude>
+          <exclude>plugin.yml</exclude>
+        </excludes>
       </resource>
     </resources>
   </build>
