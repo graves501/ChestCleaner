@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.sorting;
 
-import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
-import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
+import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.utils.InventoryConverter;
 import io.github.graves501.chestcleanerx.utils.InventoryDetector;
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public class InventorySorter {
      * @param inventory the inventory you want to sort.
      */
     public static void sortInventory(Inventory inventory, SortingPattern pattern,
-        EvaluatorType evaluator) {
+        ItemEvaluatorType evaluator) {
 
         List<ItemStack> list = InventoryConverter.getArrayListFormInventory(inventory);
         List<ItemStack> temp = new ArrayList<ItemStack>();
@@ -103,7 +103,7 @@ public class InventorySorter {
             InventoryConverter.setItemsOfInventory(inventory, list, false, pattern);
         }
 
-        Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
+        Quicksort sorter = new Quicksort(list, ItemEvaluatorType.getEvaluator(evaluator));
         temp = sorter.sort(0, list.size() - 1);
         List<ItemStack> out = getFullStacks(temp);
 
@@ -117,45 +117,49 @@ public class InventorySorter {
      *
      * @param player The player whose inventory you want to sort.
      */
-    public static void sortPlayerInv(Player player, SortingPattern pattern,
-        EvaluatorType evaluator) {
+    public static void sortPlayerInventory(Player player, SortingPattern sortingPattern,
+        ItemEvaluatorType itemEvaluatorType) {
 
-        List<ItemStack> list = InventoryDetector.getPlayerMainInventoryList(player);
-        List<ItemStack> temp = new ArrayList<ItemStack>();
+        List<ItemStack> playerMainInventoryList = InventoryDetector
+            .getPlayerMainInventoryList(player);
+        List<ItemStack> temporaryItemList;
 
-        if (list.size() <= 1) {
-            InventoryConverter.setPlayerInventory(list, player, pattern);
+        if (playerMainInventoryList.size() <= 1) {
+            InventoryConverter.setPlayerInventory(playerMainInventoryList, player, sortingPattern);
         }
 
-        Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
-        temp = sorter.sort(0, list.size() - 1);
-        List<ItemStack> out = getFullStacks(temp);
+        Quicksort inventorySorter = new Quicksort(playerMainInventoryList,
+            ItemEvaluatorType.getEvaluator(
+                itemEvaluatorType));
+        temporaryItemList = inventorySorter.sort(0, playerMainInventoryList.size() - 1);
+        final List<ItemStack> sortedPlayerInventory = getFullStacks(temporaryItemList);
 
-        InventoryConverter.setPlayerInventory(out, player, pattern);
+        InventoryConverter.setPlayerInventory(sortedPlayerInventory, player, sortingPattern);
     }
 
     /**
      * Checks if the block has an inventory or if it is an enderchest and sorts it.
      *
-     * @param block Block you want to get sorted.
+     * @param blockToBeSorted Block you want to get sorted.
      * @param player the player or owner of an enderchest inventory.
      * @return returns true if an inventory got sorted, otherwise false.
      */
-    public static boolean sortPlayerBlock(Block block, Player player, SortingPattern pattern,
-        EvaluatorType evaluator) {
+    public static boolean sortPlayerBlock(Block blockToBeSorted, Player player,
+        SortingPattern pattern,
+        ItemEvaluatorType evaluator) {
 
-        Inventory inv = InventoryDetector.getInventoryFormBlock(block);
+        Inventory inventory = InventoryDetector.getInventoryFromBlock(blockToBeSorted);
 
-        if (inv != null) {
+        if (inventory != null) {
             if (player != null) {
                 playSortingSound(player);
             }
-            sortInventory(inv, pattern, evaluator);
+            sortInventory(inventory, pattern, evaluator);
             return true;
         }
 
         if (player != null) {
-            if (block.getBlockData().getMaterial() == Material.ENDER_CHEST) {
+            if (blockToBeSorted.getBlockData().getMaterial() == Material.ENDER_CHEST) {
                 playSortingSound(player);
                 sortInventory(player.getEnderChest(), pattern, evaluator);
                 return true;
@@ -172,10 +176,12 @@ public class InventorySorter {
      * @param inventory The inventory you want to sort.
      * @param player the player who is the owner of the sorting pattern and evaluator.
      */
-    public static void sortInventoryByPlayer(Inventory inventory, Player player) {
+    public static void sortInventoryOfPlayer(Inventory inventory, Player player) {
 
-        SortingPattern pattern = PlayerDataManager.getSortingPatternOfPlayer(player);
-        EvaluatorType evaluator = PlayerDataManager.getEvaluatorTypOfPlayer(player);
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+
+        final SortingPattern pattern = playerConfiguration.getSortingPatternOfPlayer(player);
+        final ItemEvaluatorType evaluator = playerConfiguration.getEvaluatorTypOfPlayer(player);
 
         sortInventory(inventory, pattern, evaluator);
 

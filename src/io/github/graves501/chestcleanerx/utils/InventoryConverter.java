@@ -1,5 +1,6 @@
 package io.github.graves501.chestcleanerx.utils;
 
+import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class InventoryConverter {
         }
 
         if (pattern == null) {
-            pattern = SortingPattern.defaultSortingPattern;
+            pattern = PluginConfiguration.getInstance().getDefaultSortingPattern();
         }
 
         switch (pattern) {
@@ -146,20 +147,20 @@ public class InventoryConverter {
      * index 9 (including) to index 35 (including).That means the hotbar or other important slots
      * (armor slots, second hand slot) are getting avoided.
      *
-     * @param items The list of ItemStacks you want to put into the player inventory. Its size
-     * should be <= 27.
+     * @param inventoryItems The list of ItemStacks you want to put into the player inventory. Its
+     * size should be <= 27.
      * @param player the player whose inventory will get effected.
      * @throws IllegalArgumentException throws if the argument ItemStack {@code items} or the
      * Inventory {@code inv} is equal to null.
      */
-    public static void setPlayerInventory(List<ItemStack> items, Player player,
+    public static void setPlayerInventory(List<ItemStack> inventoryItems, Player player,
         SortingPattern pattern) {
 
-        if (items == null || player == null) {
+        if (inventoryItems == null || player == null) {
             throw new IllegalArgumentException();
         }
 
-        setItemsOfInventory(player.getInventory(), items, true, pattern);
+        setItemsOfInventory(player.getInventory(), inventoryItems, true, pattern);
 
     }
 

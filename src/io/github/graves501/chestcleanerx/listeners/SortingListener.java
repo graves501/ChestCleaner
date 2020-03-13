@@ -1,8 +1,8 @@
 package io.github.graves501.chestcleanerx.listeners;
 
 import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
+import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
@@ -39,19 +39,22 @@ public class SortingListener implements org.bukkit.event.Listener {
         itemOffHand.setAmount(1);
 
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+
         final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
 
         if (playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
             || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-            boolean isMainHand = itemMainHand.equals(currentCleaningItem);
-            boolean isOffHand = itemOffHand.equals(currentCleaningItem);
+            boolean isCleaningItemInMainHand = itemMainHand.equals(currentCleaningItem);
+            boolean isCleaningItemInOffHand = itemOffHand.equals(currentCleaningItem);
 
             // TODO clean up
             // TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
             // SLOTS DAS ITEM H�LT
 
-            if ((isMainHand || isOffHand) && (isMainHand != isOffHand)) {
+            if ((isCleaningItemInMainHand || isCleaningItemInOffHand) && (isCleaningItemInMainHand
+                != isCleaningItemInOffHand)) {
 
                 if (player.isSneaking()) {
 
@@ -60,10 +63,10 @@ public class SortingListener implements org.bukkit.event.Listener {
                             return;
                         }
 
-                        damageItem(player, isMainHand);
-                        InventorySorter.sortPlayerInv(
-                            player, PlayerDataManager.getSortingPatternOfPlayer(player),
-                            PlayerDataManager.getEvaluatorTypOfPlayer(
+                        damageItem(player, isCleaningItemInMainHand);
+                        InventorySorter.sortPlayerInventory(
+                            player, playerConfiguration.getSortingPatternOfPlayer(player),
+                            playerConfiguration.getEvaluatorTypOfPlayer(
                                 player));
                         InventorySorter.playSortingSound(player);
 
@@ -89,11 +92,11 @@ public class SortingListener implements org.bukkit.event.Listener {
                         }
 
                         if (InventorySorter.sortPlayerBlock(block,
-                            player, PlayerDataManager.getSortingPatternOfPlayer(player),
-                            PlayerDataManager.getEvaluatorTypOfPlayer(
+                            player, playerConfiguration.getSortingPatternOfPlayer(player),
+                            playerConfiguration.getEvaluatorTypOfPlayer(
                                 player))) {
 
-                            damageItem(player, isMainHand);
+                            damageItem(player, isCleaningItemInMainHand);
 
                             MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                                 Messages.getMessage(MessageID.INVENTORY_SORTED), player);
@@ -145,6 +148,7 @@ public class SortingListener implements org.bukkit.event.Listener {
     private void onOpenInventory(InventoryOpenEvent inventoryOpenEvent) {
 
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
         final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
 
         if (pluginConfiguration.isOpenInventoryEventDetectionModeActive()) {
@@ -170,8 +174,9 @@ public class SortingListener implements org.bukkit.event.Listener {
                     }
 
                     InventorySorter.sortInventory(inventoryOpenEvent.getInventory(),
-                        PlayerDataManager.getSortingPatternOfPlayer(player),
-                        PlayerDataManager.getEvaluatorTypOfPlayer(player));
+                        playerConfiguration.getSortingPatternOfPlayer(player),
+                        playerConfiguration.getEvaluatorTypOfPlayer(player));
+
                     InventorySorter.playSortingSound(player);
 
                     damageItem(player, isMainHand);
@@ -190,16 +195,18 @@ public class SortingListener implements org.bukkit.event.Listener {
     @EventHandler
     private void onCloseInventory(final InventoryCloseEvent inventoryCloseEvent) {
 
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+
         if (isInventoryCloseEventCausedByChest(inventoryCloseEvent)) {
             final Player player = (Player) inventoryCloseEvent.getPlayer();
 
-            if (PlayerDataManager.getAutoSortConfigurationOfPlayer(player)) {
+            if (playerConfiguration.getAutoSortChestConfigurationOfPlayer(player)) {
 
                 if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
                     return;
                 }
 
-                InventorySorter.sortInventoryByPlayer(inventoryCloseEvent.getInventory(), player);
+                InventorySorter.sortInventoryOfPlayer(inventoryCloseEvent.getInventory(), player);
                 InventorySorter.playSortingSound(player);
                 MessageSystem
                     .sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);

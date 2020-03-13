@@ -1,19 +1,17 @@
 package io.github.graves501.chestcleanerx.config;
 
 import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
-import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
-import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.messages.Messages;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,8 +21,10 @@ import org.bukkit.inventory.ItemStack;
  * @author tom2208
  */
 @Data
-public class PluginConfiguration {
+@EqualsAndHashCode(callSuper = false)
+public class PluginConfiguration extends ConfigurationManager {
 
+    // Default settings for the plugin
     private ItemStack currentCleaningItem;
     private int cooldownTimeInSeconds = 5;
 
@@ -35,19 +35,21 @@ public class PluginConfiguration {
     private boolean isOpenInventoryEventDetectionModeActive = false;
     private boolean isBlockRefillActive = true;
     private boolean isConsumablesRefillActive = true;
-    private EvaluatorType defaultEvaluatorType = EvaluatorType.BACK_BEGIN_STRING;
-
-    private static final File pluginConfigurationFile = new File(
-        Property.PLUGIN_FILE_PATH.getString(),
-        Property.PLUGIN_YAML_CONFIG_FILE_NAME.getString());
-
-    private static final FileConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(
-        pluginConfigurationFile);
+    private boolean defaultAutoSortChestActive = false;
+    private ItemEvaluatorType defaultItemEvaluatorType = ItemEvaluatorType.BACK_BEGIN_STRING;
+    private SortingPattern defaultSortingPattern = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
 
     private static PluginConfiguration instance = new PluginConfiguration();
 
     private PluginConfiguration() {
+        this.configurationFile = new File(
+            Property.PLUGIN_FILE_PATH.getString(),
+            Property.PLUGIN_YAML_CONFIG_FILE_NAME.getString());
+
+        this.yamlConfiguration = YamlConfiguration.loadConfiguration(
+            configurationFile);
     }
+
 
     public static PluginConfiguration getInstance() {
         return instance;
@@ -61,7 +63,9 @@ public class PluginConfiguration {
         // TODO put this at end of the function?
         saveOrOverwriteConfigurationToFile();
 
-        loadDefaultAutoSorting();
+        //TODO check if this is needed
+        //loadDefaultAutoSorting();
+
         loadDefaultEvaluatorType();
         loadDefaultSortingPattern();
         loadMessages();
@@ -78,29 +82,28 @@ public class PluginConfiguration {
     }
 
     private void loadDefaultAutoSorting() {
-        if (configurationContainsProperty(Property.DEFAULT_AUTOSORTING)) {
-            PlayerDataManager
-                .setDefaultAutoSorting(getBooleanProperty(Property.DEFAULT_AUTOSORTING));
+        if (configurationContainsProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE)) {
+            this.defaultAutoSortChestActive = getBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE);
         } else {
-            setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORTING,
-                PlayerDataManager.isDefaultAutoSorting());
+            setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE, defaultAutoSortChestActive);
         }
     }
 
     private void loadDefaultEvaluatorType() {
-        if (configurationContainsProperty(Property.DEFAULT_EVALUATOR)) {
-            defaultEvaluatorType = getDefaultEvaluatorTypeFromConfiguration();
+        if (configurationContainsProperty(Property.DEFAULT_ITEM_EVALUATOR)) {
+            getStringProperty(Property.DEFAULT_ITEM_EVALUATOR);
+            this.defaultItemEvaluatorType = getDefaultEvaluatorTypeFromConfiguration();
         } else {
-            setAndSaveDefaultEvaluatorType(defaultEvaluatorType);
+            setAndSaveDefaultEvaluatorType(defaultItemEvaluatorType);
         }
     }
 
     private void loadDefaultSortingPattern() {
         if (configurationContainsProperty(Property.DEFAULT_SORTING_PATTERN)) {
-            SortingPattern.setDefaultSortingPattern(getDefaultSortingPatternFromConfiguration());
+            this.defaultSortingPattern = getDefaultSortingPatternFromConfiguration();
         } else {
             setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN,
-                SortingPattern.defaultSortingPattern.name());
+                defaultSortingPattern.name());
         }
     }
 
@@ -193,27 +196,13 @@ public class PluginConfiguration {
         }
     }
 
-    /**
-     * This method will save using the system default encoding, or possibly using UTF8.
-     */
-    public void saveOrOverwriteConfigurationToFile() {
-        try {
-            yamlConfiguration.save(pluginConfigurationFile);
-        } catch (IOException e) {
-            //TODO use logger
-            e.printStackTrace();
-        }
-    }
-
-    public void setAndSaveDefaultEvaluatorType(EvaluatorType evaluatorType) {
-        yamlConfiguration
-            .set(Property.DEFAULT_EVALUATOR.getString(), evaluatorType.name());
+    public void setAndSaveDefaultEvaluatorType(ItemEvaluatorType itemEvaluatorType) {
+        yamlConfiguration.set(Property.DEFAULT_ITEM_EVALUATOR.getString(), itemEvaluatorType.name());
         saveOrOverwriteConfigurationToFile();
     }
 
-    public EvaluatorType getDefaultEvaluatorTypeFromConfiguration() {
-        return EvaluatorType.getEvaluatorTypeByName(yamlConfiguration.getString(
-            Property.DEFAULT_EVALUATOR.getString()));
+    public ItemEvaluatorType getDefaultEvaluatorTypeFromConfiguration() {
+        return ItemEvaluatorType.getEvaluatorTypeByName(getStringProperty(Property.DEFAULT_ITEM_EVALUATOR));
     }
 
     public SortingPattern getDefaultSortingPatternFromConfiguration() {
@@ -294,63 +283,5 @@ public class PluginConfiguration {
         }
 
         return materials;
-    }
-
-    // Helper functions
-
-    public boolean setFallbackValueIfPropertyIsNotSet(final Property property,
-        final Object fallbackValue) {
-        if (!configurationContainsProperty(property)) {
-            yamlConfiguration.set(property.getString(), fallbackValue);
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean setFallbackValueIfPropertyIsNotSet(final Property property,
-        final boolean fallbackValue) {
-        if (!configurationContainsProperty(property)) {
-            yamlConfiguration.set(property.getString(), fallbackValue);
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean configurationContainsProperty(final Property property) {
-        return yamlConfiguration.contains(property.getString());
-    }
-
-    public void setAndSaveBooleanProperty(final Property property, boolean value) {
-        yamlConfiguration.set(property.getString(), value);
-        saveOrOverwriteConfigurationToFile();
-    }
-
-    public boolean getBooleanProperty(final Property property) {
-        return yamlConfiguration.getBoolean(property.getString());
-    }
-
-    public void setAndSaveStringProperty(final Property property, String value) {
-        yamlConfiguration.set(property.getString(), value);
-        saveOrOverwriteConfigurationToFile();
-    }
-
-    public String getStringProperty(final Property property) {
-        return yamlConfiguration.getString(property.getString());
-    }
-
-    public void setConfigurationProperty(final Property property, final Object propertyValue) {
-        yamlConfiguration.set(property.getString(), propertyValue);
-    }
-
-    public void setAndSaveConfigurationProperty(final Property property,
-        final Object propertyValue) {
-        yamlConfiguration.set(property.getString(), propertyValue);
-        saveOrOverwriteConfigurationToFile();
-    }
-
-    public Object getConfigurationProperty(final Property property) {
-        return yamlConfiguration.get(property.getString());
     }
 }

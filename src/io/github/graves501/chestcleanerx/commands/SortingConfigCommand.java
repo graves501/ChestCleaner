@@ -1,11 +1,11 @@
 package io.github.graves501.chestcleanerx.commands;
 
+import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.playerdata.PlayerData;
-import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
-import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
+import io.github.graves501.chestcleanerx.utils.enums.SortingConfigConstant;
 import io.github.graves501.chestcleanerx.utils.messages.MessageID;
 import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
 import io.github.graves501.chestcleanerx.utils.messages.MessageType;
@@ -23,22 +23,22 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
     private final List<String> commandList = new ArrayList<>();
     private final List<String> booleans = new ArrayList<>();
-    private final List<String> admincontrolSubCMD = new ArrayList<>();
+    private final List<String> adminControlSubCommand = new ArrayList<>();
 
     public SortingConfigCommand() {
 
-        commandList.add("pattern");
-        commandList.add("evaluator");
-        commandList.add("setautosort");
-        commandList.add("adminconfig");
+        commandList.add(SortingConfigConstant.SORTING_PATTERN.getString());
+        commandList.add(SortingConfigConstant.ITEM_EVALUATOR.getString());
+        commandList.add(SortingConfigConstant.SET_AUTO_SORT_CHEST_ACTIVE.getString());
+        commandList.add(SortingConfigConstant.ADMIN_CONFIGURATION.getString());
 
-        booleans.add("true");
-        booleans.add("false");
+        booleans.add(SortingConfigConstant.TRUE.getString());
+        booleans.add(SortingConfigConstant.FALSE.getString());
 
-        admincontrolSubCMD.add("setdefaultpattern");
-        admincontrolSubCMD.add("setdefaultevaluator");
-        admincontrolSubCMD.add("setdefaultautosort");
-
+        adminControlSubCommand.add(SortingConfigConstant.SET_DEFAULT_SORTING_PATTERN.getString());
+        adminControlSubCommand.add(SortingConfigConstant.SET_DEFAULT_ITEM_EVALUATOR.getString());
+        adminControlSubCommand
+            .add(SortingConfigConstant.SET_DEFAULT_AUTO_SORT_CHEST_ACTIVE.getString());
     }
 
     @Override
@@ -53,6 +53,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) commandSender;
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
 
         if (arguments.length == 2) {
 
@@ -78,10 +79,10 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     MessageSystem
                         .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_PATTERN_SET,
                             player);
-                    PlayerData.setSortingPattern(pattern, player);
-                    PlayerDataManager.loadPlayerData(player);
-                    return true;
+                    playerConfiguration.setAndSaveSortingPattern(pattern, player);
+                    playerConfiguration.loadPlayerData(player);
 
+                    return true;
                 }
 
                 /* EVALUATOR */
@@ -93,7 +94,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                EvaluatorType evaluator = EvaluatorType.getEvaluatorTypeByName(arguments[1]);
+                ItemEvaluatorType evaluator = ItemEvaluatorType
+                    .getEvaluatorTypeByName(arguments[1]);
 
                 if (evaluator == null) {
 
@@ -106,8 +108,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     MessageSystem
                         .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_EVALUATOR_SET,
                             player);
-                    PlayerData.setEvaluatorTyp(evaluator, player);
-                    PlayerDataManager.loadPlayerData(player);
+                    playerConfiguration.setAndSaveEvaluatorType(evaluator, player);
+                    playerConfiguration.loadPlayerData(player);
+
                     return true;
 
                 }
@@ -121,9 +124,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                boolean b = false;
+                boolean isAutoSortChestActive = false;
                 if (arguments[1].equalsIgnoreCase("true")) {
-                    b = true;
+                    isAutoSortChestActive = true;
                 } else if (!arguments[1].equalsIgnoreCase("false")) {
                     MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
                         "/sortingConfig setautosort <true/false>", player);
@@ -132,10 +135,12 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
                 MessageSystem.sendMessageToPlayer(
                     MessageType.SUCCESS,
-                    Messages.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)),
+                    Messages.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(
+                        isAutoSortChestActive)),
                     player);
-                PlayerData.setAutoSort(b, player);
-                PlayerDataManager.loadPlayerData(player);
+                playerConfiguration.setAndSaveIsAutoSortChestOnClosingActive(player,
+                    isAutoSortChestActive);
+
                 return true;
 
             } else {
@@ -155,7 +160,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                 }
 
                 /* SETDEFAULTPATTERN */
-                if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(0))) {
+                if (arguments[1].equalsIgnoreCase(adminControlSubCommand.get(0))) {
 
                     SortingPattern sortingPattern = SortingPattern
                         .getSortingPatternByName(arguments[2]);
@@ -170,16 +175,18 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     pluginConfiguration
                         .setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN, sortingPattern
                             .name());
-                    SortingPattern.defaultSortingPattern = sortingPattern;
+                    pluginConfiguration.setDefaultSortingPattern(sortingPattern);
+
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                         MessageID.NEW_DEFAULT_SORTING_PATTERN,
                         player);
                     return true;
 
                     /* SETDEFAULTEVALUATOR */
-                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(1))) {
+                } else if (arguments[1].equalsIgnoreCase(adminControlSubCommand.get(1))) {
 
-                    EvaluatorType evaluator = EvaluatorType.getEvaluatorTypeByName(arguments[2]);
+                    ItemEvaluatorType evaluator = ItemEvaluatorType
+                        .getEvaluatorTypeByName(arguments[2]);
 
                     if (evaluator == null) {
                         MessageSystem
@@ -196,27 +203,26 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     return true;
 
                     /* SETDEFAULTAUTOSORTING */
-                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(2))) {
+                } else if (arguments[1].equalsIgnoreCase(adminControlSubCommand.get(2))) {
 
-                    boolean defaultAutoSorting = false;
+                    boolean isAutoSortChestActive = false;
 
                     if (arguments[2].equalsIgnoreCase("true")) {
-                        defaultAutoSorting = true;
+                        isAutoSortChestActive = true;
                     } else if (!arguments[2].equalsIgnoreCase("false")) {
                         MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
                             "/sortingConfig adminconfig setdefaultautosort <true/false>", player);
                         return true;
                     }
 
-                    PlayerDataManager.setDefaultAutoSorting(defaultAutoSorting);
-
-                    pluginConfiguration.setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORTING,
-                        defaultAutoSorting);
+                    pluginConfiguration.setDefaultAutoSortChestActive(isAutoSortChestActive);
+                    pluginConfiguration.setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE,
+                        isAutoSortChestActive);
 
                     MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
                         Messages
                             .getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(
-                                defaultAutoSorting)),
+                                isAutoSortChestActive)),
                         player);
                     return true;
 
@@ -262,32 +268,31 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                 StringUtil
                     .copyPartialMatches(arguments[1], SortingPattern.getIDList(), tabCompletions);
             } else if (arguments[0].equalsIgnoreCase(commandList.get(1))) {
-                StringUtil.copyPartialMatches(arguments[1], EvaluatorType.getIDList(),
+                StringUtil.copyPartialMatches(arguments[1], ItemEvaluatorType.getIDList(),
                     tabCompletions);
             } else if (arguments[0].equalsIgnoreCase(commandList.get(2))) {
                 StringUtil.copyPartialMatches(arguments[1], booleans, tabCompletions);
             } else if (arguments[0].equalsIgnoreCase(commandList.get(3))) {
-                StringUtil.copyPartialMatches(arguments[1], admincontrolSubCMD, tabCompletions);
+                StringUtil.copyPartialMatches(arguments[1], adminControlSubCommand, tabCompletions);
             }
 
         } else if (arguments.length == 3) {
             if (arguments[0].equalsIgnoreCase(commandList.get(3))) {
-                if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(0))) {
+                if (arguments[1].equalsIgnoreCase(adminControlSubCommand.get(0))) {
                     StringUtil
                         .copyPartialMatches(arguments[2], SortingPattern.getIDList(),
                             tabCompletions);
-                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(1))) {
+                } else if (arguments[1].equalsIgnoreCase(adminControlSubCommand.get(1))) {
                     StringUtil
-                        .copyPartialMatches(arguments[2], EvaluatorType.getIDList(),
+                        .copyPartialMatches(arguments[2], ItemEvaluatorType.getIDList(),
                             tabCompletions);
-                } else if (arguments[1].equalsIgnoreCase(admincontrolSubCMD.get(2))) {
+                } else if (arguments[1].equalsIgnoreCase(adminControlSubCommand.get(2))) {
                     StringUtil.copyPartialMatches(arguments[2], booleans, tabCompletions);
                 }
             }
         }
 
         return tabCompletions;
-
     }
 
 }

@@ -46,11 +46,4 @@ public enum SortingPattern {
 
         return list;
     }
-
-    public static SortingPattern defaultSortingPattern = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
-
-    public static void setDefaultSortingPattern(SortingPattern sortingPattern) {
-        defaultSortingPattern = sortingPattern;
-    }
-
 }

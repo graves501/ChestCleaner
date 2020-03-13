@@ -2,7 +2,7 @@ package io.github.graves501.chestcleanerx.sorting;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.evaluator.Evaluator;
-import io.github.graves501.chestcleanerx.sorting.evaluator.EvaluatorType;
+import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import java.util.List;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,8 +10,8 @@ public class Quicksort {
 
     private List<ItemStack> items;
 
-    public Evaluator defaultEvaluator = EvaluatorType
-        .getEvaluator(PluginConfiguration.getInstance().getDefaultEvaluatorType());
+    private Evaluator defaultEvaluator = ItemEvaluatorType
+        .getEvaluator(PluginConfiguration.getInstance().getDefaultItemEvaluatorType());
 
     public Quicksort(List<ItemStack> items, Evaluator evaluator) {
         this.items = items;

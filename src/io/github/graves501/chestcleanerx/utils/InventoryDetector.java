@@ -35,7 +35,7 @@ public class InventoryDetector {
      * @return Returns the inventory of the container of the block, if its has no container it
      * returns {@code null}.
      */
-    public static Inventory getInventoryFormBlock(final Block block) {
+    public static Inventory getInventoryFromBlock(final Block block) {
         if (block.getState() instanceof InventoryHolder) {
             InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
             return inventoryHolder.getInventory();
@@ -59,7 +59,7 @@ public class InventoryDetector {
      * returns {@code null}.
      */
     public static Inventory getInventoryFromLocation(Location location, World world) {
-        return getInventoryFormBlock(world.getBlockAt(location));
+        return getInventoryFromBlock(world.getBlockAt(location));
     }
 
     /**

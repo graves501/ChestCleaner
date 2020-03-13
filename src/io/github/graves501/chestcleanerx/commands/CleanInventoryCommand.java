@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.commands;
 
+import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.playerdata.PlayerDataManager;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
@@ -31,6 +31,7 @@ public class CleanInventoryCommand implements CommandExecutor {
         final String[] arguments) {
 
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
 
         Player player = (Player) commandSender;
 
@@ -68,8 +69,8 @@ public class CleanInventoryCommand implements CommandExecutor {
 
                 // if the block has no inventory
                 if (!InventorySorter.sortPlayerBlock(block,
-                    player, PlayerDataManager.getSortingPatternOfPlayer(player),
-                    PlayerDataManager.getEvaluatorTypOfPlayer(
+                    player, playerConfiguration.getSortingPatternOfPlayer(player),
+                    playerConfiguration.getEvaluatorTypOfPlayer(
                         player))) {
 
                     MessageSystem.sendMessageToPlayer(MessageType.ERROR,
@@ -141,8 +142,8 @@ public class CleanInventoryCommand implements CommandExecutor {
             }
 
             if (!InventorySorter.sortPlayerBlock(block,
-                player, PlayerDataManager.getSortingPatternOfPlayer(player),
-                PlayerDataManager.getEvaluatorTypOfPlayer(
+                player, playerConfiguration.getSortingPatternOfPlayer(player),
+                playerConfiguration.getEvaluatorTypOfPlayer(
                     player))) {
 
                 if (isPlayer) {
