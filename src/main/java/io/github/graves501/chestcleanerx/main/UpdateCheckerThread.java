@@ -1,10 +1,9 @@
 package io.github.graves501.chestcleanerx.main;
 
 import io.github.graves501.chestcleanerx.listeners.SortingListener;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,9 +26,9 @@ public class UpdateCheckerThread {
     private String spigotPluginVersion;
 
     private static final int ID = 40313;
-    private static final Permission UPDATE_PERM = new Permission("chestcleaner.update",
+    private static final Permission UPDATE_PERMISSION = new Permission("chestcleaner.update",
         PermissionDefault.TRUE);
-    private static final long CHECK_INTERVAL = 12_000; //In ticks.
+    private static final long CHECK_INTERVAL_IN_TICKS = 12_000;
 
     public UpdateCheckerThread(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
@@ -60,8 +59,8 @@ public class UpdateCheckerThread {
                         return;
                     }
 
-                    MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-                        Messages.getMessage(MessageID.NEW_UPDATE_AVAILABLE));
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.SUCCESS,
+                        InGameMessage.NEW_UPDATE_AVAILABLE);
 
                     //Register the PlayerJoinEvent
                     Bukkit.getScheduler().runTask(javaPlugin,
@@ -69,17 +68,18 @@ public class UpdateCheckerThread {
                             @EventHandler(priority = EventPriority.MONITOR)
                             public void onPlayerJoin(final PlayerJoinEvent event) {
                                 final Player player = event.getPlayer();
-                                if (!player.hasPermission(UPDATE_PERM)) {
+                                if (!player.hasPermission(UPDATE_PERMISSION)) {
                                     return;
                                 }
-                                MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                    Messages.getMessage(MessageID.NEW_UPDATE_AVAILABLE), player);
+                                InGameMessageHandler
+                                    .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                        InGameMessage.NEW_UPDATE_AVAILABLE);
                             }
                         }, javaPlugin));
 
                     cancel(); //Cancel the runnable as an update has been found.
                 });
             }
-        }.runTaskTimer(javaPlugin, 0, CHECK_INTERVAL);
+        }.runTaskTimer(javaPlugin, 0, CHECK_INTERVAL_IN_TICKS);
     }
 }

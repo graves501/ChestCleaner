@@ -5,10 +5,9 @@ import io.github.graves501.chestcleanerx.utils.enums.Permission;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.enums.TimerCommandConstant;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +34,8 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         final String[] arguments) {
 
         if (!(commandSender instanceof Player)) {
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.NOT_A_PLAYER);
+            InGameMessageHandler
+                .sendConsoleMessage(InGameMessageType.ERROR, InGameMessage.NOT_A_PLAYER);
             return true;
         }
 
@@ -55,9 +55,10 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
                             pluginConfiguration
                                 .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, true);
                         }
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_ACTIVATED,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                InGameMessage.COOLDOWN_TIMER_ACTIVATE
+                            );
                         return true;
 
                     } else if (arguments[1]
@@ -67,14 +68,16 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
                             pluginConfiguration
                                 .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, false);
                         }
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_DEACTIVATED,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                InGameMessage.COOLDOWN_TIMER_INACTIVE
+                            );
                         return true;
 
                     } else {
-                        MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                            PlayerMessage.TIMER_SYNTAX_ERROR.getString(), player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                                PlayerMessage.TIMER_SYNTAX_ERROR.getString());
                         return true;
                     }
 
@@ -86,37 +89,38 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
                     if (pluginConfiguration.getCooldownTimeInSeconds() != cooldownTimeInSeconds) {
                         pluginConfiguration.setAndSaveCooldownTime(cooldownTimeInSeconds);
                     }
-
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        Messages
-                            .getMessage(MessageID.TIMER_NEW_TIME,
-                                TimerCommandConstant.TIME_TARGET.getString(),
-                                String.valueOf(
-                                    cooldownTimeInSeconds)),
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.COOLDOWN_TIMER_NEW_TIME_SET,
+                        String.valueOf(cooldownTimeInSeconds));
+//                        Messages
+//                            .getMessage(InGameMessage.COOLDOWN_TIMER_NEW_TIME_SET,
+//                                TimerCommandConstant.TIME_TARGET.getString(),
+//                                String.valueOf(
+//                                    cooldownTimeInSeconds))
+//                    );
                     return true;
 
                 } else {
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                            PlayerMessage.TIMER_SYNTAX_ERROR.getString(),
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                            PlayerMessage.TIMER_SYNTAX_ERROR.getString()
+                        );
                     return true;
                 }
 
             } else {
-                MessageSystem
-                    .sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                        PlayerMessage.TIMER_SYNTAX_ERROR.getString(),
-                        player);
+                InGameMessageHandler
+                    .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                        PlayerMessage.TIMER_SYNTAX_ERROR.getString()
+                    );
                 return true;
             }
 
         } else {
-            MessageSystem
-                .sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                    Permission.COOLDOWN_TIMER.getString(),
-                    player);
+            InGameMessageHandler
+                .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                    Permission.COOLDOWN_TIMER.getString()
+                );
             return true;
         }
 

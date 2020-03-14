@@ -2,10 +2,9 @@ package io.github.graves501.chestcleanerx.timer;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.utils.enums.Permission;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import java.util.ArrayList;
 import lombok.Data;
 import org.bukkit.entity.Player;
@@ -65,7 +64,9 @@ public class CooldownTimer {
         if (isCoolDownTimerActive() && !playerHasTimerNoEffectPermission(player)) {
 
             if (isPlayerOnCooldownTimersList(player)) {
-                sendSortingOnCooldownMessageToPlayer(player);
+                InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.ERROR,
+                    InGameMessage.SORTING_ON_COOLDOWN,
+                    String.valueOf(getCooldownTimeForPlayer(player)));
                 return false;
             }
 
@@ -73,14 +74,6 @@ public class CooldownTimer {
         }
 
         return true;
-    }
-
-    private static void sendSortingOnCooldownMessageToPlayer(final Player player) {
-        final String sortingOnCooldownMessage = Messages.getMessage(
-            MessageID.SORTING_ON_COOLDOWN, "%time",
-            String.valueOf(getCooldownTimeForPlayer(player)));
-
-        MessageSystem.sendMessageToPlayer(MessageType.ERROR, sortingOnCooldownMessage, player);
     }
 
     private static boolean isCoolDownTimerActive() {

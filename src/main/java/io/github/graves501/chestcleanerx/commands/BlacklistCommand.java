@@ -2,14 +2,13 @@ package io.github.graves501.chestcleanerx.commands;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.utils.MaterialListUtils;
+import io.github.graves501.chestcleanerx.utils.MaterialBlacklistUtils;
 import io.github.graves501.chestcleanerx.utils.enums.BlacklistConstant;
 import io.github.graves501.chestcleanerx.utils.enums.Permission;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
@@ -62,7 +61,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
             //
             // If false is returned, then the "usage" plugin.yml entry for this command (if defined) will be sent to the player.
 
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.NOT_A_PLAYER);
+            InGameMessageHandler
+                .sendConsoleMessage(InGameMessageType.ERROR, InGameMessage.NOT_A_PLAYER);
             return VALID_COMMAND;
         }
 
@@ -103,10 +103,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         material = Material.getMaterial(arguments[2]);
 
                         if (material == null) {
-                            MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                Messages.getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
-                                    arguments[2]),
-                                player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                    InGameMessage.NO_MATERIAL_FOUND, arguments[2]);
+
                             return VALID_COMMAND;
                         }
 
@@ -115,29 +115,27 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         material = getMaterialFromPlayerHand(player);
 
                         if (material.equals(Material.AIR)) {
-                            MessageSystem
-                                .sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM,
-                                    player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                    InGameMessage.ITEM_IN_HAND_REQUIRED
+                                );
                             return VALID_COMMAND;
                         }
 
                     }
 
                     if (materialList.contains(material)) {
-                        MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                            Messages.getMessage(MessageID.IS_ALREADY_ON_BLACKLIST, "%material",
-                                material.name()),
-                            player);
+                        InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.ERROR,
+                            InGameMessage.IS_ALREADY_ON_BLACKLIST, material.name());
+
                         return VALID_COMMAND;
                     }
 
                     materialList.add(material);
                     saveBlacklistInConfiguration(listNumber);
 
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        Messages
-                            .getMessage(MessageID.SET_TO_BLACKLIST, "%material", material.name()),
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.ADDED_TO_BLACKLIST, material.name());
                     return VALID_COMMAND;
 
                 } else if (arguments[1]
@@ -161,20 +159,17 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                                     material = materialList.get(index - 1);
 
                                 } else {
-                                    MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                        Messages.getMessage(
-                                            MessageID.INDEX_OUT_OF_BOUNDS, "%biggestindex",
-                                            String.valueOf(index)),
-                                        player);
+                                    InGameMessageHandler
+                                        .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                            InGameMessage.INDEX_OUT_OF_BOUNDS,
+                                            String.valueOf(index));
                                     return VALID_COMMAND;
                                 }
 
                             } catch (NumberFormatException ex) {
-
-                                MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                    Messages.getMessage(MessageID.NO_MATERIAL_FOUND, "%material",
-                                        arguments[2]),
-                                    player);
+                                InGameMessageHandler
+                                    .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                        InGameMessage.NO_MATERIAL_FOUND, arguments[2]);
                                 return VALID_COMMAND;
 
                             }
@@ -186,36 +181,34 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                         material = getMaterialFromPlayerHand(player);
 
                         if (material == null) {
-                            MessageSystem
-                                .sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM,
-                                    player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                    InGameMessage.ITEM_IN_HAND_REQUIRED
+                                );
                             return VALID_COMMAND;
                         }
                     }
 
                     if (!materialList.contains(material)) {
-                        MessageSystem.sendMessageToPlayer(MessageType.ERROR, Messages
-                                .getMessage(MessageID.BLACKLIST_DOESNT_CONTAIN, "%material",
-                                    material.name()),
-                            player);
+                        InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.ERROR,
+                            InGameMessage.BLACKLIST_DOESNT_CONTAIN, material.name());
                         return VALID_COMMAND;
                     }
 
                     materialList.remove(material);
                     saveBlacklistInConfiguration(listNumber);
 
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        Messages.getMessage(MessageID.REMOVED_FORM_BLACKLIST, "%material",
-                            material.name()),
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.REMOVED_FROM_BLACKLIST, material.name());
                     return VALID_COMMAND;
 
                 } else if (arguments[1].equalsIgnoreCase(BlacklistConstant.LIST.getString())) {
 
                     if (materialList.isEmpty()) {
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.ERROR, MessageID.BLACKLIST_IS_EMPTY,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                InGameMessage.BLACKLIST_IS_EMPTY
+                            );
                         return VALID_COMMAND;
                     }
 
@@ -230,26 +223,23 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                         } catch (NumberFormatException ex) {
 
-                            MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                Messages
-                                    .getMessage(MessageID.INVALID_INPUT_FOR_INTEGER, "%index",
-                                        arguments[1]),
-                                player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                    InGameMessage.INVALID_INPUT_FOR_INTEGER, arguments[1]);
                             return VALID_COMMAND;
 
                         }
 
                         if (!(page > 0 && page <= pages)) {
-                            MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                Messages.getMessage(MessageID.INVALID_PAGE_NUMBER, "%range",
-                                    "1 - " + pages),
-                                player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                    InGameMessage.INVALID_PAGE_NUMBER, "1 - " + pages);
                             return VALID_COMMAND;
                         }
 
                     }
 
-                    MaterialListUtils
+                    MaterialBlacklistUtils
                         .sendListPageToPlayer(materialList, player, page, LIST_LENGTH, pages);
                     return VALID_COMMAND;
 
@@ -258,9 +248,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
                     materialList.clear();
                     saveBlacklistInConfiguration(listNumber);
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.BLACKLIST_CLEARED,
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.BLACKLIST_CLEARED
+                        );
                     return VALID_COMMAND;
 
                 } else {
@@ -274,10 +265,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
             }
 
         } else {
-            MessageSystem
-                .sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                    Permission.BLACKLIST.getString(),
-                    player);
+            InGameMessageHandler
+                .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                    Permission.BLACKLIST.getString()
+                );
             return VALID_COMMAND;
         }
 
@@ -307,10 +298,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     }
 
     private void sendSyntaxErrorMessageToPlayer(final Player player) {
-        MessageSystem
-            .sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                PlayerMessage.BLACKLIST_SYNTAX_ERROR.getString(),
-                player);
+        InGameMessageHandler
+            .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                PlayerMessage.BLACKLIST_SYNTAX_ERROR.getString()
+            );
     }
 
     private void saveBlacklistInConfiguration(final int blacklist) {

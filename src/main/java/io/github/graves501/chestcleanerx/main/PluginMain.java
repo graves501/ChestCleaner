@@ -17,20 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class PluginMain extends JavaPlugin {
 
-    /**
-     * PluginMain needs to have a default constructor,
-     * otherwise the plugin cannot be initialized.
-     * Therefore a private constructor cannot be used.
-     */
-    private static PluginMain instance;
-
-    public static PluginMain getInstance() {
-        return instance;
-    }
-
     @Override
     public void onEnable() {
-        instance = this;
         PluginConfiguration.getInstance().loadConfiguration();
         enablePluginCommands();
         registerEventListener();

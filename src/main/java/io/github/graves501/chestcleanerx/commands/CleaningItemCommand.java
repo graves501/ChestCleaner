@@ -2,10 +2,9 @@ package io.github.graves501.chestcleanerx.commands;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,16 +66,15 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     }
 
+                    //TODO find out what this line actually does
                     newCleaningItemName = newCleaningItemName.replace("&", "�");
+
                     if (isPlayer) {
-                        MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                            Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname",
-                                newCleaningItemName),
-                            player);
+                        InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.NEW_CLEANING_ITEM_NAME, newCleaningItemName);
                     } else {
-                        MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-                            Messages.getMessage(MessageID.NEW_ITEM_NAME, "%itemname",
-                                newCleaningItemName));
+                        InGameMessageHandler.sendConsoleMessage(InGameMessageType.SUCCESS,
+                            InGameMessage.NEW_CLEANING_ITEM_NAME, newCleaningItemName);
                     }
 
                     final ItemStack newCleaningItem = pluginConfiguration.getCurrentCleaningItem();
@@ -93,8 +91,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                     }
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.rename", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.rename");
                     return true;
                 }
                 return true;
@@ -131,18 +130,21 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                     pluginConfiguration.setAndSaveCleaningItem(currentCleaningItem);
 
                     if (isPlayer) {
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_ITEM_LORE,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                InGameMessage.NEW_CLEANING_ITEM_LORE
+                            );
                     } else {
-                        MessageSystem
-                            .sendConsoleMessage(MessageType.SUCCESS, MessageID.NEW_ITEM_LORE);
+                        InGameMessageHandler
+                            .sendConsoleMessage(InGameMessageType.SUCCESS,
+                                InGameMessage.NEW_CLEANING_ITEM_LORE);
                     }
                     return true;
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.setlore", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.setlore");
                     return true;
                 }
 
@@ -155,10 +157,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
             /* RENAME SUBCOMMAND ERRORS */
             if (arguments[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
                 if (isPlayer) {
-                    MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                        "/cleaningItem rename <name>", player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                        "/cleaningItem rename <name>");
                 } else {
-                    MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.SYNTAX_ERROR,
                         "/cleaningItem rename <name>");
                 }
                 return true;
@@ -178,19 +180,20 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                         pluginConfiguration.setCurrentCleaningItem(cleaningItem);
 
-                        MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                            Messages.getMessage(MessageID.NEW_ITEM, "%newitem",
-                                cleaningItem.toString()), player);
+                        InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.NEW_CLEANING_ITEM_SET, cleaningItem.toString());
                         return true;
 
                     } else {
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM, player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player,
+                                InGameMessageType.ERROR, InGameMessage.ITEM_IN_HAND_REQUIRED);
                         return true;
                     }
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.setitem", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.setitem");
                     return true;
                 }
 
@@ -202,13 +205,15 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                     player.getInventory()
                         .addItem(PluginConfiguration.getInstance().getCurrentCleaningItem());
 
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.GOT_ITEM, player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player,
+                            InGameMessageType.SUCCESS, InGameMessage.RECEIVED_CLEANING_ITEM);
                     return true;
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.get", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.get");
                     return true;
                 }
 
@@ -234,29 +239,33 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                                 isCleaningItemActive);
 
                         if (isCleaningItemActive) {
-                            MessageSystem
-                                .sendMessageToPlayer(MessageType.SUCCESS, MessageID.ITEM_ACTIVATED,
-                                    player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                    InGameMessage.CLEANING_ITEM_ACTIVE
+                                );
                         } else {
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                MessageID.ITEM_DEACTIVATED, player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                    InGameMessage.CLEANING_ITEM_INACTIVE);
                         }
                         return true;
 
                     } else {
                         if (isPlayer) {
-                            MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                                "/cleaningItem setactive <true/false>", player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                                    "/cleaningItem setactive <true/false>");
                         } else {
-                            MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
+                            InGameMessageHandler.sendConsoleMessage(InGameMessageType.SYNTAX_ERROR,
                                 "/cleaningItem setactive <true/false>");
                         }
                         return true;
                     }
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.setactive", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.setactive");
                     return true;
                 }
 
@@ -277,25 +286,29 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                         pluginConfiguration.setDurabilityLossActive(durabilityLoss);
 
                         if (pluginConfiguration.isDurabilityLossActive()) {
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                MessageID.DURABILITYLOSS_ACTIVATED,
-                                player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                    InGameMessage.DURABILITYLOSS_ACTIVE, InGameMessage.TRUE.get()
+                                );
                         } else {
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                MessageID.DURABILITYLOSS_DEACTIVATED,
-                                player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                    InGameMessage.DURABILITYLOSS_ACTIVE, InGameMessage.FALSE.get()
+                                );
                         }
                         return true;
 
                     } else {
-                        MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                            "/cleaningItem setactive <true/false>", player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                                "/cleaningItem setactive <true/false>");
                         return true;
                     }
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.durabilityloss", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.durabilityloss");
                     return true;
                 }
 
@@ -304,21 +317,19 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.give") || !isPlayer) {
 
-                    Player p2 = Bukkit.getPlayer(arguments[1]);
+                    Player otherPlayer = Bukkit.getPlayer(arguments[1]);
 
-                    if (p2 != null) {
-
-                        p2.getInventory()
+                    if (otherPlayer != null) {
+                        otherPlayer.getInventory()
                             .addItem(pluginConfiguration.getCurrentCleaningItem());
                         if (isPlayer) {
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                Messages.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername",
-                                    p2.getName()),
-                                player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                    InGameMessage.PLAYER_RECEIVED_CLEANING_ITEM,
+                                    otherPlayer.getName());
                         } else {
-                            MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-                                Messages.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername",
-                                    player.getName()));
+                            InGameMessageHandler.sendConsoleMessage(InGameMessageType.SUCCESS,
+                                InGameMessage.PLAYER_RECEIVED_CLEANING_ITEM, player.getName());
                         }
                         return true;
 
@@ -326,37 +337,38 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                         if (arguments[1].equalsIgnoreCase("@a")) {
 
-                            Object[] players = Bukkit.getOnlinePlayers().toArray();
+                            // TODO iterate via collection
+                            Object[] onlinePlayers = Bukkit.getOnlinePlayers().toArray();
 
-                            for (Object p : players) {
-                                Player pl = (Player) p;
-                                pl.getInventory()
+                            for (Object onlinePlayer : onlinePlayers) {
+                                Player tempPlayer = (Player) onlinePlayer;
+                                tempPlayer.getInventory()
                                     .addItem(pluginConfiguration.getCurrentCleaningItem());
                                 if (isPlayer) {
-                                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                        Messages.getMessage(
-                                            MessageID.PLAYER_GOT_ITEM, "%playername", pl.getName()),
-                                        player);
+                                    InGameMessageHandler
+                                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                            InGameMessage.PLAYER_IS_NOT_ONLINE, tempPlayer
+                                                .getName());
                                 }
                             }
                             return true;
                         }
 
                         if (isPlayer) {
-                            MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                                Messages.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername",
-                                    arguments[1]), p2);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(otherPlayer, InGameMessageType.ERROR,
+                                    InGameMessage.PLAYER_IS_NOT_ONLINE, arguments[1]);
                         } else {
-                            MessageSystem.sendConsoleMessage(MessageType.ERROR,
-                                Messages.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername",
-                                    arguments[1]));
+                            InGameMessageHandler.sendConsoleMessage(InGameMessageType.ERROR,
+                                InGameMessage.PLAYER_IS_NOT_ONLINE, arguments[1]);
                         }
                         return true;
                     }
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.cleaningItem.give", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.cleaningItem.give");
                     return true;
                 }
 
@@ -369,10 +381,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                     pluginConfiguration
                         .setOpenInventoryEventDetectionModeActive(eventDetectionModeActive);
 
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, Messages.getMessage(
-                        MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(
-                            eventDetectionModeActive)),
-                        player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.SET_INVENTORY_DETECTION_MODE,
+                            String.valueOf(eventDetectionModeActive));
+
                     pluginConfiguration
                         .setAndSaveBooleanProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE,
                             eventDetectionModeActive);
@@ -380,8 +393,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                 } else {
                     if (isPlayer) {
-                        MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                            "chestcleaner.cmd.cleaningItem.seteventdetectionmode", player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                                "chestcleaner.cmd.cleaningItem.seteventdetectionmode");
                     }
                     return true;
                 }
@@ -389,11 +403,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
             } else {
 
                 if (isPlayer) {
-                    MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                        "/cleaningItem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                        "/cleaningItem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>"
+                    );
                 } else {
-                    MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.SYNTAX_ERROR,
                         "/cleaningItem <setactive/setdurabilityloss/give/rename/setlore>");
                 }
                 return true;
@@ -401,11 +415,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
         } else {
             if (isPlayer) {
-                MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                    "/cleaningItem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
-                    player);
+                InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                    "/cleaningItem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>"
+                );
             } else {
-                MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
+                InGameMessageHandler.sendConsoleMessage(InGameMessageType.SYNTAX_ERROR,
                     "/cleaningItem <setactive/setdurabilityloss/give/rename/setlore>");
             }
             return true;

@@ -6,10 +6,9 @@ import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.enums.SortingConfigConstant;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -61,7 +60,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
             if (arguments[0].equalsIgnoreCase(commandList.get(0))) {
 
                 if (!player.hasPermission("chestcleaner.cmd.sortingConfig.pattern")) {
-                    MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.MISSING_PERMISSION,
                         "chestcleaner.cmd.sortingConfig.pattern");
                     return true;
                 }
@@ -70,15 +69,17 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
                 if (pattern == null) {
 
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID, player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                            InGameMessage.NO_PATTERN_ID);
                     return true;
 
                 } else {
 
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_PATTERN_SET,
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.NEW_PATTERN_SET
+                        );
                     playerConfiguration.setAndSaveSortingPattern(pattern, player);
                     playerConfiguration.loadPlayerData(player);
 
@@ -89,7 +90,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
             } else if (arguments[0].equalsIgnoreCase(commandList.get(1))) {
 
                 if (!player.hasPermission("chestcleaner.cmd.sortingConfig.evaluator")) {
-                    MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.MISSING_PERMISSION,
                         "chestcleaner.cmd.sortingConfig.evaluator");
                     return true;
                 }
@@ -99,15 +100,17 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
                 if (evaluator == null) {
 
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_EVALUATOR_ID, player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                            InGameMessage.NO_EVALUATOR_ID);
                     return true;
 
                 } else {
 
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_EVALUATOR_SET,
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.NEW_EVALUATOR_SET
+                        );
                     playerConfiguration.setAndSaveEvaluatorType(evaluator, player);
                     playerConfiguration.loadPlayerData(player);
 
@@ -119,7 +122,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
             } else if (arguments[0].equalsIgnoreCase(commandList.get(2))) {
 
                 if (!player.hasPermission("chestcleaner.cmd.sortingConfig.setautosort")) {
-                    MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.MISSING_PERMISSION,
                         "chestcleaner.cmd.sortingConfig.setautosort");
                     return true;
                 }
@@ -128,16 +131,14 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                 if (arguments[1].equalsIgnoreCase("true")) {
                     isAutoSortChestActive = true;
                 } else if (!arguments[1].equalsIgnoreCase("false")) {
-                    MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                        "/sortingConfig setautosort <true/false>", player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                        "/sortingConfig setautosort <true/false>");
                     return true;
                 }
 
-                MessageSystem.sendMessageToPlayer(
-                    MessageType.SUCCESS,
-                    Messages.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(
-                        isAutoSortChestActive)),
-                    player);
+                InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                    InGameMessage.AUTOSORT_WAS_SET, String.valueOf(isAutoSortChestActive));
+
                 playerConfiguration.setAndSaveIsAutoSortChestOnClosingActive(player,
                     isAutoSortChestActive);
 
@@ -154,8 +155,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
             if (arguments[0].equalsIgnoreCase(commandList.get(3))) {
 
                 if (!player.hasPermission("chestcleaner.cmd.sorting.config.admincontrol")) {
-                    MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                        "chestcleaner.cmd.sorting.config.admincontrol", player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                            "chestcleaner.cmd.sorting.config.admincontrol");
                     return true;
                 }
 
@@ -166,9 +168,10 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         .getSortingPatternByName(arguments[2]);
 
                     if (sortingPattern == null) {
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_PATTERN_ID,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                InGameMessage.NO_PATTERN_ID
+                            );
                         return true;
                     }
 
@@ -177,9 +180,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                             .name());
                     pluginConfiguration.setDefaultSortingPattern(sortingPattern);
 
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        MessageID.NEW_DEFAULT_SORTING_PATTERN,
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.NEW_DEFAULT_SORTING_PATTERN
+                    );
                     return true;
 
                     /* SETDEFAULTEVALUATOR */
@@ -189,17 +192,19 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         .getEvaluatorTypeByName(arguments[2]);
 
                     if (evaluator == null) {
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.ERROR, MessageID.NO_EVALUATOR_ID,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                                InGameMessage.NO_EVALUATOR_ID
+                            );
                         return true;
                     }
 
                     pluginConfiguration.setAndSaveDefaultEvaluatorType(evaluator);
 
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR,
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.NEW_DEFAULT_EVALUATOR
+                        );
                     return true;
 
                     /* SETDEFAULTAUTOSORTING */
@@ -210,26 +215,26 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                     if (arguments[2].equalsIgnoreCase("true")) {
                         isAutoSortChestActive = true;
                     } else if (!arguments[2].equalsIgnoreCase("false")) {
-                        MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                            "/sortingConfig adminconfig setdefaultautosort <true/false>", player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                                "/sortingConfig adminconfig setdefaultautosort <true/false>");
                         return true;
                     }
 
                     pluginConfiguration.setDefaultAutoSortChestActive(isAutoSortChestActive);
-                    pluginConfiguration.setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE,
-                        isAutoSortChestActive);
+                    pluginConfiguration
+                        .setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE,
+                            isAutoSortChestActive);
 
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        Messages
-                            .getMessage(MessageID.DEFAULT_AUTOSORT, "%boolean", String.valueOf(
-                                isAutoSortChestActive)),
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.DEFAULT_AUTOSORT_CHEST_ACTIVE,
+                        String.valueOf(isAutoSortChestActive));
                     return true;
 
                 } else {
-                    MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-                        "/sortingConfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>",
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+                        "/sortingConfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>"
+                    );
                     return true;
                 }
 
@@ -246,8 +251,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
     }
 
     private void sendSyntaxErrorMessage(final Player player) {
-        MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-            "/sortingConfig <pattern/evaluator/setautosort/adminconfig>", player);
+        InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SYNTAX_ERROR,
+            "/sortingConfig <pattern/evaluator/setautosort/adminconfig>");
     }
 
     @Override

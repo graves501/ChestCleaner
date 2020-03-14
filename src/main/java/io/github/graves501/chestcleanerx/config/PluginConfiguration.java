@@ -1,19 +1,21 @@
 package io.github.graves501.chestcleanerx.config;
 
 import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
+import io.github.graves501.chestcleanerx.main.PluginMain;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * This class includes all methods to save and read game data (variables for this plugin).
@@ -23,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class PluginConfiguration extends ConfigurationManager {
+
+    private final Logger logger = JavaPlugin.getPlugin(PluginMain.class).getLogger();
 
     // Default settings for the plugin
     private ItemStack currentCleaningItem;
@@ -68,7 +72,6 @@ public class PluginConfiguration extends ConfigurationManager {
 
         loadDefaultEvaluatorType();
         loadDefaultSortingPattern();
-        loadMessages();
         loadCleaningItem();
         loadIsCleaningItemActive();
         loadIsCooldownTimerActive();
@@ -83,9 +86,11 @@ public class PluginConfiguration extends ConfigurationManager {
 
     private void loadDefaultAutoSorting() {
         if (configurationContainsProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE)) {
-            this.defaultAutoSortChestActive = getBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE);
+            this.defaultAutoSortChestActive = getBooleanProperty(
+                Property.DEFAULT_AUTOSORT_CHEST_ACTIVE);
         } else {
-            setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE, defaultAutoSortChestActive);
+            setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE,
+                defaultAutoSortChestActive);
         }
     }
 
@@ -107,16 +112,9 @@ public class PluginConfiguration extends ConfigurationManager {
         }
     }
 
-    private void loadMessages() {
-        if (configurationContainsProperty(Property.MESSAGES)) {
-            Messages.setMessageList(getMessagesFromConfiguration());
-        } else {
-            Messages.setMessageList(null);
-        }
-    }
-
     private void loadCleaningItem() {
-        if (configurationContainsProperty(Property.CLEANING_ITEM)) {
+        if (configurationContainsProperty(Property.CLEANING_ITEM)
+            && getCleaningItemFromConfiguration() != null) {
             this.currentCleaningItem = getCleaningItemFromConfiguration();
         } else {
             this.currentCleaningItem = new ItemStack(Material.IRON_HOE);
@@ -197,12 +195,14 @@ public class PluginConfiguration extends ConfigurationManager {
     }
 
     public void setAndSaveDefaultEvaluatorType(ItemEvaluatorType itemEvaluatorType) {
-        yamlConfiguration.set(Property.DEFAULT_ITEM_EVALUATOR.getString(), itemEvaluatorType.name());
+        yamlConfiguration
+            .set(Property.DEFAULT_ITEM_EVALUATOR.getString(), itemEvaluatorType.name());
         saveOrOverwriteConfigurationToFile();
     }
 
     public ItemEvaluatorType getDefaultEvaluatorTypeFromConfiguration() {
-        return ItemEvaluatorType.getEvaluatorTypeByName(getStringProperty(Property.DEFAULT_ITEM_EVALUATOR));
+        return ItemEvaluatorType
+            .getEvaluatorTypeByName(getStringProperty(Property.DEFAULT_ITEM_EVALUATOR));
     }
 
     public SortingPattern getDefaultSortingPatternFromConfiguration() {

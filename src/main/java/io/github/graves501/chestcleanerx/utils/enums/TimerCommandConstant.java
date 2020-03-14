@@ -4,8 +4,7 @@ public enum TimerCommandConstant {
     SET_ACTIVE("setActive"),
     SET_TIME("setTime"),
     TRUE("true"),
-    FALSE("false"),
-    TIME_TARGET("%time");
+    FALSE("false");
 
     private String stringValue;
 

@@ -3,13 +3,14 @@ package io.github.graves501.chestcleanerx.listeners;
 import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
 import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
+import io.github.graves501.chestcleanerx.main.PluginMain;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
+import java.util.logging.Logger;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -19,15 +20,23 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Tom2208
+ * @author graves501
  */
 public class SortingListener implements org.bukkit.event.Listener {
 
+    final Logger logger = JavaPlugin.getPlugin(PluginMain.class).getLogger();
 
     @EventHandler
     private void onRightClick(PlayerInteractEvent playerInteractEvent) {
+
+        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+
+        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
 
         final Player player = playerInteractEvent.getPlayer();
         ItemStack itemMainHand = player.getInventory().getItemInMainHand().clone();
@@ -38,16 +47,17 @@ public class SortingListener implements org.bukkit.event.Listener {
         itemOffHand.setDurability((short) 0);
         itemOffHand.setAmount(1);
 
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+        boolean isCleaningItemInMainHand = itemMainHand.equals(currentCleaningItem);
+        logger.info("isCleaningItemInMainHand: " + isCleaningItemInMainHand);
 
-        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+        boolean isCleaningItemInOffHand = itemOffHand.equals(currentCleaningItem);
+        logger.info("isCleaningItemInOffHand: " + isCleaningItemInOffHand);
 
         if (playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
             || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-            boolean isCleaningItemInMainHand = itemMainHand.equals(currentCleaningItem);
-            boolean isCleaningItemInOffHand = itemOffHand.equals(currentCleaningItem);
+//            boolean isCleaningItemInMainHand = itemMainHand.equals(currentCleaningItem);
+//            boolean isCleaningItemInOffHand = itemOffHand.equals(currentCleaningItem);
 
             // TODO clean up
             // TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
@@ -70,9 +80,10 @@ public class SortingListener implements org.bukkit.event.Listener {
                                 player));
                         InventorySorter.playSortingSound(player);
 
-                        MessageSystem
-                            .sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED,
-                                player);
+                        InGameMessageHandler
+                            .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                InGameMessage.INVENTORY_SORTED
+                            );
 
                         playerInteractEvent.setCancelled(true);
                     }
@@ -98,8 +109,11 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                             damageItem(player, isCleaningItemInMainHand);
 
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                                Messages.getMessage(MessageID.INVENTORY_SORTED), player);
+                            InGameMessageHandler
+                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                                    InGameMessage.INVENTORY_SORTED);
+
+                            // TODO why setCancelled?
                             playerInteractEvent.setCancelled(true);
                         }
 
@@ -181,9 +195,10 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                     damageItem(player, isMainHand);
 
+                    //TODO why set cancelled?
                     inventoryOpenEvent.setCancelled(true);
-                    MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-                        Messages.getMessage(MessageID.INVENTORY_SORTED), player);
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.INVENTORY_SORTED);
                 }
 
             }
@@ -208,8 +223,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                 InventorySorter.sortInventoryOfPlayer(inventoryCloseEvent.getInventory(), player);
                 InventorySorter.playSortingSound(player);
-                MessageSystem
-                    .sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
+                InGameMessageHandler
+                    .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.INVENTORY_SORTED);
             }
         }
     }

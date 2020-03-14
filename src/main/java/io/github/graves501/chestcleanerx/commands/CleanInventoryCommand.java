@@ -6,10 +6,9 @@ import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
 import io.github.graves501.chestcleanerx.utils.enums.Permission;
-import io.github.graves501.chestcleanerx.utils.messages.MessageID;
-import io.github.graves501.chestcleanerx.utils.messages.MessageSystem;
-import io.github.graves501.chestcleanerx.utils.messages.MessageType;
-import io.github.graves501.chestcleanerx.utils.messages.Messages;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -40,9 +39,10 @@ public class CleanInventoryCommand implements CommandExecutor {
         if (isPlayer) {
             if (!player.hasPermission(Permission.CLEAN_INVENTORY.getString())
                 && pluginConfiguration.isCleanInventoryActive()) {
-                MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-                    "chestcleaner.cmd.cleanInventory",
-                    player);
+                InGameMessageHandler
+                    .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
+                        "chestcleaner.cmd.cleanInventory"
+                    );
                 return true;
             }
         }
@@ -51,17 +51,19 @@ public class CleanInventoryCommand implements CommandExecutor {
 
             // if cs is a console
             if (!(commandSender instanceof Player)) {
-                MessageSystem
-                    .sendConsoleMessage(MessageType.SYNTAX_ERROR, "/cleanInventory <x> <y> <z>");
+                InGameMessageHandler
+                    .sendConsoleMessage(InGameMessageType.SYNTAX_ERROR,
+                        "/cleanInventory <x> <y> <z>");
                 return true;
             }
 
             Block block = BlockDetector.getTargetBlock(player);
 
             if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
-                MessageSystem
-                    .sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST,
-                        player);
+                InGameMessageHandler
+                    .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                        InGameMessage.INVENTORY_ON_BLACKLIST
+                    );
                 return true;
             }
 
@@ -73,17 +75,25 @@ public class CleanInventoryCommand implements CommandExecutor {
                     playerConfiguration.getEvaluatorTypOfPlayer(
                         player))) {
 
-                    MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-                        Messages.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location",
-                            "(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", "
-                                + block.getType().name() + ")"),
-                        player);
+                    String blockMessage = "("
+                        + block.getX()
+                        + " / "
+                        + block.getY()
+                        + " / "
+                        + block.getZ()
+                        + ", "
+                        + block.getType().name()
+                        + ")";
+                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.ERROR,
+                        InGameMessage.BLOCK_HAS_NO_INVENTORY,
+                        blockMessage);
                     return true;
 
                 } else {
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED,
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.INVENTORY_SORTED
+                        );
                     return true;
                 }
 
@@ -104,20 +114,17 @@ public class CleanInventoryCommand implements CommandExecutor {
                     world = player.getWorld();
                 }
                 if (world == null) {
-                    MessageSystem.sendMessageToPlayer(
-                        MessageType.ERROR,
-                        Messages
-                            .getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", arguments[3]),
-                        player);
+                    InGameMessageHandler.sendMessageToPlayer(
+                        player, InGameMessageType.ERROR, InGameMessage.INVALID_WORLD_NAME,
+                        arguments[3]);
 
                     return true;
                 }
             } else {
                 world = Bukkit.getWorld(arguments[3]);
                 if (world == null) {
-                    MessageSystem.sendConsoleMessage(MessageType.ERROR,
-                        Messages
-                            .getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", arguments[3]));
+                    InGameMessageHandler.sendConsoleMessage(InGameMessageType.ERROR,
+                        InGameMessage.INVALID_WORLD_NAME, arguments[3]);
                     return true;
                 }
 
@@ -131,9 +138,10 @@ public class CleanInventoryCommand implements CommandExecutor {
                 yCoordinate, zCoordinate));
 
             if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
-                MessageSystem
-                    .sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST,
-                        player);
+                InGameMessageHandler
+                    .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                        InGameMessage.INVENTORY_ON_BLACKLIST
+                    );
                 return true;
             }
 
@@ -146,27 +154,36 @@ public class CleanInventoryCommand implements CommandExecutor {
                 playerConfiguration.getEvaluatorTypOfPlayer(
                     player))) {
 
+                final String blockMessage = "("
+                    + xCoordinate
+                    + " / "
+                    + yCoordinate
+                    + " / "
+                    + zCoordinate
+                    + ")";
+
                 if (isPlayer) {
-                    MessageSystem.sendMessageToPlayer(MessageType.ERROR, Messages.getMessage(
-                        MessageID.BLOCK_HAS_NO_INV, "%location",
-                        "(" + xCoordinate + " / " + yCoordinate + " / " + zCoordinate + ")"),
-                        player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.ERROR,
+                            InGameMessage.BLOCK_HAS_NO_INVENTORY, blockMessage);
                 } else {
-                    MessageSystem.sendConsoleMessage(MessageType.ERROR, Messages.getMessage(
-                        MessageID.BLOCK_HAS_NO_INV, "%location",
-                        "(" + xCoordinate + " / " + yCoordinate + " / " + zCoordinate + ")"));
+                    InGameMessageHandler
+                        .sendConsoleMessage(InGameMessageType.ERROR,
+                            InGameMessage.BLOCK_HAS_NO_INVENTORY, blockMessage);
                 }
 
                 return true;
 
             } else {
                 if (isPlayer) {
-                    MessageSystem
-                        .sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED,
-                            player);
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.INVENTORY_SORTED
+                        );
                 } else {
-                    MessageSystem
-                        .sendConsoleMessage(MessageType.SUCCESS, MessageID.INVENTORY_SORTED);
+                    InGameMessageHandler
+                        .sendConsoleMessage(InGameMessageType.SUCCESS,
+                            InGameMessage.INVENTORY_SORTED);
                 }
 
                 return true;
