@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.commands;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.utils.enums.Permission;
+import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.enums.TimerCommandConstant;
@@ -42,7 +42,7 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         final Player player = (Player) commandSender;
         final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
 
-        if (player.hasPermission(Permission.COOLDOWN_TIMER.getString())) {
+        if (player.hasPermission(PluginPermission.COOLDOWN_TIMER.getString())) {
 
             if (arguments.length == 2) {
 
@@ -119,7 +119,7 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         } else {
             InGameMessageHandler
                 .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
-                    Permission.COOLDOWN_TIMER.getString()
+                    PluginPermission.COOLDOWN_TIMER.getString()
                 );
             return true;
         }

@@ -4,7 +4,7 @@ import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.utils.MaterialBlacklistUtils;
 import io.github.graves501.chestcleanerx.utils.enums.BlacklistConstant;
-import io.github.graves501.chestcleanerx.utils.enums.Permission;
+import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
@@ -68,7 +68,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) commandSender;
 
-        if (player.hasPermission(Permission.BLACKLIST.getString())) {
+        if (player.hasPermission(PluginPermission.BLACKLIST.getString())) {
 
             if (arguments.length <= SINGLE_ARGUMENT) {
                 sendSyntaxErrorMessageToPlayer(player);
@@ -267,7 +267,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         } else {
             InGameMessageHandler
                 .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
-                    Permission.BLACKLIST.getString()
+                    PluginPermission.BLACKLIST.getString()
                 );
             return VALID_COMMAND;
         }

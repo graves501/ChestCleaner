@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.utils.enums;
 
-public enum Permission {
+public enum PluginPermission {
     BLACKLIST("chestcleaner.command.blacklist"),
     CLEAN_INVENTORY("chestcleaner.command.cleanInventory"),
     COOLDOWN_TIMER("chestcleaner.command.cooldownTimer"),
@@ -8,7 +8,7 @@ public enum Permission {
 
     private String stringValue;
 
-    Permission(String stringValue) {
+    PluginPermission(String stringValue) {
         this.stringValue = stringValue;
     }
 

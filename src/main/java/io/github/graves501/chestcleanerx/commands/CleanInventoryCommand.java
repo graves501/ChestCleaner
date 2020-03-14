@@ -5,7 +5,7 @@ import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimer;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
-import io.github.graves501.chestcleanerx.utils.enums.Permission;
+import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
@@ -37,7 +37,7 @@ public class CleanInventoryCommand implements CommandExecutor {
         boolean isPlayer = commandSender instanceof Player;
 
         if (isPlayer) {
-            if (!player.hasPermission(Permission.CLEAN_INVENTORY.getString())
+            if (!player.hasPermission(PluginPermission.CLEAN_INVENTORY.getString())
                 && pluginConfiguration.isCleanInventoryActive()) {
                 InGameMessageHandler
                     .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,

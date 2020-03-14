@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.timer;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.utils.enums.Permission;
+import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
@@ -81,7 +81,7 @@ public class CooldownTimer {
     }
 
     private static boolean playerHasTimerNoEffectPermission(final Player player) {
-        return player.hasPermission(Permission.TIMER_NO_EFFECT.getString());
+        return player.hasPermission(PluginPermission.TIMER_NO_EFFECT.getString());
     }
 
     private static void countDownOneSecond(CooldownTimer cooldownTimer) {
