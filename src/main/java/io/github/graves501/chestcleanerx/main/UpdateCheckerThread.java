@@ -1,9 +1,9 @@
 package io.github.graves501.chestcleanerx.main;
 
-import io.github.graves501.chestcleanerx.listeners.SortingListener;
-import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
-import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
-import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
+import io.github.graves501.chestcleanerx.listener.SortingListener;
+import io.github.graves501.chestcleanerx.util.message.InGameMessage;
+import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.util.message.InGameMessageType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

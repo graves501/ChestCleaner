@@ -1,9 +1,9 @@
 package io.github.graves501.chestcleanerx.sorting;
 
-import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
-import io.github.graves501.chestcleanerx.utils.InventoryConverter;
-import io.github.graves501.chestcleanerx.utils.InventoryDetector;
+import io.github.graves501.chestcleanerx.util.InventoryConverter;
+import io.github.graves501.chestcleanerx.util.InventoryDetector;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;

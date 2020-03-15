@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.sorting;
 
-import io.github.graves501.chestcleanerx.config.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.evaluator.Evaluator;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import java.util.List;

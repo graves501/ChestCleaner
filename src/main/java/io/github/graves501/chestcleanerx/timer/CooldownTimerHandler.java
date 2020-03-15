@@ -1,12 +1,12 @@
 package io.github.graves501.chestcleanerx.timer;
 
-import io.github.graves501.chestcleanerx.config.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
 import io.github.graves501.chestcleanerx.main.PluginMain;
-import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
-import io.github.graves501.chestcleanerx.utils.logging.PluginLoggerUtil;
-import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
-import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
-import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
+import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
+import io.github.graves501.chestcleanerx.util.logging.PluginLoggerUtil;
+import io.github.graves501.chestcleanerx.util.message.InGameMessage;
+import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
+import io.github.graves501.chestcleanerx.util.message.InGameMessageType;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;

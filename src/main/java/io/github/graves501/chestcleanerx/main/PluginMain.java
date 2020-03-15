@@ -1,16 +1,16 @@
 package io.github.graves501.chestcleanerx.main;
 
-import io.github.graves501.chestcleanerx.commands.BlacklistCommand;
-import io.github.graves501.chestcleanerx.commands.CleanInventoryCommand;
-import io.github.graves501.chestcleanerx.commands.CleaningItemCommand;
-import io.github.graves501.chestcleanerx.commands.CooldownTimerCommand;
-import io.github.graves501.chestcleanerx.commands.SortingConfigCommand;
-import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.listeners.PlayerEventListener;
-import io.github.graves501.chestcleanerx.listeners.RefillListener;
-import io.github.graves501.chestcleanerx.listeners.SortingListener;
+import io.github.graves501.chestcleanerx.command.BlacklistCommand;
+import io.github.graves501.chestcleanerx.command.CleanInventoryCommand;
+import io.github.graves501.chestcleanerx.command.CleaningItemCommand;
+import io.github.graves501.chestcleanerx.command.CooldownTimerCommand;
+import io.github.graves501.chestcleanerx.command.SortingConfigCommand;
+import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.listener.PlayerEventListener;
+import io.github.graves501.chestcleanerx.listener.RefillListener;
+import io.github.graves501.chestcleanerx.listener.SortingListener;
 import io.github.graves501.chestcleanerx.timer.CooldownTimerThread;
-import io.github.graves501.chestcleanerx.utils.enums.PlayerCommand;
+import io.github.graves501.chestcleanerx.util.constant.PlayerCommand;
 import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
