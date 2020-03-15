@@ -1,8 +1,8 @@
 package io.github.graves501.chestcleanerx.commands;
 
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
-import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.enums.PlayerMessage;
+import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.enums.Property;
 import io.github.graves501.chestcleanerx.utils.enums.TimerCommandConstant;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;

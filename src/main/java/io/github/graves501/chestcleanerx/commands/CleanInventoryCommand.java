@@ -3,7 +3,7 @@ package io.github.graves501.chestcleanerx.commands;
 import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.timer.CooldownTimer;
+import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
 import io.github.graves501.chestcleanerx.utils.enums.PluginPermission;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
@@ -67,7 +67,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (CooldownTimer.isPlayerAllowedToUseSort(player)) {
+            if (CooldownTimerHandler.isPlayerAllowedToUseSort(player)) {
 
                 // if the block has no inventory
                 if (!InventorySorter.sortPlayerBlock(block,
@@ -145,7 +145,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (isPlayer && !CooldownTimer.isPlayerAllowedToUseSort(player)) {
+            if (isPlayer && !CooldownTimerHandler.isPlayerAllowedToUseSort(player)) {
                 return true;
             }
 

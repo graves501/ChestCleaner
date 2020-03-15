@@ -5,8 +5,9 @@ import io.github.graves501.chestcleanerx.config.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.config.PluginConfiguration;
 import io.github.graves501.chestcleanerx.main.PluginMain;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.timer.CooldownTimer;
+import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
 import io.github.graves501.chestcleanerx.utils.BlockDetector;
+import io.github.graves501.chestcleanerx.utils.logging.PluginLoggerUtil;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessage;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageHandler;
 import io.github.graves501.chestcleanerx.utils.messages.InGameMessageType;
@@ -29,101 +30,72 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SortingListener implements org.bukkit.event.Listener {
 
     final Logger logger = JavaPlugin.getPlugin(PluginMain.class).getLogger();
+    final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+    final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
 
     @EventHandler
-    private void onRightClick(PlayerInteractEvent playerInteractEvent) {
+    private void onRightClick(PlayerInteractEvent onRightClickEvent) {
+        final Player player = onRightClickEvent.getPlayer();
 
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+        //FIXME check if sorting gets called twice when holding cleaning item in both hands
+        if (isPlayerHoldingCleaningItemInAHand(player)
+            && isPlayerRightClickingAirOrBlock(onRightClickEvent)) {
 
-        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+            if (isPlayerPermittedToSortOwnInventory(player) && player.isSneaking()) {
 
-        final Player player = playerInteractEvent.getPlayer();
-        ItemStack itemMainHand = player.getInventory().getItemInMainHand().clone();
-        itemMainHand.setDurability((short) 0);
-        itemMainHand.setAmount(1);
+                if (isSortingForPlayerOnCooldown(player)) {
+                    return;
+                }
 
-        ItemStack itemOffHand = player.getInventory().getItemInOffHand().clone();
-        itemOffHand.setDurability((short) 0);
-        itemOffHand.setAmount(1);
+                damageCleaningItemOfPlayer(player);
 
-        boolean isCleaningItemInMainHand = itemMainHand.equals(currentCleaningItem);
-        logger.info("isCleaningItemInMainHand: " + isCleaningItemInMainHand);
+                //TODO refactor InventorySorter
+                InventorySorter.sortPlayerInventory(
+                    player, playerConfiguration.getSortingPatternOfPlayer(
+                        player),
+                    playerConfiguration.getEvaluatorTypOfPlayer(
+                        player));
 
-        boolean isCleaningItemInOffHand = itemOffHand.equals(currentCleaningItem);
-        logger.info("isCleaningItemInOffHand: " + isCleaningItemInOffHand);
+                InventorySorter.playSortingSound(player);
 
-        if (playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
-            || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                InGameMessageHandler
+                    .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                        InGameMessage.INVENTORY_SORTED
+                    );
 
-//            boolean isCleaningItemInMainHand = itemMainHand.equals(currentCleaningItem);
-//            boolean isCleaningItemInOffHand = itemOffHand.equals(currentCleaningItem);
+                // TODO why setCancelled?
+                onRightClickEvent.setCancelled(true);
 
-            // TODO clean up
-            // TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
-            // SLOTS DAS ITEM H�LT
+            } else if (!pluginConfiguration.isOpenInventoryEventDetectionModeActive()
+                && isPlayerPermittedToUseCleaningItem(player)) {
 
-            if ((isCleaningItemInMainHand || isCleaningItemInOffHand) && (isCleaningItemInMainHand
-                != isCleaningItemInOffHand)) {
+                final Block block = BlockDetector.getTargetBlock(player);
 
-                if (player.isSneaking()) {
+                if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
+                    return;
+                }
 
-                    if (player.hasPermission("chestcleaner.cleaningItem.use.owninventory")) {
-                        if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
-                            return;
-                        }
+                if (!isSortingForPlayerOnCooldown(player)) {
+                    return;
+                }
 
-                        damageItem(player, isCleaningItemInMainHand);
-                        InventorySorter.sortPlayerInventory(
-                            player, playerConfiguration.getSortingPatternOfPlayer(player),
-                            playerConfiguration.getEvaluatorTypOfPlayer(
-                                player));
-                        InventorySorter.playSortingSound(player);
+                if (InventorySorter.sortPlayerBlock(block,
+                    player, playerConfiguration.getSortingPatternOfPlayer(
+                        player),
+                    playerConfiguration.getEvaluatorTypOfPlayer(
+                        player))) {
 
-                        InGameMessageHandler
-                            .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                                InGameMessage.INVENTORY_SORTED
-                            );
+                    damageCleaningItemOfPlayer(player);
 
-                        playerInteractEvent.setCancelled(true);
-                    }
+                    InGameMessageHandler
+                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                            InGameMessage.INVENTORY_SORTED);
 
-                } else if (!pluginConfiguration.isOpenInventoryEventDetectionModeActive()) {
-
-                    if (player.hasPermission("chestcleaner.cleaningItem.use")) {
-
-                        Block block = BlockDetector.getTargetBlock(player);
-
-                        if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
-                            return;
-                        }
-
-                        if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
-                            return;
-                        }
-
-                        if (InventorySorter.sortPlayerBlock(block,
-                            player, playerConfiguration.getSortingPatternOfPlayer(player),
-                            playerConfiguration.getEvaluatorTypOfPlayer(
-                                player))) {
-
-                            damageItem(player, isCleaningItemInMainHand);
-
-                            InGameMessageHandler
-                                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                                    InGameMessage.INVENTORY_SORTED);
-
-                            // TODO why setCancelled?
-                            playerInteractEvent.setCancelled(true);
-                        }
-
-                    }
-
+                    // TODO why setCancelled?
+                    onRightClickEvent.setCancelled(true);
                 }
             }
-
         }
-
     }
 
     /**
@@ -134,104 +106,151 @@ public class SortingListener implements org.bukkit.event.Listener {
      *
      * @param player the player who is holding the item, that you want to get damaged, in hand.
      */
-    private void damageItem(final Player player, final boolean isHoldingItemInMainHand) {
-
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-
+    private void damageCleaningItemOfPlayer(final Player player) {
         if (pluginConfiguration.isDurabilityLossActive()) {
+            final ItemStack cleaningItem;
 
-            ItemStack item;
-            if (isHoldingItemInMainHand) {
-                item = player.getInventory().getItemInMainHand();
+            if (isCleaningItemInMainHand(player)) {
+                cleaningItem = getItemInMainHand(player);
             } else {
-                item = player.getInventory().getItemInOffHand();
+                cleaningItem = getItemInOffHand(player);
             }
 
-            if (item.getMaxStackSize() == 1) {
-                item.setDurability((short) (item.getDurability() + 1));
+            //TODO refactor the deprecated method calls
+            if (cleaningItem.getMaxStackSize() == 1) {
+                cleaningItem.setDurability((short) (cleaningItem.getDurability() + 1));
             }
 
-            if (item.getDurability() >= item.getType().getMaxDurability()) {
-                item.setAmount(item.getAmount() - 1);
+            if (cleaningItem.getDurability() >= cleaningItem.getType().getMaxDurability()) {
+                cleaningItem.setAmount(cleaningItem.getAmount() - 1);
             }
         }
-
     }
 
     @EventHandler
-    private void onOpenInventory(InventoryOpenEvent inventoryOpenEvent) {
-
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
-        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+    private void onOpenInventory(final InventoryOpenEvent inventoryOpenEvent) {
 
         if (pluginConfiguration.isOpenInventoryEventDetectionModeActive()) {
-            Player player = (Player) inventoryOpenEvent.getPlayer();
 
-            if (player.hasPermission("chestcleaner.cleaningItem.use")) {
+            final Player player = (Player) inventoryOpenEvent.getPlayer();
 
-                ItemStack itemMainHand = player.getInventory().getItemInMainHand().clone();
-                itemMainHand.setDurability((short) 0);
-                itemMainHand.setAmount(1);
+            if (isPlayerPermittedToUseCleaningItem(player)
+                && isPlayerHoldingCleaningItemInAHand(player)) {
 
-                ItemStack itemOffHand = player.getInventory().getItemInOffHand().clone();
-                itemOffHand.setDurability((short) 0);
-                itemOffHand.setAmount(1);
-
-                boolean isMainHand = itemMainHand.equals(currentCleaningItem);
-                boolean isOffHand = itemOffHand.equals(currentCleaningItem);
-
-                if (isMainHand || isOffHand) {
-
-                    if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
-                        return;
-                    }
-
-                    InventorySorter.sortInventory(inventoryOpenEvent.getInventory(),
-                        playerConfiguration.getSortingPatternOfPlayer(player),
-                        playerConfiguration.getEvaluatorTypOfPlayer(player));
-
-                    InventorySorter.playSortingSound(player);
-
-                    damageItem(player, isMainHand);
-
-                    //TODO why set cancelled?
-                    inventoryOpenEvent.setCancelled(true);
-                    InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                        InGameMessage.INVENTORY_SORTED);
+                if (isSortingForPlayerOnCooldown(player)) {
+                    return;
                 }
 
+                InventorySorter.sortInventory(inventoryOpenEvent.getInventory(),
+                    playerConfiguration.getSortingPatternOfPlayer(player),
+                    playerConfiguration.getEvaluatorTypOfPlayer(player));
+
+                InventorySorter.playSortingSound(player);
+                damageCleaningItemOfPlayer(player);
+
+                //TODO why set cancelled?
+                inventoryOpenEvent.setCancelled(true);
+
+                InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                    InGameMessage.INVENTORY_SORTED);
             }
-
         }
-
     }
 
     @EventHandler
     private void onCloseInventory(final InventoryCloseEvent inventoryCloseEvent) {
-
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
-
         if (isInventoryCloseEventCausedByChest(inventoryCloseEvent)) {
             final Player player = (Player) inventoryCloseEvent.getPlayer();
 
             if (playerConfiguration.getAutoSortChestConfigurationOfPlayer(player)) {
 
-                if (!CooldownTimer.isPlayerAllowedToUseSort(player)) {
+                if (isSortingForPlayerOnCooldown(player)) {
                     return;
                 }
 
                 InventorySorter.sortInventoryOfPlayer(inventoryCloseEvent.getInventory(), player);
                 InventorySorter.playSortingSound(player);
-                InGameMessageHandler
-                    .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                        InGameMessage.INVENTORY_SORTED);
+                InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                    InGameMessage.INVENTORY_SORTED);
             }
         }
     }
 
+    //TODO refactor permission
+    private boolean isPlayerPermittedToSortOwnInventory(final Player player) {
+        final boolean isPlayerPermittedToSortOwnInventory = player
+            .hasPermission("chestcleaner.cleaningItem.use.owninventory");
+
+        PluginLoggerUtil.logPlayerInfo(logger, player,
+            "isPlayerPermittedToSortOwnInventory: " + isPlayerPermittedToSortOwnInventory);
+        return isPlayerPermittedToSortOwnInventory;
+    }
+
+    //TODO refactor permission
+    private boolean isPlayerPermittedToUseCleaningItem(final Player player) {
+        final boolean isPlayerPermittedToUseCleaningItem = player
+            .hasPermission("chestcleaner.cleaningItem.use");
+
+        PluginLoggerUtil.logPlayerInfo(logger, player,
+            "isPlayerPermittedToUseCleaningItem: " + isPlayerPermittedToUseCleaningItem);
+        return isPlayerPermittedToUseCleaningItem;
+    }
+
+    private boolean isSortingForPlayerOnCooldown(final Player player) {
+        return !CooldownTimerHandler.isPlayerAllowedToUseSort(player);
+    }
+
     private boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent) {
         return inventoryCloseEvent.getInventory().getHolder() instanceof Chest;
+    }
+
+    private boolean isPlayerRightClickingAirOrBlock(final PlayerInteractEvent playerInteractEvent) {
+        return playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
+            || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK;
+    }
+
+    private boolean isPlayerHoldingCleaningItemInAHand(final Player player) {
+        return isCleaningItemInMainHand(player) || isCleaningItemInOffHand(player);
+    }
+
+    private boolean isCleaningItemInMainHand(final Player player) {
+        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+        final ItemStack itemInMainHand = getItemInMainHand(player);
+
+        final boolean isCleaningItemInMainHand = itemInMainHand.equals(currentCleaningItem);
+        PluginLoggerUtil
+            .logPlayerInfo(logger, player, "isCleaningItemInMainHand: " + isCleaningItemInMainHand);
+
+        return isCleaningItemInMainHand;
+    }
+
+    private boolean isCleaningItemInOffHand(final Player player) {
+        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
+        final ItemStack itemInOffHand = getItemInOffHand(player);
+
+        final boolean isCleaningItemInOffHand = itemInOffHand.equals(currentCleaningItem);
+        PluginLoggerUtil
+            .logPlayerInfo(logger, player, "isCleaningItemInOffHand: " + isCleaningItemInOffHand);
+
+        return isCleaningItemInOffHand;
+    }
+
+    private ItemStack getItemInMainHand(final Player player) {
+        final ItemStack itemInMainHand = player.getInventory().getItemInMainHand().clone();
+        //TODO fix this deprecated line
+        itemInMainHand.setDurability((short) 0);
+        itemInMainHand.setAmount(1);
+
+        return itemInMainHand;
+    }
+
+    private ItemStack getItemInOffHand(final Player player) {
+        ItemStack itemInOffHand = player.getInventory().getItemInOffHand().clone();
+        //TODO fix this deprecated line
+        itemInOffHand.setDurability((short) 0);
+        itemInOffHand.setAmount(1);
+
+        return itemInOffHand;
     }
 
 }

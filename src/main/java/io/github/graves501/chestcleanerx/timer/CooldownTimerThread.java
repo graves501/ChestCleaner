@@ -10,7 +10,7 @@ public class CooldownTimerThread extends Thread {
         try {
             while (true) {
                 Thread.sleep(oneSecond);
-                CooldownTimer.update();
+                CooldownTimerHandler.update();
             }
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
