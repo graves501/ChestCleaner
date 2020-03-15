@@ -140,15 +140,16 @@ public class InventorySorter {
     /**
      * Checks if the block has an inventory or if it is an enderchest and sorts it.
      *
-     * @param blockToBeSorted Block you want to get sorted.
      * @param player the player or owner of an enderchest inventory.
+     * @param blockSelectedByPlayer Block you want to get sorted.
      * @return returns true if an inventory got sorted, otherwise false.
      */
-    public static boolean sortPlayerBlock(Block blockToBeSorted, Player player,
-        SortingPattern pattern,
-        ItemEvaluatorType evaluator) {
+    public static boolean sortBlockSelectedByPlayer(final Player player,
+        final Block blockSelectedByPlayer,
+        final SortingPattern pattern,
+        final ItemEvaluatorType evaluator) {
 
-        Inventory inventory = InventoryDetector.getInventoryFromBlock(blockToBeSorted);
+        Inventory inventory = InventoryDetector.getInventoryOfBlock(blockSelectedByPlayer);
 
         if (inventory != null) {
             if (player != null) {
@@ -158,8 +159,9 @@ public class InventorySorter {
             return true;
         }
 
+        //TODO Should shulker boxes also be sorted?
         if (player != null) {
-            if (blockToBeSorted.getBlockData().getMaterial() == Material.ENDER_CHEST) {
+            if (blockSelectedByPlayer.getBlockData().getMaterial() == Material.ENDER_CHEST) {
                 playSortingSound(player);
                 sortInventory(player.getEnderChest(), pattern, evaluator);
                 return true;

@@ -11,6 +11,7 @@ public enum InGameMessage {
     PARENTHESIS_RIGHT(" )"),
     DOUBLE_QUOTES("\""),
     PLACEHOLDER_WITH_DOUBLE_QUOTES(DOUBLE_QUOTES.get() + PLACEHOLDER.get() + DOUBLE_QUOTES),
+    MESSAGE_SEPARATOR("---------------------------"),
 
     MESSAGE_PREFIX(ChatColor.RED + "[ChestCleanerX] "),
 

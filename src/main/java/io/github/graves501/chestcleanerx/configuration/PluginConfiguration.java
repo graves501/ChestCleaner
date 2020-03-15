@@ -33,6 +33,8 @@ public class PluginConfiguration extends ConfigurationManager {
     private int cooldownTimeInSeconds = 5;
 
     private boolean isCleanInventoryActive = true;
+
+    // TODO set default to false...
     private boolean isCooldownTimerActive = true;
     private boolean isDurabilityLossActive = true;
     private boolean isCleaningItemActive = true;

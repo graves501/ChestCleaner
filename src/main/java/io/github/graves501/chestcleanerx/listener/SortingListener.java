@@ -15,11 +15,13 @@ import java.util.logging.Logger;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,20 +36,30 @@ public class SortingListener implements org.bukkit.event.Listener {
     final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
 
     @EventHandler
-    private void onRightClick(PlayerInteractEvent onRightClickEvent) {
-        final Player player = onRightClickEvent.getPlayer();
+    private void onRightClick(final PlayerInteractEvent playerRightClickEvent) {
+        final Player player = playerRightClickEvent.getPlayer();
 
-        //FIXME check if sorting gets called twice when holding cleaning item in both hands
         if (isPlayerHoldingCleaningItemInAHand(player)
-            && isPlayerRightClickingAirOrBlock(onRightClickEvent)) {
+            && isPlayerRightClickingAirOrBlock(playerRightClickEvent)) {
 
             if (isPlayerPermittedToSortOwnInventory(player) && player.isSneaking()) {
 
-                if (isSortingForPlayerOnCooldown(player)) {
+                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+                    return;
+                }
+
+                if (isPlayerHoldingCleaningItemInBothHands(player)) {
+                    final EquipmentSlot currentHand = playerRightClickEvent.getHand();
+
+                    if (currentHand == EquipmentSlot.OFF_HAND) {
+                        return;
+                    }
+                } else if (preventSortingTwice(playerRightClickEvent)) {
                     return;
                 }
 
                 damageCleaningItemOfPlayer(player);
+                preventConsumptionOfCleaningItem(playerRightClickEvent);
 
                 //TODO refactor InventorySorter
                 InventorySorter.sortPlayerInventory(
@@ -63,9 +75,6 @@ public class SortingListener implements org.bukkit.event.Listener {
                         InGameMessage.INVENTORY_SORTED
                     );
 
-                // TODO why setCancelled?
-                onRightClickEvent.setCancelled(true);
-
             } else if (!pluginConfiguration.isOpenInventoryEventDetectionModeActive()
                 && isPlayerPermittedToUseCleaningItem(player)) {
 
@@ -75,27 +84,50 @@ public class SortingListener implements org.bukkit.event.Listener {
                     return;
                 }
 
-                if (!isSortingForPlayerOnCooldown(player)) {
+                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
-                if (InventorySorter.sortPlayerBlock(block,
-                    player, playerConfiguration.getSortingPatternOfPlayer(
+                if (InventorySorter.sortBlockSelectedByPlayer(player, block,
+                    playerConfiguration.getSortingPatternOfPlayer(
                         player),
                     playerConfiguration.getEvaluatorTypOfPlayer(
                         player))) {
 
                     damageCleaningItemOfPlayer(player);
+                    preventConsumptionOfCleaningItem(playerRightClickEvent);
 
                     InGameMessageHandler
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                             InGameMessage.INVENTORY_SORTED);
-
-                    // TODO why setCancelled?
-                    onRightClickEvent.setCancelled(true);
                 }
             }
         }
+    }
+
+    private boolean preventSortingTwice(
+        final PlayerInteractEvent rightClickEvent) {
+
+        final Player player = rightClickEvent.getPlayer();
+        final EquipmentSlot currentHand = rightClickEvent.getHand();
+
+        if (isCleaningItemInMainHand(player) && currentHand == EquipmentSlot.OFF_HAND) {
+            PluginLoggerUtil.logPlayerInfo(logger, player,
+                "MAIN HAND: PREVENT TRUE");
+            return true;
+        }
+
+        if (isCleaningItemInOffHand(player) && currentHand == EquipmentSlot.HAND) {
+            PluginLoggerUtil.logPlayerInfo(logger, player,
+                "OFF HANDS");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void preventConsumptionOfCleaningItem(Cancellable cancellableEvent) {
+        cancellableEvent.setCancelled(true);
     }
 
     /**
@@ -137,7 +169,7 @@ public class SortingListener implements org.bukkit.event.Listener {
             if (isPlayerPermittedToUseCleaningItem(player)
                 && isPlayerHoldingCleaningItemInAHand(player)) {
 
-                if (isSortingForPlayerOnCooldown(player)) {
+                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
@@ -147,9 +179,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                 InventorySorter.playSortingSound(player);
                 damageCleaningItemOfPlayer(player);
-
-                //TODO why set cancelled?
-                inventoryOpenEvent.setCancelled(true);
+                preventConsumptionOfCleaningItem(inventoryOpenEvent);
 
                 InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                     InGameMessage.INVENTORY_SORTED);
@@ -164,7 +194,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
             if (playerConfiguration.getAutoSortChestConfigurationOfPlayer(player)) {
 
-                if (isSortingForPlayerOnCooldown(player)) {
+                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
@@ -196,21 +226,29 @@ public class SortingListener implements org.bukkit.event.Listener {
         return isPlayerPermittedToUseCleaningItem;
     }
 
-    private boolean isSortingForPlayerOnCooldown(final Player player) {
-        return !CooldownTimerHandler.isPlayerAllowedToUseSort(player);
-    }
 
     private boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent) {
         return inventoryCloseEvent.getInventory().getHolder() instanceof Chest;
     }
 
-    private boolean isPlayerRightClickingAirOrBlock(final PlayerInteractEvent playerInteractEvent) {
-        return playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
-            || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK;
+    private boolean isPlayerRightClickingAirOrBlock(
+        final PlayerInteractEvent playerRightClickEvent) {
+
+        boolean isPlayerRightClickingAir =
+            playerRightClickEvent.getAction() == Action.RIGHT_CLICK_AIR;
+
+        boolean isPlayerRightClickingBlock =
+            playerRightClickEvent.getAction() == Action.RIGHT_CLICK_BLOCK;
+
+        return isPlayerRightClickingAir || isPlayerRightClickingBlock;
     }
 
     private boolean isPlayerHoldingCleaningItemInAHand(final Player player) {
         return isCleaningItemInMainHand(player) || isCleaningItemInOffHand(player);
+    }
+
+    private boolean isPlayerHoldingCleaningItemInBothHands(final Player player) {
+        return isCleaningItemInMainHand(player) && isCleaningItemInOffHand(player);
     }
 
     private boolean isCleaningItemInMainHand(final Player player) {
@@ -218,8 +256,6 @@ public class SortingListener implements org.bukkit.event.Listener {
         final ItemStack itemInMainHand = getItemInMainHand(player);
 
         final boolean isCleaningItemInMainHand = itemInMainHand.equals(currentCleaningItem);
-        PluginLoggerUtil
-            .logPlayerInfo(logger, player, "isCleaningItemInMainHand: " + isCleaningItemInMainHand);
 
         return isCleaningItemInMainHand;
     }
@@ -229,8 +265,6 @@ public class SortingListener implements org.bukkit.event.Listener {
         final ItemStack itemInOffHand = getItemInOffHand(player);
 
         final boolean isCleaningItemInOffHand = itemInOffHand.equals(currentCleaningItem);
-        PluginLoggerUtil
-            .logPlayerInfo(logger, player, "isCleaningItemInOffHand: " + isCleaningItemInOffHand);
 
         return isCleaningItemInOffHand;
     }

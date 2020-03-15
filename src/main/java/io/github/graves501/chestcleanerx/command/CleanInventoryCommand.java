@@ -67,11 +67,11 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (CooldownTimerHandler.isPlayerAllowedToUseSort(player)) {
+            if (!CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
 
                 // if the block has no inventory
-                if (!InventorySorter.sortPlayerBlock(block,
-                    player, playerConfiguration.getSortingPatternOfPlayer(player),
+                if (!InventorySorter.sortBlockSelectedByPlayer(player, block,
+                    playerConfiguration.getSortingPatternOfPlayer(player),
                     playerConfiguration.getEvaluatorTypOfPlayer(
                         player))) {
 
@@ -145,12 +145,12 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (isPlayer && !CooldownTimerHandler.isPlayerAllowedToUseSort(player)) {
+            if (isPlayer && CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
                 return true;
             }
 
-            if (!InventorySorter.sortPlayerBlock(block,
-                player, playerConfiguration.getSortingPatternOfPlayer(player),
+            if (!InventorySorter.sortBlockSelectedByPlayer(player, block,
+                playerConfiguration.getSortingPatternOfPlayer(player),
                 playerConfiguration.getEvaluatorTypOfPlayer(
                     player))) {
 

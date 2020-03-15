@@ -31,11 +31,11 @@ public class InventoryDetector {
      * it will return {@code null}.</b> This method checks if the object of the block is an instance
      * of the class org.bukkit.block.Container and returns its inventory.
      *
-     * @param block The Block you want to get the inventory form.
+     * @param block The Block you want to get the inventory from.
      * @return Returns the inventory of the container of the block, if its has no container it
      * returns {@code null}.
      */
-    public static Inventory getInventoryFromBlock(final Block block) {
+    public static Inventory getInventoryOfBlock(final Block block) {
         if (block.getState() instanceof InventoryHolder) {
             InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
             return inventoryHolder.getInventory();
@@ -59,7 +59,7 @@ public class InventoryDetector {
      * returns {@code null}.
      */
     public static Inventory getInventoryFromLocation(Location location, World world) {
-        return getInventoryFromBlock(world.getBlockAt(location));
+        return getInventoryOfBlock(world.getBlockAt(location));
     }
 
     /**

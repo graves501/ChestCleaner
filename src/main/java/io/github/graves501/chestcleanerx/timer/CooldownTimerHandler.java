@@ -10,6 +10,7 @@ import io.github.graves501.chestcleanerx.util.message.InGameMessageType;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CooldownTimerHandler {
@@ -57,17 +58,23 @@ public class CooldownTimerHandler {
             PluginConfiguration.getInstance().getCooldownTimeInSeconds()));
     }
 
-    public static boolean isPlayerAllowedToUseSort(final Player player) {
+    public static boolean isSortingOnCooldownForPlayer(final Player player) {
 
-        if (isCoolDownTimerActive() && !playerHasTimerNoEffectPermission(player)) {
+        if (isCoolDownTimerActive()) {
+            PluginLogger.getGlobal().info("isCoolDownTimerActive: " + isCoolDownTimerActive());
+
+            if (playerHasCooldownTimerNoEffectPermission(player)) {
+                return false;
+            }
+
             if (isPlayerOnCooldownTimerList(player)) {
                 logErrorAndSendSortingCooldownMessageToPlayer(player);
-                return false;
+                return true;
             }
             addPlayerToCooldownTimer(player);
         }
 
-        return true;
+        return false;
     }
 
     private static void logErrorAndSendSortingCooldownMessageToPlayer(final Player player) {
@@ -84,7 +91,7 @@ public class CooldownTimerHandler {
         return PluginConfiguration.getInstance().isCooldownTimerActive();
     }
 
-    private static boolean playerHasTimerNoEffectPermission(final Player player) {
+    private static boolean playerHasCooldownTimerNoEffectPermission(final Player player) {
         return player.hasPermission(PluginPermission.TIMER_NO_EFFECT.getString());
     }
 
