@@ -1,5 +1,6 @@
 package io.github.graves501.chestcleanerx.listener;
 
+import io.github.graves501.chestcleanerx.config.PermissionHandler;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.util.InventoryDetector;
 import org.bukkit.Bukkit;
@@ -26,7 +27,7 @@ public class RefillListener implements org.bukkit.event.Listener {
                 ItemStack item = blockPlaceEvent.getItemInHand();
                 if (item.getAmount() == 1) {
 
-                    if (player.hasPermission("chestcleaner.autorefill.blocks")) {
+                    if (PermissionHandler.playerHasPermissionToAutoRefillBlocks(player)) {
 
                         Material material = blockPlaceEvent.getBlockPlaced().getType();
 
@@ -86,7 +87,7 @@ public class RefillListener implements org.bukkit.event.Listener {
                     ItemStack item = playerItemConsumeEvent.getItem();
                     if (item.getAmount() == 1) {
 
-                        if (player.hasPermission("chestcleaner.autorefill.consumables")) {
+                        if (PermissionHandler.playerHasPermissionToAutoRefillConsumables(player)) {
 
                             if (item.getMaxStackSize() > 1) {
                                 int hand = -1; // -1 = nothing, 0 = hand, 1 =

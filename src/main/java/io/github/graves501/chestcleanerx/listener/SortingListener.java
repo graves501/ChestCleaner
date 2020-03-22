@@ -10,6 +10,7 @@ import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isP
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.preventConsumptionOfCleaningItem;
 
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
+import io.github.graves501.chestcleanerx.config.PermissionHandler;
 import io.github.graves501.chestcleanerx.config.PlayerConfig;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.main.ChestCleanerX;
@@ -47,7 +48,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         if (isPlayerHoldingCleaningItemInAHand(player)
             && isPlayerRightClickingAirOrBlock(playerRightClickEvent)) {
 
-            if (isPlayerPermittedToSortOwnInventory(player) && player.isSneaking()) {
+            if (PermissionHandler.playerHasPermissionToSortOwnInventory(player) && player.isSneaking()) {
 
                 if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
@@ -81,7 +82,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                     );
 
             } else if (!pluginConfig.isOpenInventoryEventDetectionModeActive()
-                && isPlayerPermittedToUseCleaningItem(player)) {
+                && PermissionHandler.playerHasPermissionToUseCleaningItem(player)) {
 
                 final Block block = BlockDetector.getTargetBlock(player);
 
@@ -138,7 +139,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
             final Player player = (Player) inventoryOpenEvent.getPlayer();
 
-            if (isPlayerPermittedToUseCleaningItem(player)
+            if (PermissionHandler.playerHasPermissionToUseCleaningItem(player)
                 && isPlayerHoldingCleaningItemInAHand(player)) {
 
                 if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
@@ -176,25 +177,5 @@ public class SortingListener implements org.bukkit.event.Listener {
                     InGameMessage.INVENTORY_SORTED);
             }
         }
-    }
-
-    //TODO refactor permission
-    private boolean isPlayerPermittedToSortOwnInventory(final Player player) {
-        final boolean isPlayerPermittedToSortOwnInventory = player
-            .hasPermission("chestcleaner.cleaningItem.use.owninventory");
-
-        PluginLoggerUtil.logPlayerInfo(player,
-            "isPlayerPermittedToSortOwnInventory: " + isPlayerPermittedToSortOwnInventory);
-        return isPlayerPermittedToSortOwnInventory;
-    }
-
-    //TODO refactor permission
-    private boolean isPlayerPermittedToUseCleaningItem(final Player player) {
-        final boolean isPlayerPermittedToUseCleaningItem = player
-            .hasPermission("chestcleaner.cleaningItem.use");
-
-        PluginLoggerUtil.logPlayerInfo(player,
-            "isPlayerPermittedToUseCleaningItem: " + isPlayerPermittedToUseCleaningItem);
-        return isPlayerPermittedToUseCleaningItem;
     }
 }
