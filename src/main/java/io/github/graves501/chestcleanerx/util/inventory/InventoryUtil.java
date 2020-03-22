@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.util.inventory;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

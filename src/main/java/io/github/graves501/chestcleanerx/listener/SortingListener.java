@@ -3,8 +3,8 @@ package io.github.graves501.chestcleanerx.listener;
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.*;
 
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
-import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PlayerConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
@@ -29,9 +29,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SortingListener implements org.bukkit.event.Listener {
 
-    final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
-    final PluginConfig pluginConfiguration = PluginConfig.getInstance();
-    final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
+    private final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
+    private final PluginConfig pluginConfig = PluginConfig.getInstance();
+    private final PlayerConfig playerConfig = PlayerConfig.getInstance();
 
     @EventHandler
     private void onRightClick(final PlayerInteractEvent playerRightClickEvent) {
@@ -61,9 +61,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                 //TODO refactor InventorySorter
                 InventorySorter.sortPlayerInventory(
-                    player, playerConfiguration.getSortingPatternOfPlayer(
+                    player, playerConfig.getSortingPatternOfPlayer(
                         player),
-                    playerConfiguration.getEvaluatorTypOfPlayer(
+                    playerConfig.getEvaluatorTypOfPlayer(
                         player));
 
                 InventorySorter.playSortingSound(player);
@@ -73,7 +73,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                         InGameMessage.INVENTORY_SORTED
                     );
 
-            } else if (!pluginConfiguration.isOpenInventoryEventDetectionModeActive()
+            } else if (!pluginConfig.isOpenInventoryEventDetectionModeActive()
                 && isPlayerPermittedToUseCleaningItem(player)) {
 
                 final Block block = BlockDetector.getTargetBlock(player);
@@ -87,9 +87,9 @@ public class SortingListener implements org.bukkit.event.Listener {
                 }
 
                 if (InventorySorter.sortBlockSelectedByPlayer(player, block,
-                    playerConfiguration.getSortingPatternOfPlayer(
+                    playerConfig.getSortingPatternOfPlayer(
                         player),
-                    playerConfiguration.getEvaluatorTypOfPlayer(
+                    playerConfig.getEvaluatorTypOfPlayer(
                         player))) {
 
                     damageCleaningItemOfPlayer(player);
@@ -127,7 +127,7 @@ public class SortingListener implements org.bukkit.event.Listener {
     @EventHandler
     private void onOpenInventory(final InventoryOpenEvent inventoryOpenEvent) {
 
-        if (pluginConfiguration.isOpenInventoryEventDetectionModeActive()) {
+        if (pluginConfig.isOpenInventoryEventDetectionModeActive()) {
 
             final Player player = (Player) inventoryOpenEvent.getPlayer();
 
@@ -139,8 +139,8 @@ public class SortingListener implements org.bukkit.event.Listener {
                 }
 
                 InventorySorter.sortInventory(inventoryOpenEvent.getInventory(),
-                    playerConfiguration.getSortingPatternOfPlayer(player),
-                    playerConfiguration.getEvaluatorTypOfPlayer(player));
+                    playerConfig.getSortingPatternOfPlayer(player),
+                    playerConfig.getEvaluatorTypOfPlayer(player));
 
                 InventorySorter.playSortingSound(player);
                 damageCleaningItemOfPlayer(player);
@@ -157,7 +157,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         if (isInventoryCloseEventCausedByChest(inventoryCloseEvent)) {
             final Player player = (Player) inventoryCloseEvent.getPlayer();
 
-            if (playerConfiguration.getAutoSortChestConfigurationOfPlayer(player)) {
+            if (playerConfig.getAutoSortChestConfigOfPlayer(player)) {
 
                 if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
                     return;

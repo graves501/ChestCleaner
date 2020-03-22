@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.timer;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
 import io.github.graves501.chestcleanerx.util.logging.PluginLoggerUtil;

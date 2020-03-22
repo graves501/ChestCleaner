@@ -1,4 +1,4 @@
-package io.github.graves501.chestcleanerx.configuration;
+package io.github.graves501.chestcleanerx.config;
 
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
 import io.github.graves501.chestcleanerx.main.ChestCleanerX;
@@ -48,12 +48,12 @@ public class PluginConfig extends ConfigManager {
     private static PluginConfig instance = new PluginConfig();
 
     private PluginConfig() {
-        this.configurationFile = new File(
+        this.configFile = new File(
             Property.PLUGIN_FILE_PATH.getString(),
             Property.PLUGIN_YAML_CONFIG_FILE_NAME.getString());
 
-        this.yamlConfiguration = YamlConfiguration.loadConfiguration(
-            configurationFile);
+        this.yamlConfig = YamlConfiguration.loadConfiguration(
+            configFile);
     }
 
 
@@ -65,9 +65,9 @@ public class PluginConfig extends ConfigManager {
      * Loads all variables out of the config, if the config does not exist it will generate one with
      * the default values for the variables.
      */
-    public void loadConfiguration() {
+    public void loadConfig() {
         // TODO put this at end of the function?
-        saveOrOverwriteConfigurationToFile();
+        saveOrOverwriteConfigToFile();
 
         //TODO check if this is needed
         //loadDefaultAutoSorting();
@@ -87,7 +87,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadDefaultAutoSorting() {
-        if (configurationContainsProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE)) {
+        if (configContainsProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE)) {
             this.defaultAutoSortChestActive = getBooleanProperty(
                 Property.DEFAULT_AUTOSORT_CHEST_ACTIVE);
         } else {
@@ -97,17 +97,17 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadDefaultEvaluatorType() {
-        if (configurationContainsProperty(Property.DEFAULT_ITEM_EVALUATOR)) {
+        if (configContainsProperty(Property.DEFAULT_ITEM_EVALUATOR)) {
             getStringProperty(Property.DEFAULT_ITEM_EVALUATOR);
-            this.defaultItemEvaluatorType = getDefaultEvaluatorTypeFromConfiguration();
+            this.defaultItemEvaluatorType = getDefaultEvaluatorTypeFromConfig();
         } else {
             setAndSaveDefaultEvaluatorType(defaultItemEvaluatorType);
         }
     }
 
     private void loadDefaultSortingPattern() {
-        if (configurationContainsProperty(Property.DEFAULT_SORTING_PATTERN)) {
-            this.defaultSortingPattern = getDefaultSortingPatternFromConfiguration();
+        if (configContainsProperty(Property.DEFAULT_SORTING_PATTERN)) {
+            this.defaultSortingPattern = getDefaultSortingPatternFromConfig();
         } else {
             setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN,
                 defaultSortingPattern.name());
@@ -115,17 +115,17 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadCleaningItem() {
-        if (configurationContainsProperty(Property.CLEANING_ITEM)
-            && getCleaningItemFromConfiguration() != null) {
-            this.currentCleaningItem = getCleaningItemFromConfiguration();
+        if (configContainsProperty(Property.CLEANING_ITEM)
+            && getCleaningItemFromConfig() != null) {
+            this.currentCleaningItem = getCleaningItemFromConfig();
         } else {
             this.currentCleaningItem = new ItemStack(Material.IRON_HOE);
-            this.setAndSaveConfigurationProperty(Property.CLEANING_ITEM, this.currentCleaningItem);
+            this.setAndSaveConfigProperty(Property.CLEANING_ITEM, this.currentCleaningItem);
         }
     }
 
     private void loadIsCleaningItemActive() {
-        if (configurationContainsProperty(Property.CLEANING_ITEM_ACTIVE)) {
+        if (configContainsProperty(Property.CLEANING_ITEM_ACTIVE)) {
             this.isCleaningItemActive = getBooleanProperty(Property.CLEANING_ITEM_ACTIVE);
         } else {
             setAndSaveBooleanProperty(Property.CLEANING_ITEM_ACTIVE, true);
@@ -133,7 +133,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadIsCooldownTimerActive() {
-        if (configurationContainsProperty(Property.COOLDOWN_TIMER_ACTIVE)) {
+        if (configContainsProperty(Property.COOLDOWN_TIMER_ACTIVE)) {
             this.isCooldownTimerActive = getBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE);
         } else {
             setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, true);
@@ -141,7 +141,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadIsDurabilityLossActive() {
-        if (configurationContainsProperty(Property.DURABILITY_LOSS)) {
+        if (configContainsProperty(Property.DURABILITY_LOSS)) {
             this.isDurabilityLossActive = getBooleanProperty(Property.DURABILITY_LOSS);
         } else {
             setAndSaveBooleanProperty(Property.DURABILITY_LOSS, true);
@@ -149,7 +149,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadIsOpenInventoryEventModeActive() {
-        if (configurationContainsProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE)) {
+        if (configContainsProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE)) {
             this.isOpenInventoryEventDetectionModeActive = getBooleanProperty(
                 Property.OPEN_INVENTORY_EVENT_DETECTION_MODE);
         } else {
@@ -158,7 +158,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadIsConsumablesRefillActive() {
-        if (configurationContainsProperty(Property.CONSUMABLES_REFILL)) {
+        if (configContainsProperty(Property.CONSUMABLES_REFILL)) {
             this.isConsumablesRefillActive = getBooleanProperty(Property.CONSUMABLES_REFILL);
         } else {
             setAndSaveBooleanProperty(Property.CONSUMABLES_REFILL, true);
@@ -166,7 +166,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadIsBlockRefillActive() {
-        if (configurationContainsProperty(Property.BLOCK_REFILL)) {
+        if (configContainsProperty(Property.BLOCK_REFILL)) {
             this.isBlockRefillActive = getBooleanProperty(Property.BLOCK_REFILL);
         } else {
             setAndSaveBooleanProperty(Property.BLOCK_REFILL, true);
@@ -174,7 +174,7 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadIsCleanInventoryPermissionActive() {
-        if (configurationContainsProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE)) {
+        if (configContainsProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE)) {
             this.isCleanInventoryActive = getBooleanProperty(
                 Property.CLEAN_INVENTORY_PERMISSION_ACTIVE);
         } else {
@@ -183,56 +183,56 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void loadSortingBlacklist() {
-        if (configurationContainsProperty(Property.SORTING_BLACKLIST)) {
+        if (configContainsProperty(Property.SORTING_BLACKLIST)) {
             //TODO make list non-static
-            InventorySorter.blacklist = getSortingBlackListFromConfiguration();
+            InventorySorter.blacklist = getSortingBlackListFromConfig();
         }
     }
 
     private void loadInventoryBlacklist() {
-        if (configurationContainsProperty(Property.INVENTORY_BLACKLIST)) {
+        if (configContainsProperty(Property.INVENTORY_BLACKLIST)) {
             //TODO make list non-static
-            BlacklistCommand.inventoryBlacklist = getInventoryBlackListFromConfiguration();
+            BlacklistCommand.inventoryBlacklist = getInventoryBlackListFromConfig();
         }
     }
 
     public void setAndSaveDefaultEvaluatorType(ItemEvaluatorType itemEvaluatorType) {
-        yamlConfiguration
+        yamlConfig
             .set(Property.DEFAULT_ITEM_EVALUATOR.getString(), itemEvaluatorType.name());
-        saveOrOverwriteConfigurationToFile();
+        saveOrOverwriteConfigToFile();
     }
 
-    public ItemEvaluatorType getDefaultEvaluatorTypeFromConfiguration() {
+    public ItemEvaluatorType getDefaultEvaluatorTypeFromConfig() {
         return ItemEvaluatorType
             .getEvaluatorTypeByName(getStringProperty(Property.DEFAULT_ITEM_EVALUATOR));
     }
 
-    public SortingPattern getDefaultSortingPatternFromConfiguration() {
+    public SortingPattern getDefaultSortingPatternFromConfig() {
         return SortingPattern
             .getSortingPatternByName(getStringProperty(Property.DEFAULT_SORTING_PATTERN));
     }
 
     public void setAndSaveCooldownTime(int timeInSeconds) {
-        yamlConfiguration.set(Property.TIMER_TIME.getString(), timeInSeconds);
-        saveOrOverwriteConfigurationToFile();
+        yamlConfig.set(Property.TIMER_TIME.getString(), timeInSeconds);
+        saveOrOverwriteConfigToFile();
     }
 
     public void setAndSaveCleaningItem(ItemStack cleaningItem) {
-        yamlConfiguration.set(Property.CLEANING_ITEM.getString(), cleaningItem);
-        saveOrOverwriteConfigurationToFile();
+        yamlConfig.set(Property.CLEANING_ITEM.getString(), cleaningItem);
+        saveOrOverwriteConfigToFile();
     }
 
     public void setAndSaveMessageList(List<String> messageList) {
-        yamlConfiguration.set(Property.MESSAGES.getString(), messageList);
-        saveOrOverwriteConfigurationToFile();
+        yamlConfig.set(Property.MESSAGES.getString(), messageList);
+        saveOrOverwriteConfigToFile();
     }
 
-    private List<String> getMessagesFromConfiguration() {
-        return yamlConfiguration.getStringList(Property.MESSAGES.getString());
+    private List<String> getMessagesFromConfig() {
+        return yamlConfig.getStringList(Property.MESSAGES.getString());
     }
 
-    private ItemStack getCleaningItemFromConfiguration() {
-        return yamlConfiguration.getItemStack(Property.CLEANING_ITEM.getString());
+    private ItemStack getCleaningItemFromConfig() {
+        return yamlConfig.getItemStack(Property.CLEANING_ITEM.getString());
     }
 
     public void setSortingBlacklist(final List<Material> blacklist) {
@@ -245,12 +245,12 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void setAndSaveSortingBlacklist(List<String> list) {
-        yamlConfiguration.set(Property.SORTING_BLACKLIST.getString(), list);
-        saveOrOverwriteConfigurationToFile();
+        yamlConfig.set(Property.SORTING_BLACKLIST.getString(), list);
+        saveOrOverwriteConfigToFile();
     }
 
-    public List<Material> getSortingBlackListFromConfiguration() {
-        List<String> list = yamlConfiguration.getStringList(Property.SORTING_BLACKLIST.getString());
+    public List<Material> getSortingBlackListFromConfig() {
+        List<String> list = yamlConfig.getStringList(Property.SORTING_BLACKLIST.getString());
         List<Material> materials = new ArrayList<>();
 
         for (String name : list) {
@@ -270,13 +270,13 @@ public class PluginConfig extends ConfigManager {
     }
 
     private void setAndSaveSortingInventoryBlackList(final List<String> list) {
-        yamlConfiguration.set(Property.INVENTORY_BLACKLIST.getString(), list);
-        saveOrOverwriteConfigurationToFile();
+        yamlConfig.set(Property.INVENTORY_BLACKLIST.getString(), list);
+        saveOrOverwriteConfigToFile();
     }
 
-    public List<Material> getInventoryBlackListFromConfiguration() {
+    public List<Material> getInventoryBlackListFromConfig() {
 
-        List<String> inventoryBlacklist = yamlConfiguration
+        List<String> inventoryBlacklist = yamlConfig
             .getStringList(Property.INVENTORY_BLACKLIST.getString());
         ArrayList<Material> materials = new ArrayList<>();
 

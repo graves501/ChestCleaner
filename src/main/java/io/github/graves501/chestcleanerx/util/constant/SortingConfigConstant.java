@@ -4,7 +4,7 @@ public enum SortingConfigConstant {
     SORTING_PATTERN("sortingPattern"),
     ITEM_EVALUATOR("itemEvaluator"),
     SET_AUTO_SORT_CHEST_ACTIVE("setAutoSortChestActive"),
-    ADMIN_CONFIGURATION("adminConfiguration"),
+    ADMIN_CONFIG("adminConfig"),
 
     TRUE("true"),
     FALSE("false"),

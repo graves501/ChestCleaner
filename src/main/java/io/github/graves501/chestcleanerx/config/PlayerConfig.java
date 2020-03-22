@@ -1,4 +1,4 @@
-package io.github.graves501.chestcleanerx.configuration;
+package io.github.graves501.chestcleanerx.config;
 
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
@@ -21,12 +21,12 @@ public class PlayerConfig extends ConfigManager {
     private HashMap<UUID, Boolean> playerAutoSortChestMap = new HashMap<>();
 
     private PlayerConfig() {
-        this.configurationFile = new File(
+        this.configFile = new File(
             Property.PLUGIN_FILE_PATH.getString(),
             Property.PLAYER_DATA_YAML_CONFIG_FILE_NAME.getString());
 
-        this.yamlConfiguration = YamlConfiguration
-            .loadConfiguration(this.configurationFile);
+        this.yamlConfig = YamlConfiguration
+            .loadConfiguration(this.configFile);
     }
 
     public static PlayerConfig getInstance() {
@@ -34,9 +34,9 @@ public class PlayerConfig extends ConfigManager {
     }
 
     public void loadPlayerData(Player player) {
-        final SortingPattern pattern = getSortingPatternFromConfiguration(player);
-        final ItemEvaluatorType evaluator = getEvaluatorTypeFromConfiguration(player);
-        boolean isAutoSortChestOnClosingActive = getIsAutoSortChestOnClosingActiveFromConfiguration(
+        final SortingPattern pattern = getSortingPatternFromConfig(player);
+        final ItemEvaluatorType evaluator = getEvaluatorTypeFromConfig(player);
+        boolean isAutoSortChestOnClosingActive = getIsAutoSortChestOnClosingActiveFromConfig(
             player);
 
         if (pattern != null) {
@@ -58,45 +58,45 @@ public class PlayerConfig extends ConfigManager {
 
     /* SORTINGPATTERN */
     public void setAndSaveSortingPattern(SortingPattern pattern, Player player) {
-        yamlConfiguration
+        yamlConfig
             .set(player.getUniqueId() + PlayerProperty.SORTING_PATTERN.getString(), pattern.name());
-        saveOrOverwriteConfigurationToFile();
+        saveOrOverwriteConfigToFile();
     }
 
-    public SortingPattern getSortingPatternFromConfiguration(Player player) {
+    public SortingPattern getSortingPatternFromConfig(Player player) {
         return SortingPattern
             .getSortingPatternByName(
-                yamlConfiguration
+                yamlConfig
                     .getString(player.getUniqueId() + PlayerProperty.SORTING_PATTERN.getString()));
     }
 
     public void setAndSaveEvaluatorType(ItemEvaluatorType pattern, Player player) {
-        yamlConfiguration
+        yamlConfig
             .set(player.getUniqueId() + PlayerProperty.EVALUATOR_TYPE.getString(), pattern.name());
-        saveOrOverwriteConfigurationToFile();
+        saveOrOverwriteConfigToFile();
     }
 
-    public ItemEvaluatorType getEvaluatorTypeFromConfiguration(Player player) {
+    public ItemEvaluatorType getEvaluatorTypeFromConfig(Player player) {
         return ItemEvaluatorType
             .getEvaluatorTypeByName(
-                yamlConfiguration
+                yamlConfig
                     .getString(player.getUniqueId() + PlayerProperty.EVALUATOR_TYPE.getString()));
     }
 
     public void setAndSaveIsAutoSortChestOnClosingActive(final Player player,
         final boolean isActive) {
-        yamlConfiguration
+        yamlConfig
             .set(player.getUniqueId() + PlayerProperty.AUTO_SORT_CHEST.getString(), isActive);
-        saveOrOverwriteConfigurationToFile();
+        saveOrOverwriteConfigToFile();
     }
 
     public boolean containsIsAutoSortChestOnClosingActive(Player player) {
-        return yamlConfiguration
+        return yamlConfig
             .contains(player.getUniqueId() + PlayerProperty.AUTO_SORT_CHEST.getString());
     }
 
-    public boolean getIsAutoSortChestOnClosingActiveFromConfiguration(Player player) {
-        return yamlConfiguration
+    public boolean getIsAutoSortChestOnClosingActiveFromConfig(Player player) {
+        return yamlConfig
             .getBoolean(player.getUniqueId() + PlayerProperty.AUTO_SORT_CHEST.getString());
     }
 
@@ -118,7 +118,7 @@ public class PlayerConfig extends ConfigManager {
             : PluginConfig.getInstance().getDefaultSortingPattern();
     }
 
-    public boolean getAutoSortChestConfigurationOfPlayer(Player player) {
+    public boolean getAutoSortChestConfigOfPlayer(Player player) {
         return playerAutoSortChestMap.containsKey(player.getUniqueId()) ? playerAutoSortChestMap
             .get(player.getUniqueId())
             : PluginConfig.getInstance().isDefaultAutoSortChestActive();

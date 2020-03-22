@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.util.constant.PlayerMessage;
 import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
 import io.github.graves501.chestcleanerx.util.constant.Property;
@@ -40,7 +40,7 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         }
 
         final Player player = (Player) commandSender;
-        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
+        final PluginConfig pluginConfig = PluginConfig.getInstance();
 
         if (player.hasPermission(PluginPermission.COOLDOWN_TIMER.getString())) {
 
@@ -51,8 +51,8 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
 
                     if (arguments[1].equalsIgnoreCase(TimerCommandConstant.TRUE.getString())) {
 
-                        if (!pluginConfiguration.isCooldownTimerActive()) {
-                            pluginConfiguration
+                        if (!pluginConfig.isCooldownTimerActive()) {
+                            pluginConfig
                                 .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, true);
                         }
                         InGameMessageHandler
@@ -64,8 +64,8 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
                     } else if (arguments[1]
                         .equalsIgnoreCase(TimerCommandConstant.FALSE.getString())) {
 
-                        if (!pluginConfiguration.isCooldownTimerActive()) {
-                            pluginConfiguration
+                        if (!pluginConfig.isCooldownTimerActive()) {
+                            pluginConfig
                                 .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, false);
                         }
                         InGameMessageHandler
@@ -86,8 +86,8 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
 
                     final int cooldownTimeInSeconds = Integer.valueOf(arguments[1]);
 
-                    if (pluginConfiguration.getCooldownTimeInSeconds() != cooldownTimeInSeconds) {
-                        pluginConfiguration.setAndSaveCooldownTime(cooldownTimeInSeconds);
+                    if (pluginConfig.getCooldownTimeInSeconds() != cooldownTimeInSeconds) {
+                        pluginConfig.setAndSaveCooldownTime(cooldownTimeInSeconds);
                     }
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                         InGameMessage.COOLDOWN_TIMER_NEW_TIME_SET,

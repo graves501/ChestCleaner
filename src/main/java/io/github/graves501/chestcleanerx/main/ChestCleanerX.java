@@ -5,7 +5,7 @@ import io.github.graves501.chestcleanerx.command.CleanInventoryCommand;
 import io.github.graves501.chestcleanerx.command.CleaningItemCommand;
 import io.github.graves501.chestcleanerx.command.CooldownTimerCommand;
 import io.github.graves501.chestcleanerx.command.SortingConfigCommand;
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.listener.PlayerEventListener;
 import io.github.graves501.chestcleanerx.listener.RefillListener;
 import io.github.graves501.chestcleanerx.listener.SortingListener;
@@ -19,7 +19,7 @@ public class ChestCleanerX extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PluginConfig.getInstance().loadConfiguration();
+        PluginConfig.getInstance().loadConfig();
         enablePluginCommands();
         registerEventListener();
         startCooldownTimerThread();

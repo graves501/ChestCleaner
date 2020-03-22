@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.util.MaterialBlacklistUtils;
 import io.github.graves501.chestcleanerx.util.constant.BlacklistConstant;
@@ -132,7 +132,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                     }
 
                     materialList.add(material);
-                    saveBlacklistInConfiguration(listNumber);
+                    saveBlacklistInConfig(listNumber);
 
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                         InGameMessage.ADDED_TO_BLACKLIST, material.name());
@@ -196,7 +196,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                     }
 
                     materialList.remove(material);
-                    saveBlacklistInConfiguration(listNumber);
+                    saveBlacklistInConfig(listNumber);
 
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                         InGameMessage.REMOVED_FROM_BLACKLIST, material.name());
@@ -247,7 +247,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
                 } else if (arguments[1].equalsIgnoreCase(BlacklistConstant.CLEAR.getString())) {
 
                     materialList.clear();
-                    saveBlacklistInConfiguration(listNumber);
+                    saveBlacklistInConfig(listNumber);
                     InGameMessageHandler
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                             InGameMessage.BLACKLIST_CLEARED
@@ -304,16 +304,16 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
             );
     }
 
-    private void saveBlacklistInConfiguration(final int blacklist) {
-        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
+    private void saveBlacklistInConfig(final int blacklist) {
+        final PluginConfig pluginConfig = PluginConfig.getInstance();
 
         final int SORTING_BLACKLIST = 0;
         final int INVENTORY_BLACKLIST = 1;
 
         if (blacklist == SORTING_BLACKLIST) {
-            pluginConfiguration.setSortingBlacklist(InventorySorter.blacklist);
+            pluginConfig.setSortingBlacklist(InventorySorter.blacklist);
         } else if (blacklist == INVENTORY_BLACKLIST) {
-            pluginConfiguration.setInventoryBlackList(inventoryBlacklist);
+            pluginConfig.setInventoryBlackList(inventoryBlacklist);
         }
 
     }

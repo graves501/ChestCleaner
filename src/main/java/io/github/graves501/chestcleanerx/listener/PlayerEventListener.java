@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.listener;
 
-import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
+import io.github.graves501.chestcleanerx.config.PlayerConfig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

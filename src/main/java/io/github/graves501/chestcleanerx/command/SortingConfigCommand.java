@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PlayerConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.util.constant.Property;
@@ -29,7 +29,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         commandList.add(SortingConfigConstant.SORTING_PATTERN.getString());
         commandList.add(SortingConfigConstant.ITEM_EVALUATOR.getString());
         commandList.add(SortingConfigConstant.SET_AUTO_SORT_CHEST_ACTIVE.getString());
-        commandList.add(SortingConfigConstant.ADMIN_CONFIGURATION.getString());
+        commandList.add(SortingConfigConstant.ADMIN_CONFIG.getString());
 
         booleans.add(SortingConfigConstant.TRUE.getString());
         booleans.add(SortingConfigConstant.FALSE.getString());
@@ -51,8 +51,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         }
 
         Player player = (Player) commandSender;
-        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
-        final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
+        final PluginConfig pluginConfig = PluginConfig.getInstance();
+        final PlayerConfig playerConfig = PlayerConfig.getInstance();
 
         if (arguments.length == 2) {
 
@@ -80,8 +80,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                             InGameMessage.NEW_PATTERN_SET
                         );
-                    playerConfiguration.setAndSaveSortingPattern(pattern, player);
-                    playerConfiguration.loadPlayerData(player);
+                    playerConfig.setAndSaveSortingPattern(pattern, player);
+                    playerConfig.loadPlayerData(player);
 
                     return true;
                 }
@@ -111,8 +111,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                             InGameMessage.NEW_EVALUATOR_SET
                         );
-                    playerConfiguration.setAndSaveEvaluatorType(evaluator, player);
-                    playerConfiguration.loadPlayerData(player);
+                    playerConfig.setAndSaveEvaluatorType(evaluator, player);
+                    playerConfig.loadPlayerData(player);
 
                     return true;
 
@@ -139,7 +139,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                 InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                     InGameMessage.AUTOSORT_WAS_SET, String.valueOf(isAutoSortChestActive));
 
-                playerConfiguration.setAndSaveIsAutoSortChestOnClosingActive(player,
+                playerConfig.setAndSaveIsAutoSortChestOnClosingActive(player,
                     isAutoSortChestActive);
 
                 return true;
@@ -175,10 +175,10 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfiguration
+                    pluginConfig
                         .setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN, sortingPattern
                             .name());
-                    pluginConfiguration.setDefaultSortingPattern(sortingPattern);
+                    pluginConfig.setDefaultSortingPattern(sortingPattern);
 
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                         InGameMessage.NEW_DEFAULT_SORTING_PATTERN
@@ -199,7 +199,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfiguration.setAndSaveDefaultEvaluatorType(evaluator);
+                    pluginConfig.setAndSaveDefaultEvaluatorType(evaluator);
 
                     InGameMessageHandler
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
@@ -221,8 +221,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfiguration.setDefaultAutoSortChestActive(isAutoSortChestActive);
-                    pluginConfiguration
+                    pluginConfig.setDefaultAutoSortChestActive(isAutoSortChestActive);
+                    pluginConfig
                         .setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE,
                             isAutoSortChestActive);
 

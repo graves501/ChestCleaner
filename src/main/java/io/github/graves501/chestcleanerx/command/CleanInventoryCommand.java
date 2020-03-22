@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
-import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.config.PlayerConfig;
+import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
 import io.github.graves501.chestcleanerx.util.BlockDetector;
@@ -29,8 +29,8 @@ public class CleanInventoryCommand implements CommandExecutor {
         final String label,
         final String[] arguments) {
 
-        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
-        final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
+        final PluginConfig pluginConfig = PluginConfig.getInstance();
+        final PlayerConfig playerConfig = PlayerConfig.getInstance();
 
         Player player = (Player) commandSender;
 
@@ -38,7 +38,7 @@ public class CleanInventoryCommand implements CommandExecutor {
 
         if (isPlayer) {
             if (!player.hasPermission(PluginPermission.CLEAN_INVENTORY.getString())
-                && pluginConfiguration.isCleanInventoryActive()) {
+                && pluginConfig.isCleanInventoryActive()) {
                 InGameMessageHandler
                     .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
                         "chestcleaner.cmd.cleanInventory"
@@ -71,8 +71,8 @@ public class CleanInventoryCommand implements CommandExecutor {
 
                 // if the block has no inventory
                 if (!InventorySorter.sortBlockSelectedByPlayer(player, block,
-                    playerConfiguration.getSortingPatternOfPlayer(player),
-                    playerConfiguration.getEvaluatorTypOfPlayer(
+                    playerConfig.getSortingPatternOfPlayer(player),
+                    playerConfig.getEvaluatorTypOfPlayer(
                         player))) {
 
                     String blockMessage = "("
@@ -150,8 +150,8 @@ public class CleanInventoryCommand implements CommandExecutor {
             }
 
             if (!InventorySorter.sortBlockSelectedByPlayer(player, block,
-                playerConfiguration.getSortingPatternOfPlayer(player),
-                playerConfiguration.getEvaluatorTypOfPlayer(
+                playerConfig.getSortingPatternOfPlayer(player),
+                playerConfig.getEvaluatorTypOfPlayer(
                     player))) {
 
                 final String blockMessage = "("
