@@ -21,6 +21,7 @@ public class PlayerConfig extends ConfigManager {
     private HashMap<UUID, Boolean> playerAutoSortChestMap = new HashMap<>();
 
     private PlayerConfig() {
+        super();
         this.configFile = new File(
             Property.PLUGIN_FILE_PATH.getString(),
             Property.PLAYER_DATA_YAML_CONFIG_FILE_NAME.getString());

@@ -195,7 +195,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfig.setAndSaveDefaultEvaluatorType(evaluator);
+                    pluginConfig.setAndSaveDefaultItemEvaluatorType(evaluator);
 
                     InGameMessageHandler
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,

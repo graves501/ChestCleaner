@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +21,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author graves501
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 public class PluginConfig extends ConfigManager {
 
     private final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
@@ -44,6 +42,7 @@ public class PluginConfig extends ConfigManager {
     private static PluginConfig instance = new PluginConfig();
 
     private PluginConfig() {
+        super();
         this.configFile = new File(
             Property.PLUGIN_FILE_PATH.getString(),
             Property.PLUGIN_YAML_CONFIG_FILE_NAME.getString());
@@ -75,8 +74,6 @@ public class PluginConfig extends ConfigManager {
         // TODO fix blacklist functionality first
         // loadSortingBlacklist();
         // loadInventoryBlacklist();
-
-        saveOrOverwriteConfigToFile();
     }
 
     private void loadIsAutoSortingActive() {
@@ -187,7 +184,8 @@ public class PluginConfig extends ConfigManager {
         saveOrOverwriteConfigToFile();
     }
 
-    public void setAndSaveDefaultEvaluatorType(ItemEvaluatorType itemEvaluatorType) {
+    public void setAndSaveDefaultItemEvaluatorType(ItemEvaluatorType itemEvaluatorType) {
+        this.defaultItemEvaluatorType = itemEvaluatorType;
         yamlConfig.set(Property.DEFAULT_ITEM_EVALUATOR.getString(), itemEvaluatorType.name());
         saveOrOverwriteConfigToFile();
     }
@@ -231,7 +229,8 @@ public class PluginConfig extends ConfigManager {
     }
 
     public void setAndSaveCooldownInSeconds(int cooldownInSeconds) {
-        yamlConfig.set(Property.COOLDOWN_IN_SECONDS.getString(), cooldownInSeconds);
+        this.cooldownInSeconds = cooldownInSeconds;
+        yamlConfig.set(Property.COOLDOWN_IN_SECONDS.getString(), this.cooldownInSeconds);
         saveOrOverwriteConfigToFile();
     }
 
@@ -291,5 +290,20 @@ public class PluginConfig extends ConfigManager {
     public void setAndSaveIsCooldownActive(boolean isCooldownActive) {
         this.isCooldownActive = isCooldownActive;
         yamlConfig.set(Property.COOLDOWN_ACTIVE.getString(), this.isCooldownActive);
+    }
+
+    public void setAndSaveIsCleanInventoryCommandActive(boolean isCleanInventoryCommandActive) {
+        this.isCleanInventoryCommandActive = isCleanInventoryCommandActive;
+        yamlConfig.set(Property.CLEAN_INVENTORY_COMMAND_ACTIVE.getString(), this.isCleanInventoryCommandActive);
+    }
+
+    public void setAndSaveIsBlockRefillActive(boolean isBlockRefillActive) {
+        this.isBlockRefillActive = isBlockRefillActive;
+        yamlConfig.set(Property.BLOCK_REFILL.getString(), this.isBlockRefillActive);
+    }
+
+    public void setAndSaveConsumablesRefillActive(boolean isConsumablesRefillActive) {
+        this.isConsumablesRefillActive = isConsumablesRefillActive;
+        yamlConfig.set(Property.CONSUMABLES_REFILL.getString(), this.isBlockRefillActive);
     }
 }

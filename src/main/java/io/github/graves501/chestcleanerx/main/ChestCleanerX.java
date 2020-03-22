@@ -19,13 +19,19 @@ public class ChestCleanerX extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PluginConfig.getInstance().loadConfig();
+        initializePluginConfig();
         enablePluginCommands();
         registerEventListener();
         startCooldownThread();
 
         //TODO not needed for now
         // checkForUpdates();
+    }
+
+    private void initializePluginConfig(){
+        final PluginConfig pluginConfig = PluginConfig.getInstance();
+        pluginConfig.loadConfig();
+        pluginConfig.saveOrOverwriteConfigToFile();
     }
 
     private void enablePluginCommands() {

@@ -13,7 +13,7 @@ public abstract class ConfigManager {
     /*
      * This method will save using the system default encoding, or possibly using UTF8.
      */
-    protected void saveOrOverwriteConfigToFile() {
+    public void saveOrOverwriteConfigToFile() {
         try {
             this.yamlConfig.save(this.configFile);
         } catch (IOException exception) {
@@ -24,15 +24,15 @@ public abstract class ConfigManager {
 
     // Helper functions
 
-    public boolean configContainsProperty(final Property property) {
+    protected boolean configContainsProperty(final Property property) {
         return this.yamlConfig.contains(property.getString());
     }
 
-    public boolean getBooleanProperty(final Property property) {
+    protected boolean getBooleanProperty(final Property property) {
         return this.yamlConfig.getBoolean(property.getString());
     }
 
-    public String getStringProperty(final Property property) {
+    protected String getStringProperty(final Property property) {
         return this.yamlConfig.getString(property.getString());
     }
 }
