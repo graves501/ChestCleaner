@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.util.inventory;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -54,7 +54,7 @@ public class InventoryUtil {
     }
 
     private static boolean isItemSimilarToCurrentCleaningItem(final ItemStack item) {
-        final ItemStack currentCleaningItem = PluginConfiguration.getInstance()
+        final ItemStack currentCleaningItem = PluginConfig.getInstance()
             .getCurrentCleaningItem();
         return item.isSimilar(currentCleaningItem);
     }
@@ -98,7 +98,7 @@ public class InventoryUtil {
      * @param player the player who is holding the item, that you want to get damaged, in hand.
      */
     public static void damageCleaningItemOfPlayer(final Player player) {
-        if (PluginConfiguration.getInstance().isDurabilityLossActive()) {
+        if (PluginConfig.getInstance().isDurabilityLossActive()) {
             final ItemStack cleaningItem;
 
             if (isCleaningItemInMainHand(player)) {

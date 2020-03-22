@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.util.MaterialBlacklistUtils;
 import io.github.graves501.chestcleanerx.util.constant.BlacklistConstant;
@@ -305,7 +305,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     }
 
     private void saveBlacklistInConfiguration(final int blacklist) {
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
 
         final int SORTING_BLACKLIST = 0;
         final int INVENTORY_BLACKLIST = 1;

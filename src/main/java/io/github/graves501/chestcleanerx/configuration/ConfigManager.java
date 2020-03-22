@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public abstract class ConfigurationManager {
+public abstract class ConfigManager {
 
     protected File configurationFile;
     protected FileConfiguration yamlConfiguration;

@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.util;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class InventoryConverter {
         }
 
         if (pattern == null) {
-            pattern = PluginConfiguration.getInstance().getDefaultSortingPattern();
+            pattern = PluginConfig.getInstance().getDefaultSortingPattern();
         }
 
         switch (pattern) {

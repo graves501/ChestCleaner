@@ -5,7 +5,7 @@ import io.github.graves501.chestcleanerx.command.CleanInventoryCommand;
 import io.github.graves501.chestcleanerx.command.CleaningItemCommand;
 import io.github.graves501.chestcleanerx.command.CooldownTimerCommand;
 import io.github.graves501.chestcleanerx.command.SortingConfigCommand;
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.listener.PlayerEventListener;
 import io.github.graves501.chestcleanerx.listener.RefillListener;
 import io.github.graves501.chestcleanerx.listener.SortingListener;
@@ -15,11 +15,11 @@ import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PluginMain extends JavaPlugin {
+public class ChestCleanerX extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PluginConfiguration.getInstance().loadConfiguration();
+        PluginConfig.getInstance().loadConfiguration();
         enablePluginCommands();
         registerEventListener();
         startCooldownTimerThread();

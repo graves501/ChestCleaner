@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PlayerConfiguration;
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.util.constant.Property;
@@ -51,8 +51,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         }
 
         Player player = (Player) commandSender;
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
+        final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
 
         if (arguments.length == 2) {
 

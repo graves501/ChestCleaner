@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.util.constant.PlayerMessage;
 import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
 import io.github.graves501.chestcleanerx.util.constant.Property;
@@ -40,7 +40,7 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
         }
 
         final Player player = (Player) commandSender;
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
 
         if (player.hasPermission(PluginPermission.COOLDOWN_TIMER.getString())) {
 

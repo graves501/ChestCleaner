@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.configuration;
 
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
-import io.github.graves501.chestcleanerx.main.PluginMain;
+import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
@@ -24,9 +24,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class PluginConfiguration extends ConfigurationManager {
+public class PluginConfig extends ConfigManager {
 
-    private final Logger logger = JavaPlugin.getPlugin(PluginMain.class).getLogger();
+    private final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
 
     // Default settings for the plugin
     private ItemStack currentCleaningItem;
@@ -45,9 +45,9 @@ public class PluginConfiguration extends ConfigurationManager {
     private ItemEvaluatorType defaultItemEvaluatorType = ItemEvaluatorType.BACK_BEGIN_STRING;
     private SortingPattern defaultSortingPattern = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
 
-    private static PluginConfiguration instance = new PluginConfiguration();
+    private static PluginConfig instance = new PluginConfig();
 
-    private PluginConfiguration() {
+    private PluginConfig() {
         this.configurationFile = new File(
             Property.PLUGIN_FILE_PATH.getString(),
             Property.PLUGIN_YAML_CONFIG_FILE_NAME.getString());
@@ -57,7 +57,7 @@ public class PluginConfiguration extends ConfigurationManager {
     }
 
 
-    public static PluginConfiguration getInstance() {
+    public static PluginConfig getInstance() {
         return instance;
     }
 

@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.util.constant.Property;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
@@ -46,7 +46,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
         boolean isPlayer = sender instanceof Player;
         Player player = (Player) sender;
 
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
+        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
 
         if (arguments.length > 1) {
 
@@ -203,7 +203,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                 if (player.hasPermission("chestcleaner.cmd.cleaningItem.get")) {
 
                     player.getInventory()
-                        .addItem(PluginConfiguration.getInstance().getCurrentCleaningItem());
+                        .addItem(PluginConfig.getInstance().getCurrentCleaningItem());
 
                     InGameMessageHandler
                         .sendMessageToPlayer(player,

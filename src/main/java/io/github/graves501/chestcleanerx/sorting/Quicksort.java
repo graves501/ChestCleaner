@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.sorting;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.evaluator.Evaluator;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import java.util.List;
@@ -11,7 +11,7 @@ public class Quicksort {
     private List<ItemStack> items;
 
     private Evaluator defaultEvaluator = ItemEvaluatorType
-        .getEvaluator(PluginConfiguration.getInstance().getDefaultItemEvaluatorType());
+        .getEvaluator(PluginConfig.getInstance().getDefaultItemEvaluatorType());
 
     public Quicksort(List<ItemStack> items, Evaluator evaluator) {
         this.items = items;

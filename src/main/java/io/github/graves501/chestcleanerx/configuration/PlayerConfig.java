@@ -12,15 +12,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 @Data
-public class PlayerConfiguration extends ConfigurationManager {
+public class PlayerConfig extends ConfigManager {
 
-    private static PlayerConfiguration instance = new PlayerConfiguration();
+    private static PlayerConfig instance = new PlayerConfig();
 
     private HashMap<UUID, ItemEvaluatorType> playerItemEvaluatorTypeMap = new HashMap<>();
     private HashMap<UUID, SortingPattern> playerSortingPatternMap = new HashMap<>();
     private HashMap<UUID, Boolean> playerAutoSortChestMap = new HashMap<>();
 
-    private PlayerConfiguration() {
+    private PlayerConfig() {
         this.configurationFile = new File(
             Property.PLUGIN_FILE_PATH.getString(),
             Property.PLAYER_DATA_YAML_CONFIG_FILE_NAME.getString());
@@ -29,7 +29,7 @@ public class PlayerConfiguration extends ConfigurationManager {
             .loadConfiguration(this.configurationFile);
     }
 
-    public static PlayerConfiguration getInstance() {
+    public static PlayerConfig getInstance() {
         return instance;
     }
 
@@ -48,7 +48,7 @@ public class PlayerConfiguration extends ConfigurationManager {
         }
 
         if (!containsIsAutoSortChestOnClosingActive(player)) {
-            isAutoSortChestOnClosingActive = PluginConfiguration.getInstance()
+            isAutoSortChestOnClosingActive = PluginConfig.getInstance()
                 .isDefaultAutoSortChestActive();
         }
 
@@ -109,19 +109,19 @@ public class PlayerConfiguration extends ConfigurationManager {
     public ItemEvaluatorType getEvaluatorTypOfPlayer(Player player) {
         return playerItemEvaluatorTypeMap.get(player) == null ? playerItemEvaluatorTypeMap
             .get(player.getUniqueId())
-            : PluginConfiguration.getInstance().getDefaultItemEvaluatorType();
+            : PluginConfig.getInstance().getDefaultItemEvaluatorType();
     }
 
     public SortingPattern getSortingPatternOfPlayer(Player player) {
         return playerSortingPatternMap.get(player) == null ? playerSortingPatternMap
             .get(player.getUniqueId())
-            : PluginConfiguration.getInstance().getDefaultSortingPattern();
+            : PluginConfig.getInstance().getDefaultSortingPattern();
     }
 
     public boolean getAutoSortChestConfigurationOfPlayer(Player player) {
         return playerAutoSortChestMap.containsKey(player.getUniqueId()) ? playerAutoSortChestMap
             .get(player.getUniqueId())
-            : PluginConfiguration.getInstance().isDefaultAutoSortChestActive();
+            : PluginConfig.getInstance().isDefaultAutoSortChestActive();
     }
 
 }

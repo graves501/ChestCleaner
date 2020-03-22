@@ -3,9 +3,9 @@ package io.github.graves501.chestcleanerx.listener;
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.*;
 
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
-import io.github.graves501.chestcleanerx.configuration.PlayerConfiguration;
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
-import io.github.graves501.chestcleanerx.main.PluginMain;
+import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
 import io.github.graves501.chestcleanerx.util.BlockDetector;
@@ -29,9 +29,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SortingListener implements org.bukkit.event.Listener {
 
-    final Logger logger = JavaPlugin.getPlugin(PluginMain.class).getLogger();
-    final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-    final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+    final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
+    final PluginConfig pluginConfiguration = PluginConfig.getInstance();
+    final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
 
     @EventHandler
     private void onRightClick(final PlayerInteractEvent playerRightClickEvent) {

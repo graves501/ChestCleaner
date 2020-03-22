@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.timer;
 
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
-import io.github.graves501.chestcleanerx.main.PluginMain;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
+import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
 import io.github.graves501.chestcleanerx.util.logging.PluginLoggerUtil;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
@@ -18,12 +18,12 @@ public class CooldownTimerHandler {
     private CooldownTimerHandler() {
     }
 
-    private static final Logger logger = JavaPlugin.getPlugin(PluginMain.class).getLogger();
+    private static final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
 
     private static ArrayList<CooldownTimer> cooldownTimerList = new ArrayList<>();
 
     public static void update() {
-        if (PluginConfiguration.getInstance().isCooldownTimerActive()) {
+        if (PluginConfig.getInstance().isCooldownTimerActive()) {
             for (CooldownTimer cooldownTimer : cooldownTimerList) {
                 countDownOneSecond(cooldownTimer);
             }
@@ -55,7 +55,7 @@ public class CooldownTimerHandler {
 
     private static void addPlayerToCooldownTimer(final Player player) {
         cooldownTimerList.add(new CooldownTimer(player,
-            PluginConfiguration.getInstance().getCooldownTimeInSeconds()));
+            PluginConfig.getInstance().getCooldownTimeInSeconds()));
     }
 
     public static boolean isSortingOnCooldownForPlayer(final Player player) {
@@ -88,7 +88,7 @@ public class CooldownTimerHandler {
     }
 
     private static boolean isCoolDownTimerActive() {
-        return PluginConfiguration.getInstance().isCooldownTimerActive();
+        return PluginConfig.getInstance().isCooldownTimerActive();
     }
 
     private static boolean playerHasCooldownTimerNoEffectPermission(final Player player) {

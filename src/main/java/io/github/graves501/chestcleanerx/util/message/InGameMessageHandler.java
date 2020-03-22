@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.util.message;
 
-import io.github.graves501.chestcleanerx.main.PluginMain;
+import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -55,7 +55,7 @@ public class InGameMessageHandler {
     }
 
     private static ConsoleCommandSender getConsoleCommandSender() {
-        return JavaPlugin.getPlugin(PluginMain.class).getServer().getConsoleSender();
+        return JavaPlugin.getPlugin(ChestCleanerX.class).getServer().getConsoleSender();
     }
 
     private static String getTypedInGameMessage(final InGameMessageType inGameMessageType,

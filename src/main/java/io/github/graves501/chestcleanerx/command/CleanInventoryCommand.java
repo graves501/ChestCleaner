@@ -1,7 +1,7 @@
 package io.github.graves501.chestcleanerx.command;
 
-import io.github.graves501.chestcleanerx.configuration.PlayerConfiguration;
-import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
+import io.github.graves501.chestcleanerx.configuration.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
 import io.github.graves501.chestcleanerx.util.BlockDetector;
@@ -29,8 +29,8 @@ public class CleanInventoryCommand implements CommandExecutor {
         final String label,
         final String[] arguments) {
 
-        final PluginConfiguration pluginConfiguration = PluginConfiguration.getInstance();
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+        final PluginConfig pluginConfiguration = PluginConfig.getInstance();
+        final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
 
         Player player = (Player) commandSender;
 

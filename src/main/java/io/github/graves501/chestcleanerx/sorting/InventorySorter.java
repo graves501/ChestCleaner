@@ -1,6 +1,6 @@
 package io.github.graves501.chestcleanerx.sorting;
 
-import io.github.graves501.chestcleanerx.configuration.PlayerConfiguration;
+import io.github.graves501.chestcleanerx.configuration.PlayerConfig;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
 import io.github.graves501.chestcleanerx.util.InventoryConverter;
 import io.github.graves501.chestcleanerx.util.InventoryDetector;
@@ -180,7 +180,7 @@ public class InventorySorter {
      */
     public static void sortInventoryOfPlayer(Inventory inventory, Player player) {
 
-        final PlayerConfiguration playerConfiguration = PlayerConfiguration.getInstance();
+        final PlayerConfig playerConfiguration = PlayerConfig.getInstance();
 
         final SortingPattern pattern = playerConfiguration.getSortingPatternOfPlayer(player);
         final ItemEvaluatorType evaluator = playerConfiguration.getEvaluatorTypOfPlayer(player);
