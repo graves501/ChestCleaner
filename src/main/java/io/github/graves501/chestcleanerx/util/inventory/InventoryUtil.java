@@ -85,7 +85,8 @@ public class InventoryUtil {
         return isPlayerRightClickingAir || isPlayerRightClickingBlock;
     }
 
-    public static boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent) {
+    public static boolean isInventoryCloseEventCausedByChest(
+        InventoryCloseEvent inventoryCloseEvent) {
         return inventoryCloseEvent.getInventory().getHolder() instanceof Chest;
     }
 

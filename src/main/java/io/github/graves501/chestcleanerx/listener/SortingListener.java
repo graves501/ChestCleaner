@@ -1,13 +1,20 @@
 package io.github.graves501.chestcleanerx.listener;
 
-import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.*;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.damageCleaningItemOfPlayer;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isCleaningItemInMainHand;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isCleaningItemInOffHand;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isInventoryCloseEventCausedByChest;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isPlayerHoldingCleaningItemInAHand;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isPlayerHoldingCleaningItemInBothHands;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isPlayerRightClickingAirOrBlock;
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.preventConsumptionOfCleaningItem;
 
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
 import io.github.graves501.chestcleanerx.config.PlayerConfig;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
+import io.github.graves501.chestcleanerx.timer.CooldownHandler;
 import io.github.graves501.chestcleanerx.util.BlockDetector;
 import io.github.graves501.chestcleanerx.util.logging.PluginLoggerUtil;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
@@ -42,7 +49,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
             if (isPlayerPermittedToSortOwnInventory(player) && player.isSneaking()) {
 
-                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
@@ -82,7 +89,7 @@ public class SortingListener implements org.bukkit.event.Listener {
                     return;
                 }
 
-                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
@@ -110,13 +117,13 @@ public class SortingListener implements org.bukkit.event.Listener {
         final EquipmentSlot currentHand = rightClickEvent.getHand();
 
         if (isCleaningItemInMainHand(player) && currentHand == EquipmentSlot.OFF_HAND) {
-            PluginLoggerUtil.logPlayerInfo(logger, player,
+            PluginLoggerUtil.logPlayerInfo(player,
                 "MAIN HAND: PREVENT TRUE");
             return true;
         }
 
         if (isCleaningItemInOffHand(player) && currentHand == EquipmentSlot.HAND) {
-            PluginLoggerUtil.logPlayerInfo(logger, player,
+            PluginLoggerUtil.logPlayerInfo(player,
                 "OFF HANDS");
             return true;
         }
@@ -134,7 +141,7 @@ public class SortingListener implements org.bukkit.event.Listener {
             if (isPlayerPermittedToUseCleaningItem(player)
                 && isPlayerHoldingCleaningItemInAHand(player)) {
 
-                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
@@ -159,7 +166,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
             if (playerConfig.getAutoSortChestConfigOfPlayer(player)) {
 
-                if (CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
                     return;
                 }
 
@@ -176,7 +183,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         final boolean isPlayerPermittedToSortOwnInventory = player
             .hasPermission("chestcleaner.cleaningItem.use.owninventory");
 
-        PluginLoggerUtil.logPlayerInfo(logger, player,
+        PluginLoggerUtil.logPlayerInfo(player,
             "isPlayerPermittedToSortOwnInventory: " + isPlayerPermittedToSortOwnInventory);
         return isPlayerPermittedToSortOwnInventory;
     }
@@ -186,7 +193,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         final boolean isPlayerPermittedToUseCleaningItem = player
             .hasPermission("chestcleaner.cleaningItem.use");
 
-        PluginLoggerUtil.logPlayerInfo(logger, player,
+        PluginLoggerUtil.logPlayerInfo(player,
             "isPlayerPermittedToUseCleaningItem: " + isPlayerPermittedToUseCleaningItem);
         return isPlayerPermittedToUseCleaningItem;
     }

@@ -49,14 +49,13 @@ public class PlayerConfig extends ConfigManager {
 
         if (!containsIsAutoSortChestOnClosingActive(player)) {
             isAutoSortChestOnClosingActive = PluginConfig.getInstance()
-                .isDefaultAutoSortChestActive();
+                .isAutoSortChestActive();
         }
 
         playerAutoSortChestMap.put(player.getUniqueId(), isAutoSortChestOnClosingActive);
     }
 
 
-    /* SORTINGPATTERN */
     public void setAndSaveSortingPattern(SortingPattern pattern, Player player) {
         yamlConfig
             .set(player.getUniqueId() + PlayerProperty.SORTING_PATTERN.getString(), pattern.name());
@@ -121,7 +120,7 @@ public class PlayerConfig extends ConfigManager {
     public boolean getAutoSortChestConfigOfPlayer(Player player) {
         return playerAutoSortChestMap.containsKey(player.getUniqueId()) ? playerAutoSortChestMap
             .get(player.getUniqueId())
-            : PluginConfig.getInstance().isDefaultAutoSortChestActive();
+            : PluginConfig.getInstance().isAutoSortChestActive();
     }
 
 }

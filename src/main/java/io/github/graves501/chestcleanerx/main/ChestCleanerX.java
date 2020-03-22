@@ -3,13 +3,13 @@ package io.github.graves501.chestcleanerx.main;
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
 import io.github.graves501.chestcleanerx.command.CleanInventoryCommand;
 import io.github.graves501.chestcleanerx.command.CleaningItemCommand;
-import io.github.graves501.chestcleanerx.command.CooldownTimerCommand;
+import io.github.graves501.chestcleanerx.command.CooldownCommand;
 import io.github.graves501.chestcleanerx.command.SortingConfigCommand;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.listener.PlayerEventListener;
 import io.github.graves501.chestcleanerx.listener.RefillListener;
 import io.github.graves501.chestcleanerx.listener.SortingListener;
-import io.github.graves501.chestcleanerx.timer.CooldownTimerThread;
+import io.github.graves501.chestcleanerx.timer.CooldownThread;
 import io.github.graves501.chestcleanerx.util.constant.PlayerCommand;
 import java.util.Objects;
 import org.bukkit.Bukkit;
@@ -22,8 +22,10 @@ public class ChestCleanerX extends JavaPlugin {
         PluginConfig.getInstance().loadConfig();
         enablePluginCommands();
         registerEventListener();
-        startCooldownTimerThread();
-        checkForUpdates();
+        startCooldownThread();
+
+        //TODO not needed for now
+        // checkForUpdates();
     }
 
     private void enablePluginCommands() {
@@ -31,7 +33,7 @@ public class ChestCleanerX extends JavaPlugin {
             .setExecutor(new CleanInventoryCommand());
 
         Objects.requireNonNull(getCommand(PlayerCommand.TIMER.getString()))
-            .setExecutor(new CooldownTimerCommand());
+            .setExecutor(new CooldownCommand());
 
         Objects.requireNonNull(getCommand(PlayerCommand.CLEANING_ITEM.getString()))
             .setExecutor(new CleaningItemCommand());
@@ -49,9 +51,9 @@ public class ChestCleanerX extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), this);
     }
 
-    private void startCooldownTimerThread() {
-        CooldownTimerThread cooldownTimerThread = new CooldownTimerThread();
-        cooldownTimerThread.start();
+    private void startCooldownThread() {
+        CooldownThread cooldownThread = new CooldownThread();
+        cooldownThread.start();
     }
 
     private void checkForUpdates() {

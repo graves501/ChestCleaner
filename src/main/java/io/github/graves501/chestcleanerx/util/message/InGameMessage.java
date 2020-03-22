@@ -23,9 +23,9 @@ public enum InGameMessage {
     PERMISSION_DENIED("I'm sorry, but you do not have permission to perform this command."),
 
     NOT_A_PLAYER("You have to be a player to perform this command"),
-    COOLDOWN_TIMER_ACTIVATE("Cooldown timer active: true"),
-    COOLDOWN_TIMER_INACTIVE("Cooldown timer active: false"),
-    COOLDOWN_TIMER_NEW_TIME_SET(String.format("Cooldown time set to: %s", PLACEHOLDER.get())),
+    COOLDOWN_ACTIVATE("Cooldown active: true"),
+    COOLDOWN_INACTIVE("Cooldown active: false"),
+    COOLDOWN_NEW_TIME_SET(String.format("Cooldown time set to: %s", PLACEHOLDER.get())),
     NEW_CLEANING_ITEM_LORE("Cleaning item lore was set."),
     NEW_CLEANING_ITEM_SET(String.format("%s is now the new cleaning item.", PLACEHOLDER.get())),
     ITEM_IN_HAND_REQUIRED("You have to hold an item in the main hand to do this."),

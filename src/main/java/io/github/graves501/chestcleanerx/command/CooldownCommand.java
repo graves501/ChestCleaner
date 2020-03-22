@@ -3,7 +3,6 @@ package io.github.graves501.chestcleanerx.command;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.util.constant.PlayerMessage;
 import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
-import io.github.graves501.chestcleanerx.util.constant.Property;
 import io.github.graves501.chestcleanerx.util.constant.TimerCommandConstant;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
@@ -18,11 +17,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
+public class CooldownCommand implements CommandExecutor, TabCompleter {
 
     private final List<String> timerCommands = new ArrayList<>();
 
-    public CooldownTimerCommand() {
+    public CooldownCommand() {
         timerCommands.add(TimerCommandConstant.SET_ACTIVE.getString());
         timerCommands.add(TimerCommandConstant.SET_TIME.getString());
     }
@@ -51,26 +50,22 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
 
                     if (arguments[1].equalsIgnoreCase(TimerCommandConstant.TRUE.getString())) {
 
-                        if (!pluginConfig.isCooldownTimerActive()) {
-                            pluginConfig
-                                .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, true);
-                        }
+                        pluginConfig.setAndSaveIsCooldownActive(true);
+
                         InGameMessageHandler
                             .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                                InGameMessage.COOLDOWN_TIMER_ACTIVATE
+                                InGameMessage.COOLDOWN_ACTIVATE
                             );
                         return true;
 
                     } else if (arguments[1]
                         .equalsIgnoreCase(TimerCommandConstant.FALSE.getString())) {
 
-                        if (!pluginConfig.isCooldownTimerActive()) {
-                            pluginConfig
-                                .setAndSaveBooleanProperty(Property.COOLDOWN_TIMER_ACTIVE, false);
-                        }
+                        pluginConfig.setAndSaveIsCooldownActive(false);
+
                         InGameMessageHandler
                             .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                                InGameMessage.COOLDOWN_TIMER_INACTIVE
+                                InGameMessage.COOLDOWN_INACTIVE
                             );
                         return true;
 
@@ -84,14 +79,14 @@ public class CooldownTimerCommand implements CommandExecutor, TabCompleter {
                     /* SETTIMER SUBCOMMAND */
                 } else if (arguments[0].equalsIgnoreCase(timerCommands.get(1))) {
 
-                    final int cooldownTimeInSeconds = Integer.valueOf(arguments[1]);
+                    final int cooldownInSeconds = Integer.valueOf(arguments[1]);
 
-                    if (pluginConfig.getCooldownTimeInSeconds() != cooldownTimeInSeconds) {
-                        pluginConfig.setAndSaveCooldownTime(cooldownTimeInSeconds);
+                    if (pluginConfig.getCooldownInSeconds() != cooldownInSeconds) {
+                        pluginConfig.setAndSaveCooldownInSeconds(cooldownInSeconds);
                     }
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                        InGameMessage.COOLDOWN_TIMER_NEW_TIME_SET,
-                        String.valueOf(cooldownTimeInSeconds));
+                        InGameMessage.COOLDOWN_NEW_TIME_SET,
+                        String.valueOf(cooldownInSeconds));
 //                        Messages
 //                            .getMessage(InGameMessage.COOLDOWN_TIMER_NEW_TIME_SET,
 //                                TimerCommandConstant.TIME_TARGET.getString(),

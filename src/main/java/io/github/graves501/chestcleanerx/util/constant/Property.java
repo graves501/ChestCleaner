@@ -1,19 +1,18 @@
 package io.github.graves501.chestcleanerx.util.constant;
 
 public enum Property {
-    BLOCK_REFILL("blockRefill"),
-    CLEAN_INVENTORY_PERMISSION_ACTIVE("cleanInventory.permissionActive"),
+    BLOCK_REFILL("isBlockRefillActive"),
+    CLEAN_INVENTORY_COMMAND_ACTIVE("isCleanInventoryCommandActive"),
     CLEANING_ITEM("cleaningItem"),
-    CLEANING_ITEM_ACTIVE("cleaningItem.active"),
-    CONSUMABLES_REFILL("consumablesRefill"),
+    CLEANING_ITEM_ACTIVE("isCleaningItemActive"),
+    CONSUMABLES_REFILL("isConsumablesRefillActive"),
     DEFAULT_SORTING_PATTERN("defaultSortingPattern"),
-    DURABILITY_LOSS("durabilityLoss"),
-    DEFAULT_AUTOSORT_CHEST_ACTIVE("defaultAutoSortChestActive"),
+    DURABILITY_LOSS("isDurabilityLossActive"),
+    AUTOSORT_CHEST_ACTIVE("isAutoSortChestActive"),
     DEFAULT_ITEM_EVALUATOR("defaultItemEvaluator"),
     INVENTORY_BLACKLIST("inventoryBlacklist"),
-    MESSAGES("messages"),
-    TIMER_TIME("timer.time"),
-    COOLDOWN_TIMER_ACTIVE("timer.active"),
+    COOLDOWN_IN_SECONDS("cooldownInSeconds"),
+    COOLDOWN_ACTIVE("isCooldownActive"),
     OPEN_INVENTORY_EVENT_DETECTION_MODE("openInventoryEventDetectionMode"),
     SORTING_BLACKLIST("sortingBlacklist"),
 

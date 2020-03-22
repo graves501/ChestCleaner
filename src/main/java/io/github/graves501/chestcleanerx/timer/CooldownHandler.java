@@ -13,49 +13,49 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class CooldownTimerHandler {
+public class CooldownHandler {
 
-    private CooldownTimerHandler() {
+    private CooldownHandler() {
     }
 
     private static final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
 
-    private static ArrayList<CooldownTimer> cooldownTimerList = new ArrayList<>();
+    private static ArrayList<Cooldown> cooldownOfPlayers = new ArrayList<>();
 
     public static void update() {
-        if (PluginConfig.getInstance().isCooldownTimerActive()) {
-            for (CooldownTimer cooldownTimer : cooldownTimerList) {
-                countDownOneSecond(cooldownTimer);
+        if (PluginConfig.getInstance().isCooldownActive()) {
+            for (Cooldown cooldown : cooldownOfPlayers) {
+                countdownOneSecond(cooldown);
             }
 
-            cooldownTimerList
-                .removeIf(cooldownTimer -> cooldownTimer.getCooldownTimeInSeconds() <= 0);
+            cooldownOfPlayers.removeIf(
+                cooldownOfPlayer -> cooldownOfPlayer.getCooldownInSeconds() <= 0);
         }
     }
 
-    public static boolean isPlayerOnCooldownTimerList(final Player player) {
+    public static boolean isPlayerOnCooldownList(final Player player) {
         //TODO use streams
-        for (CooldownTimer cooldownTimer : cooldownTimerList) {
-            if (cooldownTimer.getPlayer().equals(player)) {
+        for (Cooldown cooldown : cooldownOfPlayers) {
+            if (cooldown.getPlayer().equals(player)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static int getCooldownTimeForPlayer(final Player player) {
+    public static int getCooldownForPlayer(final Player player) {
         //TODO use streams
-        for (CooldownTimer cooldownTimer : cooldownTimerList) {
-            if (cooldownTimer.getPlayer().equals(player)) {
-                return cooldownTimer.getCooldownTimeInSeconds();
+        for (Cooldown cooldown : cooldownOfPlayers) {
+            if (cooldown.getPlayer().equals(player)) {
+                return cooldown.getCooldownInSeconds();
             }
         }
         return 0;
     }
 
-    private static void addPlayerToCooldownTimer(final Player player) {
-        cooldownTimerList.add(new CooldownTimer(player,
-            PluginConfig.getInstance().getCooldownTimeInSeconds()));
+    private static void addPlayerToCooldownList(final Player player) {
+        cooldownOfPlayers.add(new Cooldown(player,
+            PluginConfig.getInstance().getCooldownInSeconds()));
     }
 
     public static boolean isSortingOnCooldownForPlayer(final Player player) {
@@ -63,15 +63,15 @@ public class CooldownTimerHandler {
         if (isCoolDownTimerActive()) {
             PluginLogger.getGlobal().info("isCoolDownTimerActive: " + isCoolDownTimerActive());
 
-            if (playerHasCooldownTimerNoEffectPermission(player)) {
+            if (playerHasCooldownNoEffectPermission(player)) {
                 return false;
             }
 
-            if (isPlayerOnCooldownTimerList(player)) {
+            if (isPlayerOnCooldownList(player)) {
                 logErrorAndSendSortingCooldownMessageToPlayer(player);
                 return true;
             }
-            addPlayerToCooldownTimer(player);
+            addPlayerToCooldownList(player);
         }
 
         return false;
@@ -79,24 +79,24 @@ public class CooldownTimerHandler {
 
     private static void logErrorAndSendSortingCooldownMessageToPlayer(final Player player) {
         PluginLoggerUtil
-            .logPlayerInfo(logger, player, "Sorting not allowed due to cooldown.");
+            .logPlayerInfo(player, "Sorting not allowed due to cooldown.");
 
         InGameMessageHandler.sendMessageToPlayer(player,
             InGameMessageType.ERROR,
             InGameMessage.SORTING_ON_COOLDOWN,
-            String.valueOf(getCooldownTimeForPlayer(player)));
+            String.valueOf(getCooldownForPlayer(player)));
     }
 
     private static boolean isCoolDownTimerActive() {
-        return PluginConfig.getInstance().isCooldownTimerActive();
+        return PluginConfig.getInstance().isCooldownActive();
     }
 
-    private static boolean playerHasCooldownTimerNoEffectPermission(final Player player) {
+    private static boolean playerHasCooldownNoEffectPermission(final Player player) {
         return player.hasPermission(PluginPermission.TIMER_NO_EFFECT.getString());
     }
 
-    private static void countDownOneSecond(final CooldownTimer cooldownTimer) {
-        cooldownTimer.setCooldownTimeInSeconds(cooldownTimer.getCooldownTimeInSeconds() - 1);
+    private static void countdownOneSecond(final Cooldown cooldown) {
+        cooldown.setCooldownInSeconds(cooldown.getCooldownInSeconds() - 1);
     }
 
 }

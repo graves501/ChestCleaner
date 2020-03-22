@@ -4,7 +4,6 @@ import io.github.graves501.chestcleanerx.config.PlayerConfig;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.SortingPattern;
 import io.github.graves501.chestcleanerx.sorting.evaluator.ItemEvaluatorType;
-import io.github.graves501.chestcleanerx.util.constant.Property;
 import io.github.graves501.chestcleanerx.util.constant.SortingConfigConstant;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
@@ -175,10 +174,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfig
-                        .setAndSaveStringProperty(Property.DEFAULT_SORTING_PATTERN, sortingPattern
-                            .name());
-                    pluginConfig.setDefaultSortingPattern(sortingPattern);
+                    pluginConfig.setAndSaveDefaultSortingPattern(sortingPattern);
 
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                         InGameMessage.NEW_DEFAULT_SORTING_PATTERN
@@ -221,10 +217,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    pluginConfig.setDefaultAutoSortChestActive(isAutoSortChestActive);
-                    pluginConfig
-                        .setAndSaveBooleanProperty(Property.DEFAULT_AUTOSORT_CHEST_ACTIVE,
-                            isAutoSortChestActive);
+                    pluginConfig.setAndSaveIsAutoSortChestActive(isAutoSortChestActive);
 
                     InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,
                         InGameMessage.DEFAULT_AUTOSORT_CHEST_ACTIVE,

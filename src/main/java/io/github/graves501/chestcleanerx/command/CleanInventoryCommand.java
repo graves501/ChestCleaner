@@ -3,7 +3,7 @@ package io.github.graves501.chestcleanerx.command;
 import io.github.graves501.chestcleanerx.config.PlayerConfig;
 import io.github.graves501.chestcleanerx.config.PluginConfig;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
-import io.github.graves501.chestcleanerx.timer.CooldownTimerHandler;
+import io.github.graves501.chestcleanerx.timer.CooldownHandler;
 import io.github.graves501.chestcleanerx.util.BlockDetector;
 import io.github.graves501.chestcleanerx.util.constant.PluginPermission;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
@@ -38,7 +38,7 @@ public class CleanInventoryCommand implements CommandExecutor {
 
         if (isPlayer) {
             if (!player.hasPermission(PluginPermission.CLEAN_INVENTORY.getString())
-                && pluginConfig.isCleanInventoryActive()) {
+                && pluginConfig.isCleanInventoryCommandActive()) {
                 InGameMessageHandler
                     .sendMessageToPlayer(player, InGameMessageType.MISSING_PERMISSION,
                         "chestcleaner.cmd.cleanInventory"
@@ -67,7 +67,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (!CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+            if (!CooldownHandler.isSortingOnCooldownForPlayer(player)) {
 
                 // if the block has no inventory
                 if (!InventorySorter.sortBlockSelectedByPlayer(player, block,
@@ -145,7 +145,7 @@ public class CleanInventoryCommand implements CommandExecutor {
                 return true;
             }
 
-            if (isPlayer && CooldownTimerHandler.isSortingOnCooldownForPlayer(player)) {
+            if (isPlayer && CooldownHandler.isSortingOnCooldownForPlayer(player)) {
                 return true;
             }
 

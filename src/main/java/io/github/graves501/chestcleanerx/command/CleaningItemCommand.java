@@ -1,7 +1,6 @@
 package io.github.graves501.chestcleanerx.command;
 
 import io.github.graves501.chestcleanerx.config.PluginConfig;
-import io.github.graves501.chestcleanerx.util.constant.Property;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageType;
@@ -84,7 +83,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     newCleaningItem.setItemMeta(currentCleaningItemMeta);
 
-                    pluginConfig.setCurrentCleaningItem(newCleaningItem);
+                    pluginConfig.setAndSaveCurrentCleaningItem(newCleaningItem);
 
                     if (arguments.length == 1) {
                         return true;
@@ -118,16 +117,15 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     }
 
-                    ItemMeta itemMeta = pluginConfig.getCurrentCleaningItem()
+                    ItemMeta newItemMeta = pluginConfig.getCurrentCleaningItem()
                         .getItemMeta();
-                    itemMeta.setLore(lorelist);
+                    newItemMeta.setLore(lorelist);
 
                     final ItemStack currentCleaningItem = pluginConfig
                         .getCurrentCleaningItem();
-                    currentCleaningItem.setItemMeta(itemMeta);
+                    currentCleaningItem.setItemMeta(newItemMeta);
 
-                    pluginConfig.setCurrentCleaningItem(currentCleaningItem);
-                    pluginConfig.setAndSaveCleaningItem(currentCleaningItem);
+                    pluginConfig.setAndSaveCurrentCleaningItem(currentCleaningItem);
 
                     if (isPlayer) {
                         InGameMessageHandler
@@ -234,9 +232,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                             isCleaningItemActive = true;
                         }
 
-                        pluginConfig
-                            .setAndSaveBooleanProperty(Property.CLEAN_INVENTORY_PERMISSION_ACTIVE,
-                                isCleaningItemActive);
+                        pluginConfig.setAndSaveIsCleaningItemActive(isCleaningItemActive);
 
                         if (isCleaningItemActive) {
                             InGameMessageHandler
@@ -283,7 +279,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                             durabilityLoss = true;
                         }
 
-                        pluginConfig.setDurabilityLossActive(durabilityLoss);
+                        pluginConfig.setAndSaveDurabilityLossActive(durabilityLoss);
 
                         if (pluginConfig.isDurabilityLossActive()) {
                             InGameMessageHandler
@@ -379,7 +375,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
                     boolean eventDetectionModeActive = Boolean.parseBoolean(arguments[1]);
                     pluginConfig
-                        .setOpenInventoryEventDetectionModeActive(eventDetectionModeActive);
+                        .setAndSaveOpenInventoryEventDetectionModeActive(eventDetectionModeActive);
 
                     InGameMessageHandler
                         .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
@@ -387,8 +383,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
                             String.valueOf(eventDetectionModeActive));
 
                     pluginConfig
-                        .setAndSaveBooleanProperty(Property.OPEN_INVENTORY_EVENT_DETECTION_MODE,
-                            eventDetectionModeActive);
+                        .setAndSaveOpenInventoryEventDetectionModeActive(eventDetectionModeActive);
                     return true;
 
                 } else {

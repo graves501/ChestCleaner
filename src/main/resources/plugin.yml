@@ -3,7 +3,7 @@ version: "0.1"
 author: Tom2208, graves501
 api-version: "1.15"
 
-main: io.github.graves501.chestcleanerx.main.PluginMain
+main: io.github.graves501.chestcleanerx.main.ChestCleanerX
 
 commands:
   cleanInventory:
