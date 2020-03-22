@@ -45,20 +45,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>3.2.0</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Lombok-->
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -66,13 +52,38 @@
       <version>1.18.12</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- Unit Test dependencies-->
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4-rule</artifactId>
+      <version>${powermock-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-classloading-xstream</artifactId>
+      <version>${powermock-version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <defaultGoal>clean install</defaultGoal>
     <sourceDirectory>src/main/java</sourceDirectory>
-    <!-- TODO add testSourceDirectory-->
-    <!-- <testSourceDirectory>test</testSourceDirectory>-->
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -108,5 +119,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <release.version>0.1</release.version>
+    <powermock-version>1.7.4</powermock-version>
   </properties>
 </project>

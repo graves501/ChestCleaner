@@ -1,5 +1,7 @@
 package io.github.graves501.chestcleanerx.listener;
 
+import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.*;
+
 import io.github.graves501.chestcleanerx.command.BlacklistCommand;
 import io.github.graves501.chestcleanerx.configuration.PlayerConfiguration;
 import io.github.graves501.chestcleanerx.configuration.PluginConfiguration;
@@ -13,16 +15,12 @@ import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageType;
 import java.util.logging.Logger;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -126,39 +124,6 @@ public class SortingListener implements org.bukkit.event.Listener {
         return false;
     }
 
-    private void preventConsumptionOfCleaningItem(Cancellable cancellableEvent) {
-        cancellableEvent.setCancelled(true);
-    }
-
-    /**
-     * Damages the item in the Hand of the {@code player} (using player.getItemInHand()), if the
-     * {@code durability} (in class Main) is true. Damaging means, that stackable items
-     * (maxStackSize > 1) get reduced in amount by one, not stackable items get damaged and removed,
-     * if they reach the highest durability .
-     *
-     * @param player the player who is holding the item, that you want to get damaged, in hand.
-     */
-    private void damageCleaningItemOfPlayer(final Player player) {
-        if (pluginConfiguration.isDurabilityLossActive()) {
-            final ItemStack cleaningItem;
-
-            if (isCleaningItemInMainHand(player)) {
-                cleaningItem = getItemInMainHand(player);
-            } else {
-                cleaningItem = getItemInOffHand(player);
-            }
-
-            //TODO refactor the deprecated method calls
-            if (cleaningItem.getMaxStackSize() == 1) {
-                cleaningItem.setDurability((short) (cleaningItem.getDurability() + 1));
-            }
-
-            if (cleaningItem.getDurability() >= cleaningItem.getType().getMaxDurability()) {
-                cleaningItem.setAmount(cleaningItem.getAmount() - 1);
-            }
-        }
-    }
-
     @EventHandler
     private void onOpenInventory(final InventoryOpenEvent inventoryOpenEvent) {
 
@@ -225,66 +190,4 @@ public class SortingListener implements org.bukkit.event.Listener {
             "isPlayerPermittedToUseCleaningItem: " + isPlayerPermittedToUseCleaningItem);
         return isPlayerPermittedToUseCleaningItem;
     }
-
-
-    private boolean isInventoryCloseEventCausedByChest(InventoryCloseEvent inventoryCloseEvent) {
-        return inventoryCloseEvent.getInventory().getHolder() instanceof Chest;
-    }
-
-    private boolean isPlayerRightClickingAirOrBlock(
-        final PlayerInteractEvent playerRightClickEvent) {
-
-        boolean isPlayerRightClickingAir =
-            playerRightClickEvent.getAction() == Action.RIGHT_CLICK_AIR;
-
-        boolean isPlayerRightClickingBlock =
-            playerRightClickEvent.getAction() == Action.RIGHT_CLICK_BLOCK;
-
-        return isPlayerRightClickingAir || isPlayerRightClickingBlock;
-    }
-
-    private boolean isPlayerHoldingCleaningItemInAHand(final Player player) {
-        return isCleaningItemInMainHand(player) || isCleaningItemInOffHand(player);
-    }
-
-    private boolean isPlayerHoldingCleaningItemInBothHands(final Player player) {
-        return isCleaningItemInMainHand(player) && isCleaningItemInOffHand(player);
-    }
-
-    private boolean isCleaningItemInMainHand(final Player player) {
-        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
-        final ItemStack itemInMainHand = getItemInMainHand(player);
-
-        final boolean isCleaningItemInMainHand = itemInMainHand.equals(currentCleaningItem);
-
-        return isCleaningItemInMainHand;
-    }
-
-    private boolean isCleaningItemInOffHand(final Player player) {
-        final ItemStack currentCleaningItem = pluginConfiguration.getCurrentCleaningItem();
-        final ItemStack itemInOffHand = getItemInOffHand(player);
-
-        final boolean isCleaningItemInOffHand = itemInOffHand.equals(currentCleaningItem);
-
-        return isCleaningItemInOffHand;
-    }
-
-    private ItemStack getItemInMainHand(final Player player) {
-        final ItemStack itemInMainHand = player.getInventory().getItemInMainHand().clone();
-        //TODO fix this deprecated line
-        itemInMainHand.setDurability((short) 0);
-        itemInMainHand.setAmount(1);
-
-        return itemInMainHand;
-    }
-
-    private ItemStack getItemInOffHand(final Player player) {
-        ItemStack itemInOffHand = player.getInventory().getItemInOffHand().clone();
-        //TODO fix this deprecated line
-        itemInOffHand.setDurability((short) 0);
-        itemInOffHand.setAmount(1);
-
-        return itemInOffHand;
-    }
-
 }

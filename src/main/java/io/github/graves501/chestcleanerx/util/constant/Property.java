@@ -18,6 +18,8 @@ public enum Property {
     SORTING_BLACKLIST("sortingBlacklist"),
 
     PLUGIN_FILE_PATH("plugins/ChestCleanerX"),
+
+    //TODO Get distinct name for player config
     PLAYER_DATA_YAML_CONFIG_FILE_NAME("config.yml"),
     PLUGIN_YAML_CONFIG_FILE_NAME("config.yml");
 

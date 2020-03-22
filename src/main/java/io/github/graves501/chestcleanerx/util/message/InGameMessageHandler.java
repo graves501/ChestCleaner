@@ -68,13 +68,13 @@ public class InGameMessageHandler {
             case SYNTAX_ERROR:
                 inGameMessageStringBuilder.append(ChatColor.RED);
                 inGameMessageStringBuilder.append(InGameMessage.SYNTAX_ERROR.get());
-                inGameMessageStringBuilder.append(InGameMessage.COLON);
+                inGameMessageStringBuilder.append(InGameMessage.COLON.get());
                 inGameMessageStringBuilder.append(inGameMessage);
                 break;
             case ERROR:
                 inGameMessageStringBuilder.append(ChatColor.RED);
                 inGameMessageStringBuilder.append(InGameMessage.ERROR.get());
-                inGameMessageStringBuilder.append(InGameMessage.COLON);
+                inGameMessageStringBuilder.append(InGameMessage.COLON.get());
                 inGameMessageStringBuilder.append(inGameMessage);
                 break;
             case SUCCESS:
@@ -84,9 +84,9 @@ public class InGameMessageHandler {
             case MISSING_PERMISSION:
                 inGameMessageStringBuilder.append(ChatColor.RED);
                 inGameMessageStringBuilder.append(InGameMessage.PERMISSION_DENIED.get());
-                inGameMessageStringBuilder.append(InGameMessage.PARENTHESIS_LEFT);
+                inGameMessageStringBuilder.append(InGameMessage.PARENTHESIS_LEFT.get());
                 inGameMessageStringBuilder.append(inGameMessage);
-                inGameMessageStringBuilder.append(InGameMessage.PARENTHESIS_RIGHT);
+                inGameMessageStringBuilder.append(InGameMessage.PARENTHESIS_RIGHT.get());
                 break;
             case UNHEADED_INFORMATION:
                 inGameMessageStringBuilder.append(ChatColor.GRAY);
