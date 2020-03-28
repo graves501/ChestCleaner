@@ -21,3 +21,13 @@ commands:
   sortingConfig:
     description: Configuration of the sorting algorithm.
     usage: /<command> <pattern/evaluator/setAutosort/adminConfig>
+
+permissions:
+  chestCleanerX.cleaningItem.use:
+    default: true
+  chestCleanerX.cleaningItem.sortOwnInventory:
+    default: true
+  chestCleanerX.autoRefill.blocks:
+    default: true
+  chestCleanerX.autoRefill.consumables:
+    default: true
