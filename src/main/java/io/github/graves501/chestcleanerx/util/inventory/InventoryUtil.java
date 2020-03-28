@@ -24,14 +24,14 @@ public class InventoryUtil {
     }
 
     public static ItemStack getItemInOffHand(final Player player) {
-        return player.getInventory().getItemInMainHand();
+        return player.getInventory().getItemInOffHand();
     }
 
-    public static boolean isPlayerHoldingCleaningItemInAHand(final Player player) {
+    public static boolean isCleaningItemInAHand(final Player player) {
         return isCleaningItemInMainHand(player) || isCleaningItemInOffHand(player);
     }
 
-    public static boolean isPlayerHoldingCleaningItemInBothHands(final Player player) {
+    public static boolean isCleaningItemInBothHands(final Player player) {
         return isCleaningItemInMainHand(player) && isCleaningItemInOffHand(player);
     }
 

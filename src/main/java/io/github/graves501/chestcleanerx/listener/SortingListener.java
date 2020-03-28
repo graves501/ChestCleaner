@@ -2,10 +2,7 @@ package io.github.graves501.chestcleanerx.listener;
 
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.damageCleaningItemOfPlayer;
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isCleaningItemInMainHand;
-import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isCleaningItemInOffHand;
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isInventoryCloseEventCausedByChest;
-import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isPlayerHoldingCleaningItemInAHand;
-import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isPlayerHoldingCleaningItemInBothHands;
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.isPlayerRightClickingAirOrBlock;
 import static io.github.graves501.chestcleanerx.util.inventory.InventoryUtil.preventConsumptionOfCleaningItem;
 
@@ -17,7 +14,6 @@ import io.github.graves501.chestcleanerx.main.ChestCleanerX;
 import io.github.graves501.chestcleanerx.sorting.InventorySorter;
 import io.github.graves501.chestcleanerx.timer.CooldownHandler;
 import io.github.graves501.chestcleanerx.util.BlockDetector;
-import io.github.graves501.chestcleanerx.util.logging.PluginLoggerUtil;
 import io.github.graves501.chestcleanerx.util.message.InGameMessage;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageHandler;
 import io.github.graves501.chestcleanerx.util.message.InGameMessageType;
@@ -37,99 +33,78 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SortingListener implements org.bukkit.event.Listener {
 
+    //TODO log more events in this class
     private final Logger logger = JavaPlugin.getPlugin(ChestCleanerX.class).getLogger();
     private final PluginConfig pluginConfig = PluginConfig.getInstance();
     private final PlayerConfig playerConfig = PlayerConfig.getInstance();
 
     @EventHandler
     private void onRightClick(final PlayerInteractEvent playerRightClickEvent) {
+
         final Player player = playerRightClickEvent.getPlayer();
 
-        if (isPlayerHoldingCleaningItemInAHand(player)
+        if (preventSortingTwice(playerRightClickEvent) || CooldownHandler.isSortingOnCooldownForPlayer(player)) {
+            return;
+        }
+
+        if (isCleaningItemInMainHand(player)
             && isPlayerRightClickingAirOrBlock(playerRightClickEvent)) {
 
-            if (PermissionHandler.playerHasPermissionToSortOwnInventory(player) && player.isSneaking()) {
+            if (PermissionHandler.playerHasPermissionToSortOwnInventory(player) && player
+                .isSneaking()) {
 
-                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
-                    return;
-                }
-
-                if (isPlayerHoldingCleaningItemInBothHands(player)) {
-                    final EquipmentSlot currentHand = playerRightClickEvent.getHand();
-
-                    if (currentHand == EquipmentSlot.OFF_HAND) {
-                        return;
-                    }
-                } else if (preventSortingTwice(playerRightClickEvent)) {
-                    return;
-                }
-
+                sortInventoryOfPlayer(player);
                 damageCleaningItemOfPlayer(player);
                 preventConsumptionOfCleaningItem(playerRightClickEvent);
-
-                //TODO refactor InventorySorter
-                InventorySorter.sortPlayerInventory(
-                    player, playerConfig.getSortingPatternOfPlayer(
-                        player),
-                    playerConfig.getEvaluatorTypOfPlayer(
-                        player));
-
-                InventorySorter.playSortingSound(player);
-
-                InGameMessageHandler
-                    .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                        InGameMessage.INVENTORY_SORTED
-                    );
 
             } else if (!pluginConfig.isOpenInventoryEventDetectionModeActive()
                 && PermissionHandler.playerHasPermissionToUseCleaningItem(player)) {
 
-                final Block block = BlockDetector.getTargetBlock(player);
-
-                if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
-                    return;
-                }
-
-                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
-                    return;
-                }
-
-                if (InventorySorter.sortBlockSelectedByPlayer(player, block,
-                    playerConfig.getSortingPatternOfPlayer(
-                        player),
-                    playerConfig.getEvaluatorTypOfPlayer(
-                        player))) {
-
-                    damageCleaningItemOfPlayer(player);
-                    preventConsumptionOfCleaningItem(playerRightClickEvent);
-
-                    InGameMessageHandler
-                        .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
-                            InGameMessage.INVENTORY_SORTED);
-                }
+                sortInventoryOfBlockSelectedByPlayer(player);
+                damageCleaningItemOfPlayer(player);
+                preventConsumptionOfCleaningItem(playerRightClickEvent);
             }
+        }
+    }
+
+    private void sortInventoryOfPlayer(final Player player) {
+        //TODO refactor InventorySorter
+        InventorySorter.sortPlayerInventory(
+            player, playerConfig.getSortingPatternOfPlayer(
+                player),
+            playerConfig.getEvaluatorTypOfPlayer(
+                player));
+
+        InventorySorter.playSortingSound(player);
+
+        InGameMessageHandler
+            .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                InGameMessage.INVENTORY_SORTED
+            );
+    }
+
+    private void sortInventoryOfBlockSelectedByPlayer(final Player player) {
+        final Block block = BlockDetector.getTargetBlock(player);
+
+        if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
+            return;
+        }
+
+        if (InventorySorter.sortBlockSelectedByPlayer(player, block,
+            playerConfig.getSortingPatternOfPlayer(
+                player),
+            playerConfig.getEvaluatorTypOfPlayer(
+                player))) {
+
+            InGameMessageHandler
+                .sendMessageToPlayer(player, InGameMessageType.SUCCESS,
+                    InGameMessage.INVENTORY_SORTED);
         }
     }
 
     private boolean preventSortingTwice(
         final PlayerInteractEvent rightClickEvent) {
-
-        final Player player = rightClickEvent.getPlayer();
-        final EquipmentSlot currentHand = rightClickEvent.getHand();
-
-        if (isCleaningItemInMainHand(player) && currentHand == EquipmentSlot.OFF_HAND) {
-            PluginLoggerUtil.logPlayerInfo(player,
-                "MAIN HAND: PREVENT TRUE");
-            return true;
-        }
-
-        if (isCleaningItemInOffHand(player) && currentHand == EquipmentSlot.HAND) {
-            PluginLoggerUtil.logPlayerInfo(player,
-                "OFF HANDS");
-            return true;
-        }
-
-        return false;
+        return rightClickEvent.getHand() == EquipmentSlot.OFF_HAND;
     }
 
     @EventHandler
@@ -139,12 +114,12 @@ public class SortingListener implements org.bukkit.event.Listener {
 
             final Player player = (Player) inventoryOpenEvent.getPlayer();
 
-            if (PermissionHandler.playerHasPermissionToUseCleaningItem(player)
-                && isPlayerHoldingCleaningItemInAHand(player)) {
+            if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
+                return;
+            }
 
-                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
-                    return;
-                }
+            if (PermissionHandler.playerHasPermissionToUseCleaningItem(player)
+                && isCleaningItemInMainHand(player)) {
 
                 InventorySorter.sortInventory(inventoryOpenEvent.getInventory(),
                     playerConfig.getSortingPatternOfPlayer(player),
@@ -165,12 +140,11 @@ public class SortingListener implements org.bukkit.event.Listener {
         if (isInventoryCloseEventCausedByChest(inventoryCloseEvent)) {
             final Player player = (Player) inventoryCloseEvent.getPlayer();
 
+            if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
+                return;
+            }
+
             if (playerConfig.getAutoSortChestConfigOfPlayer(player)) {
-
-                if (CooldownHandler.isSortingOnCooldownForPlayer(player)) {
-                    return;
-                }
-
                 InventorySorter.sortInventoryOfPlayer(inventoryCloseEvent.getInventory(), player);
                 InventorySorter.playSortingSound(player);
                 InGameMessageHandler.sendMessageToPlayer(player, InGameMessageType.SUCCESS,

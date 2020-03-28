@@ -14,6 +14,7 @@ public class PermissionHandler {
 
         PluginLoggerUtil.logPlayerInfo(player,
             "playerHasPermissionToSortOwnInventory: " + playerHasPermissionToSortOwnInventory);
+
         return playerHasPermissionToSortOwnInventory;
     }
 
@@ -23,6 +24,7 @@ public class PermissionHandler {
 
         PluginLoggerUtil.logPlayerInfo(player,
             "playerHasPermissionToUseCleaningItem: " + playerHasPermissionToUseCleaningItem);
+
         return playerHasPermissionToUseCleaningItem;
     }
 
@@ -32,6 +34,7 @@ public class PermissionHandler {
 
         PluginLoggerUtil.logPlayerInfo(player,
             "playerHasAutoRefillBlocksPermission: " + playerHasAutoRefillBlocksPermission);
+
         return playerHasAutoRefillBlocksPermission;
     }
 
@@ -42,6 +45,7 @@ public class PermissionHandler {
         PluginLoggerUtil.logPlayerInfo(player,
             "playerHasAutoRefillConsumablesPermission: "
                 + playerHasAutoRefillConsumablesPermission);
+
         return playerHasAutoRefillConsumablesPermission;
     }
 
